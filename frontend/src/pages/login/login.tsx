@@ -324,7 +324,10 @@ const Login: React.FC = () => {
           )}
         </div>
 
-       
+        {/* 푸터 */}
+        <div className="footer">
+          © 2025 kh.solr. All rights reserved.
+        </div>
       </div>
     </div>
   );
