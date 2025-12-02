@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './login.css';
+import { Link } from "react-router-dom";
 
 type PageType = 'login' | 'signup';
 
@@ -70,12 +71,14 @@ const Login: React.FC = () => {
         <div className="gradient-circle gradient-circle-3"></div>
       </div>
 
+
       <div className="login-content">
         {/* 로고 및 헤더 */}
         <div className="login-header">
-          <h1 className="logo">
-            kh<span className="logo-accent">.solr</span>
-          </h1>
+         <h1> < Link to="/" className="logo">
+            KH<span className="logo-accent">.Solr</span>
+            </Link>
+        </h1>
           <p className="tagline">가장 빠른 AI 검색을 경험하세요</p>
         </div>
 
@@ -209,6 +212,7 @@ const Login: React.FC = () => {
                   네이버로 계속하기
                 </button>
               </div>
+
             </>
           ) : (
             // 회원가입 폼
@@ -324,10 +328,7 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        {/* 푸터 */}
-        <div className="footer">
-          © 2025 kh.solr. All rights reserved.
-        </div>
+       
       </div>
     </div>
   );
