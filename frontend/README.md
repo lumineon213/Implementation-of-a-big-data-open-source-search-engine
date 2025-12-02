@@ -195,3 +195,56 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 4. API는 api 폴더의 axios로만 호출.
 5. 저장하면 자동 포맷, 코드 정리됨.
 6. 나머지는 설정 파일이라 건드릴 필요 없음.
+
+---
+## 13. 초보용 안내: 건드리는 폴더
+
+프론트엔드 폴더에는 여러 설정 파일이 있지만  
+**실제로 만져야 할 폴더는 딱 4개뿐입니다.**
+
+### ✅ 반드시 건드리는 폴더
+- **src/pages/**  
+  화면을 만드는 곳  
+  예: Home.tsx, Login.tsx, Search.tsx
+
+- **src/components/**  
+  화면에 들어가는 공통 UI 조각  
+  예: Header.tsx, Footer.tsx, SearchBar.tsx
+
+- **src/api/**  
+  백엔드(Spring Boot)와 통신하는 axios 함수  
+  예: api.get("/api/search")
+
+- **src/styles/**  
+  필요한 경우 CSS를 작성하는 곳  
+  예: global.css, page별 CSS
+
+---
+
+### 🟦 조건부로 건드릴 수 있는 곳 (조금 이해 필요)
+- **src/layouts/**  
+  여러 페이지에 공통으로 들어가는 레이아웃  
+  예: Header + Footer + Outlet 구조
+
+- **src/hooks/**  
+  재사용 로직을 넣는 곳  
+  이 부분은 잘 모르겠으면 건드리지 않아도 됨
+
+---
+
+### ❌ 건드리면 안 되는 파일들 (설정파일)
+초보자가 절대 수정하면 안 되는 파일입니다.
+
+- `.vscode/**`  
+  (자동 포맷, ESLint 설정 포함)
+
+- `.eslintrc.json`  
+- `.prettierrc`  
+- `tsconfig.json`  
+- `vite.config.ts`  
+- `package.json`  
+- `node_modules/`  
+- `public/`의 대부분 파일  
+
+이 파일들은 프로젝트 전체 규칙을 결정하므로  
+수정 시 오류가 날 가능성이 큼.
