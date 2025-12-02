@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
-import './login.css';
-import { Link } from "react-router-dom";
+import axios, { AxiosError } from "axios";
+import './Login.css';
+import { Link, useNavigate } from "react-router-dom";
 
 type PageType = 'login' | 'signup';
 
+interface ApiErrorResponse {
+  msg?: string;
+  success?: boolean;
+}
+
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState<PageType>('login');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
+
   // 로그인 상태
-  const [loginEmail, setLoginEmail] = useState<string>('');
-  const [loginPassword, setLoginPassword] = useState<string>('');
-  
+  const [loginData, setLoginData] = useState({
+    accountId: '',
+    accountPw: ''
+  });
+
   // 회원가입 상태
   const [signupData, setSignupData] = useState({
     accountId: '',
@@ -22,44 +31,102 @@ const Login: React.FC = () => {
     phoneNumber: ''
   });
 
+  /** ================================
+   *  로그인 요청
+   *  ================================ */
   const handleLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    setTimeout(() => {
-      console.log('Login attempt:', { loginEmail, loginPassword });
-      alert('로그인 성공! (백엔드 연동 필요)');
+
+    try {
+      const res = await axios.post("/api/login/login", {
+        accountId: loginData.accountId,
+        accountPw: loginData.accountPw
+      }, {
+        withCredentials: true // 세션 쿠키 전송
+      });
+
+      if (res.data.success) {
+        alert("로그인 성공!");
+        console.log("로그인 결과:", res.data.user);
+        navigate("/"); // 메인 페이지로 이동
+      } else {
+        alert(res.data.msg || "로그인 실패");
+      }
+
+    } catch (err) {
+      const error = err as AxiosError<ApiErrorResponse>;
+      alert(error.response?.data?.msg || "로그인 실패 (아이디/비밀번호 확인)");
+      console.error(err);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
+  /** ================================
+   *  회원가입 요청
+   *  ================================ */
   const handleSignup = async (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     // 유효성 검사
+    if (!signupData.accountId || !signupData.accountName || !signupData.email || 
+        !signupData.phoneNumber || !signupData.accountPw) {
+      alert("모든 필수 항목을 입력해주세요.");
+      return;
+    }
+
+    // 비밀번호 확인
     if (signupData.accountPw !== signupData.accountPwConfirm) {
-      alert('비밀번호가 일치하지 않습니다.');
+      alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-    
+
+    // 비밀번호 길이 체크
     if (signupData.accountPw.length < 8) {
-      alert('비밀번호는 8자 이상이어야 합니다.');
+      alert("비밀번호는 8자 이상이어야 합니다.");
       return;
     }
-    
+
     setIsLoading(true);
-    
-    setTimeout(() => {
-      console.log('Signup attempt:', signupData);
-      alert('회원가입 성공! (백엔드 연동 필요)');
+
+    try {
+      const res = await axios.post("/api/login/signup", {
+        accountId: signupData.accountId,
+        accountPw: signupData.accountPw,
+        accountName: signupData.accountName,
+        email: signupData.email,
+        phoneNumber: signupData.phoneNumber
+      });
+
+      if (res.data.success) {
+        alert("회원가입 성공! 로그인해주세요.");
+        console.log("회원가입 결과:", res.data);
+        setPage("login");
+        // 폼 초기화
+        setSignupData({
+          accountId: '',
+          accountPw: '',
+          accountPwConfirm: '',
+          accountName: '',
+          email: '',
+          phoneNumber: ''
+        });
+      } else {
+        alert(res.data.msg || "회원가입 실패");
+      }
+
+    } catch (err) {
+      const error = err as AxiosError<ApiErrorResponse>;
+      alert(error.response?.data?.msg || "회원가입 실패");
+      console.error(err);
+    } finally {
       setIsLoading(false);
-      setPage('login');
-    }, 1500);
+    }
   };
 
   const handleSocialLogin = (provider: 'google' | 'kakao' | 'naver') => {
-    console.log(`${provider} login clicked`);
-    alert(`${provider} 로그인 (OAuth 연동 필요)`);
+    alert(`${provider} 로그인은 아직 미구현`);
   };
 
   return (
@@ -71,14 +138,14 @@ const Login: React.FC = () => {
         <div className="gradient-circle gradient-circle-3"></div>
       </div>
 
-
       <div className="login-content">
         {/* 로고 및 헤더 */}
         <div className="login-header">
-         <h1> < Link to="/" className="logo">
-            KH<span className="logo-accent">.Solr</span>
+          <h1 className="logo">
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              kh<span className="logo-accent">.solr</span>
             </Link>
-        </h1>
+          </h1>
           <p className="tagline">가장 빠른 AI 검색을 경험하세요</p>
         </div>
 
@@ -106,30 +173,36 @@ const Login: React.FC = () => {
               {/* 이메일 로그인 */}
               <div className="form-section">
                 <div className="input-group">
-                  <label htmlFor="email" className="input-label">
-                    이메일
+                  <label htmlFor="loginId" className="input-label">
+                    아이디
                   </label>
                   <input
-                    id="email"
-                    type="email"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="your@email.com"
+                    id="loginId"
+                    type="text"
+                    value={loginData.accountId}
+                    onChange={(e) => setLoginData({...loginData, accountId: e.target.value})}
+                    placeholder="아이디를 입력하세요"
                     className="input-field"
                   />
                 </div>
 
                 <div className="input-group">
-                  <label htmlFor="password" className="input-label">
+                  <label htmlFor="loginPw" className="input-label">
                     비밀번호
                   </label>
                   <input
-                    id="password"
+                    id="loginPw"
                     type="password"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    value={loginData.accountPw}
+                    onChange={(e) => setLoginData({...loginData, accountPw: e.target.value})}
                     placeholder="••••••••"
                     className="input-field"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleLogin(e as unknown as React.MouseEvent);
+                      }
+                    }}
                   />
                 </div>
 
@@ -174,7 +247,8 @@ const Login: React.FC = () => {
 
               {/* 구분선 */}
               <div className="divider">
-              
+                <div className="divider-line"></div>
+                <span className="divider-text">또는</span>
               </div>
 
               {/* 소셜 로그인 버튼 */}
@@ -212,7 +286,6 @@ const Login: React.FC = () => {
                   네이버로 계속하기
                 </button>
               </div>
-
             </>
           ) : (
             // 회원가입 폼
@@ -328,7 +401,10 @@ const Login: React.FC = () => {
           )}
         </div>
 
-       
+        {/* 푸터 */}
+        <div className="footer">
+          © 2024 kh.solr. All rights reserved.
+        </div>
       </div>
     </div>
   );
