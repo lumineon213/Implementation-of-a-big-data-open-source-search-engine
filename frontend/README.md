@@ -108,7 +108,7 @@ axios 인스턴스는 `src/api/axios.ts`에 있습니다.
 
 예시:
 
-```ts
+ts
 import { api } from "../api/axios";
 
 const data = await api.get("/api/search?keyword=test");
@@ -116,7 +116,9 @@ const data = await api.get("/api/search?keyword=test");
 Vite proxy가 이미 설정되어 있으므로
 /api로 시작하는 모든 요청은 Spring Boot(8484)로 자동 전달됩니다.
 
-7. 페이지 생성 규칙
+---
+
+## 7. 페이지 생성 규칙
 
 화면 단위 파일은 src/pages에 만든다.
 
@@ -125,7 +127,9 @@ Vite proxy가 이미 설정되어 있으므로
 
 라우터는 App.tsx에서 등록한다.
 
-8. 컴포넌트 제작 규칙
+---
+
+## 8. 컴포넌트 제작 규칙
 
 반복되는 UI는 반드시 components 폴더로 분리한다.
 
@@ -134,7 +138,9 @@ Vite proxy가 이미 설정되어 있으므로
 
 props가 많아지면 interface로 타입을 분리한다.
 
-9. Git 협업 규칙
+---
+
+## 9. Git 협업 규칙
 main      → 최종 배포용
 develop   → 통합 개발 브랜치
 feature/frontend-기능명 → 프론트 작업 브랜치
@@ -145,7 +151,9 @@ PR은 항상 develop으로 보낸다.
 
 pages/components 파일은 리뷰 후 병합한다.
 
-10. 환경 변수 (.env)
+---
+
+## 10. 환경 변수 (.env)
 
 API 주소나 KEY가 필요할 경우 사용합니다.
 
@@ -158,7 +166,9 @@ VITE_API_URL=http://localhost:8484
 
 import.meta.env.VITE_API_URL
 
-11. 빌드 및 배포 방법
+---
+
+## 11. 빌드 및 배포 방법
 ✔ 개발용
 
 npm run dev
@@ -176,7 +186,9 @@ Nginx로 별도 정적 호스팅
 
 Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 
-30초 요약
+---
+
+## 12. 30초 요약
 1. VSCode로 frontend 폴더만 연다.
 2. npm install → npm run dev 실행.
 3. pages에서 화면 만들고 components로 UI 조각 만든다.
