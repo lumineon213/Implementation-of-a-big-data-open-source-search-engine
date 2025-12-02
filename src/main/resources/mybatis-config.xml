@@ -8,4 +8,9 @@
         <!-- 로그 출력 옵션 -->
         <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
+    	<mappers>
+    	
+		<mapper resource="mybatis/mappers/loginMapper.xml"/>
+
+	</mappers>
 </configuration>
