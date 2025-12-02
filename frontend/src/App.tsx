@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "pages/Home";  // Home 페이지 임시
+import Home from "pages/Home";
 
 
 function App() {
