@@ -1,7 +1,5 @@
 .home-container {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 100vh;
   display: flex;
@@ -9,9 +7,8 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  padding-bottom: 8rem; /* 하단 여백을 늘려서 전체적으로 위로 이동 */
+  padding-bottom: 8rem;
   box-sizing: border-box;
-  z-index: 1; /* 헤더(1000)와 푸터(999)보다 낮게 */
 }
 
 .home-title {
@@ -101,4 +98,169 @@
     width: 32px;
     height: 32px;
   }
+}
+
+/* 기록 토글 버튼 (왼쪽 하단) */
+.history-toggle-button {
+  position: fixed;
+  bottom: 120px;
+  left: 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.2s;
+}
+
+.history-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.book-icon {
+  color: #4a4a4a;
+}
+
+/* 검색 기록 사이드바 - 왼쪽에서 슬라이드 */
+.search-history-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
+  
+  /* 기본적으로 화면 왼쪽 바깥에 숨김 */
+  transform: translateX(-100%); 
+  transition: transform 0.3s ease-out;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* 사이드바가 열렸을 때 */
+.search-history-sidebar.is-open {
+  transform: translateX(0);
+}
+
+/* 사이드바 헤더 */
+.sidebar-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-logo {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.close-sidebar-button {
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.close-sidebar-button:hover {
+  color: #333;
+}
+
+/* 기록 내용 */
+.sidebar-content {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #888;
+  padding: 20px;
+}
+
+.no-history p {
+  margin: 5px 0;
+  font-size: 0.95em;
+}
+
+
+
+/* 사이드바 푸터 */
+.sidebar-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+}
+
+.sync-prompt {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-button {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #7950f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+}
+
+.login-button:hover {
+  background-color: #6741d9;
+}
+
+.settings-button {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+  background-color: #f5f5f5;
+}
+
+/* 사이드바 외부 클릭 시 닫히는 오버레이 */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1001;
 }

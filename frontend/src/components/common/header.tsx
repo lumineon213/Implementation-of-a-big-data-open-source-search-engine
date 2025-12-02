@@ -12,10 +12,10 @@ const Header: React.FC = () => {
   return (
     <header className="header">
   
-      <div className="logo">
-        <div className="logo-circle"></div>
-        <span className="logo-text">KH.Solr</span>
-      </div>
+      <Link to="/" className="logo">
+        <div className="logo-circle"></div>
+        <span className="logo-text">KH.Solr</span>
+      </Link>
 
      
       <button className="btn-dropdown" onClick={toggleDropdown}>
@@ -33,13 +33,13 @@ const Header: React.FC = () => {
             로그인
           </Link>
 
-          <Link
+          {/* <Link
             to="/register"
             className="dropdown-item"
             onClick={() => setIsDropDownOpen(false)}
           >
             회원가입
-          </Link>
+          </Link> */}
         </div>
       )}
     </header>
