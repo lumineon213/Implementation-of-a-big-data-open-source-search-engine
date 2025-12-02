@@ -1,70 +1,197 @@
-# Getting Started with Create React App
+# Frontend - React + TypeScript + Vite
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+이 프로젝트의 프론트엔드는 **React + TypeScript + Vite** 기반이며  
+백엔드(Spring Boot)와는 완전히 분리되어 독립적으로 동작합니다.  
+프론트 작업은 반드시 **VSCode**로 진행해야 합니다.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 1. 프로젝트 구조 (통합 아키텍처)
 
-### `npm start`
+[React (Vite + TS, 5173)] → (proxy /api) → [Spring Boot (8484)] → [Oracle/DB]
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+프론트와 백엔드는 서로 다른 서버에서 개발되며  
+Vite proxy를 통해 `/api` 요청이 Spring Boot로 전달됩니다.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 2. 개발 환경 열기
 
-### `npm run build`
+반드시 VSCode에서 `frontend` 폴더만 열어 작업합니다.  
+Spring Boot IDE(STS/IntelliJ)는 프론트 파일(TSX)을 정상 인식하지 못합니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 3. 설치 및 실행
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+프로젝트 루트의 frontend 경로로 들어간 다음
+npm install
+npm run dev
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+개발 서버:  
+http://localhost:5173/
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Spring 서버는 http://localhost:8484/
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 4. 폴더 구조 설명
 
-## Learn More
+### 🔹 public 폴더
+HTML과 기본 이미지가 들어있는 폴더입니다.  
+건드릴 일이 거의 없습니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 🔹 src 폴더
+프로젝트의 실제 코드가 모두 들어 있습니다.
 
-### Code Splitting
+#### ✔ api — 백엔드(Spring) API 통신  
+axios.ts가 있으며, 모든 API 요청을 여기서 작성합니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### ✔ assets — 이미지/아이콘/폰트 보관  
+정적 리소스 저장 용도입니다.
 
-### Analyzing the Bundle Size
+#### ✔ components — 반복 UI 컴포넌트  
+예: Header, Footer, SearchBar  
+페이지 전체가 아니라 "조각 UI"를 넣습니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### ✔ hooks — 재사용 가능한 로직(커스텀 훅)  
+예: useFetch(), useInput()  
+초보는 건드릴 필요 없습니다.
 
-### Making a Progressive Web App
+#### ✔ layouts — 공통 레이아웃 템플릿  
+예: Header + Footer + Outlet 구성.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### ✔ pages — 실제 화면 페이지  
+예: Home.tsx, Login.tsx, Search.tsx, MyPage.tsx  
+라우터는 pages 기준으로 구성됩니다.
 
-### Advanced Configuration
+#### ✔ styles — 전역 스타일 및 CSS  
+global.css 등, 전체 페이지 공통 디자인 적용.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+### ✔ App.tsx  
+전체 라우터를 관리하는 파일입니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### ✔ main.tsx  
+프로젝트의 시작점(엔트리)입니다.  
+여기서 `<App />`이 실제 화면에 렌더링됩니다.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 5. VSCode 자동 설정
+
+프로젝트에는 아래 파일들이 이미 포함되어 있습니다:
+
+.vscode/settings.json
+.eslintrc.json
+.prettierrc
+
+
+해당 설정으로 VSCode는 다음을 자동 적용합니다:
+
+- 저장 시 자동 정렬(Prettier)
+- 코드 검사 및 자동 수정(ESLint)
+- 공통 코드 스타일 유지
+
+팀원이 따로 설정할 필요 없습니다.
+
+---
+
+## 6. API 호출 방법
+
+axios 인스턴스는 `src/api/axios.ts`에 있습니다.
+
+예시:
+
+ts
+import { api } from "../api/axios";
+
+const data = await api.get("/api/search?keyword=test");
+
+Vite proxy가 이미 설정되어 있으므로
+/api로 시작하는 모든 요청은 Spring Boot(8484)로 자동 전달됩니다.
+
+---
+
+## 7. 페이지 생성 규칙
+
+화면 단위 파일은 src/pages에 만든다.
+
+파일명은 PascalCase를 사용한다.
+예: Home.tsx, Login.tsx
+
+라우터는 App.tsx에서 등록한다.
+
+---
+
+## 8. 컴포넌트 제작 규칙
+
+반복되는 UI는 반드시 components 폴더로 분리한다.
+
+파일명은 PascalCase로 만든다.
+예: Header.tsx, SearchBar.tsx
+
+props가 많아지면 interface로 타입을 분리한다.
+
+---
+
+## 9. Git 협업 규칙
+main      → 최종 배포용
+develop   → 통합 개발 브랜치
+feature/frontend-기능명 → 프론트 작업 브랜치
+feature/backend-기능명 → 백엔드 작업 브랜치
+
+
+PR은 항상 develop으로 보낸다.
+
+pages/components 파일은 리뷰 후 병합한다.
+
+---
+
+## 10. 환경 변수 (.env)
+
+API 주소나 KEY가 필요할 경우 사용합니다.
+
+프로젝트 루트에 .env 파일 생성:
+
+VITE_API_URL=http://localhost:8484
+
+
+코드에서 사용:
+
+import.meta.env.VITE_API_URL
+
+---
+
+## 11. 빌드 및 배포 방법
+✔ 개발용
+
+npm run dev
+
+✔ 빌드
+
+npm run build
+
+dist/ 폴더가 생성되며,
+배포는 아래 방식 중 하나로 진행합니다:
+
+Spring Boot 정적 리소스(src/main/resources/static/)로 이동
+
+Nginx로 별도 정적 호스팅
+
+Vercel, Netlify 등 프론트 전용 배포 서비스 활용
+
+---
+
+## 12. 30초 요약
+1. VSCode로 frontend 폴더만 연다.
+2. npm install → npm run dev 실행.
+3. pages에서 화면 만들고 components로 UI 조각 만든다.
+4. API는 api 폴더의 axios로만 호출.
+5. 저장하면 자동 포맷, 코드 정리됨.
+6. 나머지는 설정 파일이라 건드릴 필요 없음.
