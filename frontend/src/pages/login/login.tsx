@@ -69,99 +69,64 @@ const Login: React.FC = () => {
   /** ================================
    *  회원가입 요청
    *  ================================ */
-const handleSignup = async (e: React.MouseEvent) => {
-  e.preventDefault();
+  const handleSignup = async (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  // ===============================
-  // 🔥 1) 정규식 정의
-  // ===============================
-  const idRegex = /^[a-zA-Z0-9]{5,20}$/;
-  const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
-  const nameRegex = /^[가-힣a-zA-Z]{2,20}$/;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/;
-
-  // ===============================
-  // 🔥 2) 입력값 체크
-  // ===============================
-  if (!signupData.accountId || !signupData.accountName || !signupData.email ||
-      !signupData.phoneNumber || !signupData.accountPw) {
-    alert("모든 필수 항목을 입력해주세요.");
-    return;
-  }
-
-  // ===============================
-  // 🔥 3) 정규식 검증
-  // ===============================
-
-  if (!idRegex.test(signupData.accountId)) {
-    alert("아이디는 영문/숫자 조합 5~20자여야 합니다.");
-    return;
-  }
-
-  if (!pwRegex.test(signupData.accountPw)) {
-    alert("비밀번호는 영문/숫자/특수문자를 포함한 8~20자여야 합니다.");
-    return;
-  }
-
-  if (signupData.accountPw !== signupData.accountPwConfirm) {
-    alert("비밀번호가 일치하지 않습니다.");
-    return;
-  }
-
-  if (!nameRegex.test(signupData.accountName)) {
-    alert("이름은 한글 또는 영문만 입력 가능합니다.");
-    return;
-  }
-
-  if (!emailRegex.test(signupData.email)) {
-    alert("올바른 이메일 형식이 아닙니다.");
-    return;
-  }
-
-  if (!phoneRegex.test(signupData.phoneNumber)) {
-    alert("전화번호 형식이 올바르지 않습니다. 예) 010-1234-5678");
-    return;
-  }
-
-  // ===============================
-  // 🔥 4) 서버 요청
-  // ===============================
-  setIsLoading(true);
-
-  try {
-    const res = await axios.post("/api/login/signup", {
-      accountId: signupData.accountId,
-      accountPw: signupData.accountPw,
-      accountName: signupData.accountName,
-      email: signupData.email,
-      phoneNumber: signupData.phoneNumber
-    });
-
-    if (res.data.success) {
-      alert("회원가입 성공! 로그인해주세요.");
-      setPage("login");
-
-      // 폼 초기화
-      setSignupData({
-        accountId: '',
-        accountPw: '',
-        accountPwConfirm: '',
-        accountName: '',
-        email: '',
-        phoneNumber: ''
-      });
-    } else {
-      alert(res.data.msg || "회원가입 실패");
+    // 유효성 검사
+    if (!signupData.accountId || !signupData.accountName || !signupData.email || 
+        !signupData.phoneNumber || !signupData.accountPw) {
+      alert("모든 필수 항목을 입력해주세요.");
+      return;
     }
 
-  } catch (err) {
-    const error = err as AxiosError<ApiErrorResponse>;
-    alert(error.response?.data?.msg || "회원가입 실패");
-  } finally {
-    setIsLoading(false);
-  }
-};
+    // 비밀번호 확인
+    if (signupData.accountPw !== signupData.accountPwConfirm) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    // 비밀번호 길이 체크
+    if (signupData.accountPw.length < 8) {
+      alert("비밀번호는 8자 이상이어야 합니다.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post("/api/login/signup", {
+        accountId: signupData.accountId,
+        accountPw: signupData.accountPw,
+        accountName: signupData.accountName,
+        email: signupData.email,
+        phoneNumber: signupData.phoneNumber
+      });
+
+      if (res.data.success) {
+        alert("회원가입 성공! 로그인해주세요.");
+        console.log("회원가입 결과:", res.data);
+        setPage("login");
+        // 폼 초기화
+        setSignupData({
+          accountId: '',
+          accountPw: '',
+          accountPwConfirm: '',
+          accountName: '',
+          email: '',
+          phoneNumber: ''
+        });
+      } else {
+        alert(res.data.msg || "회원가입 실패");
+      }
+
+    } catch (err) {
+      const error = err as AxiosError<ApiErrorResponse>;
+      alert(error.response?.data?.msg || "회원가입 실패");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSocialLogin = (provider: 'google' | 'kakao' | 'naver') => {
     alert(`${provider} 로그인은 아직 미구현`);
@@ -285,7 +250,8 @@ const handleSignup = async (e: React.MouseEvent) => {
 
               {/* 구분선 */}
               <div className="divider">
-             
+                <div className="divider-line"></div>
+                <span className="divider-text">또는</span>
               </div>
 
               {/* 소셜 로그인 버튼 */}
@@ -438,7 +404,10 @@ const handleSignup = async (e: React.MouseEvent) => {
           )}
         </div>
 
-      
+        {/* 푸터 */}
+        <div className="footer">
+          © 2024 kh.solr. All rights reserved.
+        </div>
       </div>
     </div>
   );

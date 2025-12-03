@@ -19,12 +19,12 @@ public class loginSerivceImpl implements loginService {
 	    
 	    @Override
 	    public boolean emailCheck(String email) {
-	        return dao.emailCheck(email) > 0;  
+	        return dao.emailCheck(email) > 0;  // int를 boolean으로 변환
 	    }
 	    
 	    @Override
 	    public boolean phoneCheck(String phoneNumber) {
-	        return dao.phoneCheck(phoneNumber) > 0;  
+	        return dao.phoneCheck(phoneNumber) > 0;  // int를 boolean으로 변환
 	    }
 	    
 	    @Override
