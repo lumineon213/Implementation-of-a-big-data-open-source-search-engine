@@ -1,7 +1,8 @@
 import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './Home.css';
+import './home.css';
+import Modal from '../../components/common/modal';
 
 // 1. 타입 정의
 // Solr 결과 데이터 타입
@@ -36,8 +37,14 @@ const Home: React.FC = () => {
 
   // 2) UI 및 세션 관련 상태
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true); // 세션 로딩 상태
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    // localStorage에서 다크모드 설정 읽기
+    const saved = localStorage.getItem('darkMode');
+    return saved === 'true';
+  });
 
   const location = useLocation();
   const SOLR_CORE_NAME = 'Search'; 
@@ -106,6 +113,24 @@ const Home: React.FC = () => {
     checkSession();
   }, [location.pathname]);
 
+  // 다크모드 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    // localStorage에 저장
+    localStorage.setItem('darkMode', String(isDarkMode));
+  }, [isDarkMode]);
+
+  // 컴포넌트 마운트 시 다크모드 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+  }, []);
+
 
   // --- 이벤트 핸들러 ---
 
@@ -115,6 +140,18 @@ const Home: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => !prev);
   };
 
   // Solr 검색 요청
@@ -251,7 +288,7 @@ const Home: React.FC = () => {
               <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>
                 {user.accountName}님 환영합니다 👋
               </div>
-              <button className="settings-button">
+              <button className="settings-button" onClick={openModal}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
               </button>
             </div>
@@ -265,7 +302,7 @@ const Home: React.FC = () => {
                 <Link to="/login" className="login-button">
                   로그인
                 </Link>
-                <button className="settings-button">
+                <button className="settings-button" onClick={openModal}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
               </div>
@@ -275,6 +312,14 @@ const Home: React.FC = () => {
       </div>
       
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
+
+      {/* 모달 */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={closeModal}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+      />
     </>
   );
 };
