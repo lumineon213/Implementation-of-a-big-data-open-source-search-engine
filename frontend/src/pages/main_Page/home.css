@@ -18,7 +18,7 @@
   box-sizing: border-box;
   
     /* 배경색 (팀원 코드 유지) */
-  background-color: #f8f9fa; 
+  background-color: #f8f9fa;
   transition: background-color 0.3s ease;
 }
 

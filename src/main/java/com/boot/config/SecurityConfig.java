@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtFilter; 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,6 +30,9 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                
+                // permitAll() 는 누구나 허용 ,  .authenticated() 토큰이 없으면 오류 
+                // 즉 .authenticated()인 mypage는 로그인 해서 토큰을 얻지 못하면 접속 불가
                 .authorizeHttpRequests(auth -> auth
                         //  로그인/회원가입 API 허용
                         .requestMatchers("/api/login/**").permitAll()
@@ -54,10 +57,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:5173")); // React 주소 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // OPTTIONS는 허락 요청 -> GET이나 POST 허락 요청 ok
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(true); // 도메인이 스프링부트랑 리액트랑 다른데 리액트에서 jwt 읽을 수 있도록 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -65,6 +68,7 @@ public class SecurityConfig {
         return source;
     }
 
+    // DB에 암호화 된 상태로 저장
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

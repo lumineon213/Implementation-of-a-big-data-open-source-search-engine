@@ -3,7 +3,6 @@ import "./header.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-//TypeScript에서 객체의 타입(구조)를 정의하는 방법
 interface User {
   accountId: string;
   accountName: string;
@@ -19,26 +18,26 @@ const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 세션 확인
+  // ============================================
+  //  기존 세션 검사 로직 — JWT에서는 사용 안 함
+  // ============================================
+  /*
   useEffect(() => {
     checkSession();
 
-    // 로그인 성공 이벤트 리스너
     const handleLoginSuccess = () => {
-      // 약간의 딜레이를 주어 세션이 완전히 설정되도록 함
       setTimeout(() => {
         checkSession();
       }, 100);
     };
 
-    window.addEventListener('loginSuccess', handleLoginSuccess);
+    window.addEventListener("loginSuccess", handleLoginSuccess);
 
     return () => {
-      window.removeEventListener('loginSuccess', handleLoginSuccess);
+      window.removeEventListener("loginSuccess", handleLoginSuccess);
     };
   }, []);
 
-  // 페이지 이동 시 세션 확인
   useEffect(() => {
     checkSession();
   }, [location.pathname]);
@@ -46,7 +45,7 @@ const Header: React.FC = () => {
   const checkSession = async () => {
     try {
       const res = await axios.get("/api/login/check", {
-        withCredentials: true
+        withCredentials: true,
       });
 
       if (res.data.isLogin && res.data.user) {
@@ -61,29 +60,65 @@ const Header: React.FC = () => {
       setIsLoading(false);
     }
   };
+  */
+
+  // ======================================================
+  // 새로운 JWT 인증 방식 — checkAuth() (이거만 사용함!)
+  // ======================================================
+  const checkAuth = async () => {
+    const token = localStorage.getItem("token");
+
+    // 🔥 토큰 없으면 로그인 안 한 상태
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.get("/api/mypage", {
+        headers: {
+          Authorization: `Bearer ${token}`, //  JWT 인증 헤더
+        },
+      });
+
+      //  백엔드가 MyPageDTO 그대로 반환한다고 가정
+      setUser(res.data);
+    } catch (err) {
+      console.error("JWT 인증 실패:", err);
+      localStorage.removeItem("token"); // 잘못된 토큰 제거
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 컴포넌트 최초 로드시 JWT 검사
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  // 페이지 이동 시마다 확인
+  useEffect(() => {
+    checkAuth();
+  }, [location.pathname]);
+
+  // ======================================================
+  //  JWT 방식 로그아웃 — 토큰 제거만 하면 된다!
+  // ======================================================
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // JWT 삭제
+    setUser(null);
+    setIsDropDownOpen(false);
+    navigate("/");
+  };
 
   const toggleDropdown = () => {
     setIsDropDownOpen((prev) => !prev);
   };
 
-  const handleLogout = async () => {
-    try {
-      await axios.post("/api/login/logout", {}, {
-        withCredentials: true
-      });
-      setUser(null);
-      setIsDropDownOpen(false);
-      // 로그아웃 성공 이벤트 발생
-      window.dispatchEvent(new Event('logoutSuccess'));
-      navigate("/");
-    } catch (err) {
-      console.error("로그아웃 실패:", err);
-    }
-  };
-
   return (
     <header className="header">
-  
       <Link to="/" className="logo">
         <div className="logo-circle"></div>
         <span className="logo-text">KH.Solr</span>
@@ -100,11 +135,20 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-    
       {isDropDownOpen && (
         <div className="dropdown-menu">
           {user ? (
             <>
+
+        {/* ###########################마이페이지 버튼 ####################### */}
+
+         <Link
+                to="/mypage"
+                className="dropdown-item"
+                onClick={() => setIsDropDownOpen(false)}
+              >
+                마이페이지
+              </Link>
               <div className="dropdown-item" onClick={handleLogout}>
                 로그아웃
               </div>
@@ -118,14 +162,6 @@ const Header: React.FC = () => {
               로그인
             </Link>
           )}
-
-          {/* <Link
-            to="/register"
-            className="dropdown-item"
-            onClick={() => setIsDropDownOpen(false)}
-          >
-            회원가입
-          </Link> */}
         </div>
       )}
     </header>
