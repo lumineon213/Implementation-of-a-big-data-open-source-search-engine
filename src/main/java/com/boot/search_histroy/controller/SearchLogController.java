@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.boot.login.dto.loginDTO;
+import com.boot.dto.loginDTO;
 import com.boot.search_histroy.dto.SearchLogDTO;
 import com.boot.search_histroy.service.SearchLogService;
 
@@ -34,7 +34,7 @@ public class SearchLogController {
     // 검색 기록 저장
     @PostMapping
     public ResponseEntity<?> saveSearch(@RequestBody SearchLogDTO dto, HttpSession session) {
-        loginDTO user = (loginDTO) session.getAttribute("loginUser");
+        com.boot.dto.loginDTO user = (loginDTO) session.getAttribute("loginUser");
         if (user != null) {
             dto.setAccountId(user.getAccountId());
             searchLogService.saveSearchKeyword(dto);
