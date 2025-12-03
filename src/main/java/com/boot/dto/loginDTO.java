@@ -1,4 +1,4 @@
-package com.boot.login.dto;
+package com.boot.dto;
 
 import lombok.Data;
 
