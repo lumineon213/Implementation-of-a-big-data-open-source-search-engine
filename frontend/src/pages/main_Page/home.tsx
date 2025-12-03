@@ -1,10 +1,23 @@
-import React, { useState, type FormEvent, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './home.css'; 
 
+//TypeScript에서 객체의 타입(구조)를 정의하는 방법
+interface User {
+  accountId: string;
+  accountName: string;
+  email: string;
+  phoneNumber: string;
+  accountRole: string;
+}
+
 const Home: React.FC = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -17,6 +30,57 @@ const Home: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev)
+  };
+
+  // 세션 확인
+  useEffect(() => {
+    checkSession();
+
+    // 로그인 성공 이벤트 리스너
+    const handleLoginSuccess = () => {
+      setTimeout(() => {
+        checkSession();
+      }, 100);
+    };
+
+    // 로그아웃 성공 이벤트 리스너
+    const handleLogoutSuccess = () => {
+      setTimeout(() => {
+        checkSession();
+      }, 100);
+    };
+
+    window.addEventListener('loginSuccess', handleLoginSuccess);
+    window.addEventListener('logoutSuccess', handleLogoutSuccess);
+
+    return () => {
+      window.removeEventListener('loginSuccess', handleLoginSuccess);
+      window.removeEventListener('logoutSuccess', handleLogoutSuccess);
+    };
+  }, []);
+
+  // 페이지 이동 시 세션 확인
+  useEffect(() => {
+    checkSession();
+  }, [location.pathname]);
+
+  const checkSession = async () => {
+    try {
+      const res = await axios.get("/api/login/check", {
+        withCredentials: true
+      });
+
+      if (res.data.isLogin && res.data.user) {
+        setUser(res.data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      console.error("세션 확인 실패:", err);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,17 +145,30 @@ const Home: React.FC = () => {
         </div>
 
         <div className="sidebar-footer">
-          <div className="sync-prompt">
-            로그인하고 기록을 동기화 해보세요
-          </div>
-          <div className="footer-actions">
-            <Link to="/login" className="login-button">
-              로그인
-            </Link>
-            <button className="settings-button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </button>
-          </div>
+          {!isLoading && user ? (
+            <div className="footer-actions">
+              <div className="sync-prompt">
+                {user.accountName}님 환영합니다
+              </div>
+              <button className="settings-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="sync-prompt">
+                로그인하고 기록을 동기화 해보세요
+              </div>
+              <div className="footer-actions">
+                <Link to="/login" className="login-button">
+                  로그인
+                </Link>
+                <button className="settings-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
      

@@ -49,6 +49,9 @@ const Login: React.FC = () => {
       if (res.data.success) {
         alert("로그인 성공!");
         console.log("로그인 결과:", res.data.user);
+        // 로그인 성공 이벤트 발생 (navigate 전에 발생)
+        window.dispatchEvent(new Event('loginSuccess'));
+        // navigate 후 location 변경으로 인해 자동으로 세션 확인됨
         navigate("/"); // 메인 페이지로 이동
       } else {
         alert(res.data.msg || "로그인 실패");
