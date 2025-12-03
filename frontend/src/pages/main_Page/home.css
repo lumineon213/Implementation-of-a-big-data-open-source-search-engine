@@ -236,8 +236,8 @@
 .sync-prompt {
   font-size: 0.9em;
   color: #666;
-  margin-bottom: 10px;
   text-align: center;
+  flex: 1;
 }
 
 .footer-actions {
