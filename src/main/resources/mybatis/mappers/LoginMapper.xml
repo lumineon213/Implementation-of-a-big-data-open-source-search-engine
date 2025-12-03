@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.boot.login.dao.loginDAO">
+<mapper namespace="com.boot.dao.loginDAO">
 
-    <resultMap id="loginResultMap" type="com.boot.login.dto.loginDTO">
+    <resultMap id="loginResultMap" type="com.boot.dto.loginDTO">
         <id property="accountId" column="ACCOUNT_ID"/>
         <result property="accountPw" column="ACCOUNT_PW"/>
         <result property="accountName" column="ACCOUNT_NAME"/>
@@ -15,7 +15,7 @@
     </resultMap>
 
     <!-- 회원가입 -->
-    <insert id="signup" parameterType="com.boot.login.dto.loginDTO">
+    <insert id="signup" parameterType="com.boot.dto.loginDTO">
         INSERT INTO account_tbl (
             account_id, account_pw, account_name, 
             email, phone_number, account_role, reg_date

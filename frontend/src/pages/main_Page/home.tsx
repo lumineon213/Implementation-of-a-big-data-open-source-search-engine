@@ -1,281 +1,245 @@
-import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import './Home.css';
+import React, { useState } from 'react';
+import { Search, Heart, Calendar, MapPin, Trash2, BookOpen, X, LogIn, Settings } from 'lucide-react';
+import './home.css'; // CSS 파일 임포트 필수
 
-// 1. 타입 정의
-// Solr 결과 데이터 타입
-interface SolrResultItem {
-  id: string;
+// --- [1] 데이터 타입 정의 ---
+interface SearchResult {
+  id: number;
   title: string;
-  description?: string;
-  start_date?: string;
-  end_date?: string;
-  place?: string; 
-  address?: string; 
-  [key: string]: any; 
+  place?: string;
+  date: string;
+  desc: string;
+  type: 'NEWS' | 'TRAVEL';
 }
 
-// 사용자 정보 타입 (팀원 코드)
-interface User {
-  accountId: string;
-  accountName: string;
-  email: string;
-  phoneNumber: string;
-  accountRole: string;
+interface FavoriteItem {
+  fav_id: number;
+  id: number;
+  title: string;
+  date: string;
+  type: 'NEWS' | 'TRAVEL';
 }
 
 const Home: React.FC = () => {
-  // --- 상태 관리 (State) ---
   
-  // 1) 검색 관련 상태
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<SolrResultItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // 2) UI 및 세션 관련 상태
+  // --- [2] 상태 관리 ---
+  const [keyword, setKeyword] = useState<string>('');
+  const [isSearched, setIsSearched] = useState<boolean>(false);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  
+  // 사이드바 토글 상태 (CSS에 정의된 사이드바 활용)
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // 세션 로딩 상태
 
-  const location = useLocation();
-  const SOLR_CORE_NAME = 'Search'; 
-
-  // --- 헬퍼 함수 ---
-
-  // 날짜 변환 (YYYY.MM.DD)
-  const formatDate = (isoDate: string): string => {
-    try {
-      const date = new Date(isoDate);
-      if (isNaN(date.getTime())) return isoDate;
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}.${month}.${day}`;
-    } catch {
-      return isoDate;
-    }
-  };
-
-  // 날짜 범위 표시 (시작 ~ 종료)
-  const formatDateRange = (start?: string, end?: string): string => {
-    if (!start) return '날짜 미정';
-    const startStr = formatDate(start);
-    if (!end) return startStr;
-    const endStr = formatDate(end);
-    return `${startStr} ~ ${endStr}`;
-  };
-
-  // --- 세션(로그인) 관리 로직 ---
-  const checkSession = async () => {
-    try {
-      // 백엔드에 로그인 상태 확인 요청
-      const res = await axios.get("/api/login/check", { withCredentials: true });
-      if (res.data.isLogin && res.data.user) {
-        setUser(res.data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      console.error("세션 확인 실패:", err);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    checkSession();
-
-    // 로그인/로그아웃 이벤트 리스너 등록
-    const handleLoginSuccess = () => setTimeout(() => checkSession(), 100);
-    const handleLogoutSuccess = () => setTimeout(() => checkSession(), 100);
-
-    window.addEventListener('loginSuccess', handleLoginSuccess);
-    window.addEventListener('logoutSuccess', handleLogoutSuccess);
-
-    return () => {
-      window.removeEventListener('loginSuccess', handleLoginSuccess);
-      window.removeEventListener('logoutSuccess', handleLogoutSuccess);
-    };
-  }, []);
-
-  // 페이지 이동 시 세션 재확인
-  useEffect(() => {
-    checkSession();
-  }, [location.pathname]);
-
-
-  // --- 이벤트 핸들러 ---
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
-  };
-
-  // Solr 검색 요청
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSearchResults([]);
-    
-    if (!searchQuery.trim()) {
-      alert('검색어를 입력해 주세요.');
+  // --- [3] 검색 실행 함수 ---
+  const handleSearch = () => {
+    if (keyword.trim() === '') {
+      alert('검색어를 입력해주세요.');
       return;
     }
 
-    setLoading(true);
+    setIsSearched(true);
+    
+    // 더미 데이터 로직
+    const isWinter = keyword.includes('겨울');
+    const mockData: SearchResult[] = isWinter ? [
+      { id: 201, title: '대관령 눈꽃 축제', place: '강원도 평창', date: '2025.12.15', desc: '하얀 눈과 함께하는 환상의 겨울 축제', type: 'TRAVEL' },
+      { id: 202, title: '전국 스키장 개장 일정', place: '전국', date: '2025.11.20', desc: '올해 스키 시즌, 예년보다 1주 일찍 시작', type: 'NEWS' }
+    ] : [
+      { id: 101, title: '도구로 가을 축제', place: '도구머리공원', date: '2025.10.25', desc: '단풍길 스케치북 및 포토존 + 문화공연 운영', type: 'TRAVEL' },
+      { id: 102, title: '오목공원 가을축제', place: '오목공원', date: '2025.09.20', desc: '가을 영화상영 및 체험부스 운영', type: 'TRAVEL' },
+      { id: 501, title: '[뉴스] 설악산 단풍 절정 시기', place: '기상청', date: '2025.10.15', desc: '올해 단풍은 평년보다 늦어질 전망입니다.', type: 'NEWS' },
+      { id: 103, title: '용마폭포 문화예술축제', place: '용마폭포공원', date: '2025.09.27', desc: '가을 분위기에 어울리는 고품격 공연', type: 'TRAVEL' }
+    ];
+    setSearchResults(mockData);
+  };
 
-    try {
-      const flFields = 'id,title,description,start_date,end_date,place,address'; 
-      const query = 
-        `q=${encodeURIComponent(searchQuery)}` + 
-        `&defType=edismax` + 
-        `&qf=title^3+place+description` + 
-        `&rows=10` + 
-        `&wt=json` +
-        `&fl=${flFields}`;
-        
-      const url = `/solr/${SOLR_CORE_NAME}/select?${query}`; 
-      
-      const response = await axios.get(url);
-      const docs = response.data.response.docs as SolrResultItem[];
-      setSearchResults(docs);
+  // --- [4] 즐겨찾기 추가/삭제 로직 ---
+  const toggleFavorite = (item: SearchResult) => {
+    const existingIndex = favorites.findIndex(f => f.id === item.id && f.type === item.type);
 
-    } catch (err) {
-      console.error('검색 실패:', err);
-      if (axios.isAxiosError(err) && err.response) {
-          setError(`검색 실패: ${err.response.status}. 서버 설정을 확인해주세요.`);
-      } else {
-          setError('검색 중 오류가 발생했습니다.');
-      }
-    } finally {
-      setLoading(false);
+    if (existingIndex !== -1) {
+      const newFavorites = favorites.filter((_, index) => index !== existingIndex);
+      setFavorites(newFavorites);
+    } else {
+      const newFav: FavoriteItem = {
+        fav_id: Date.now(),
+        id: item.id,
+        title: item.title,
+        date: item.date,
+        type: item.type
+      };
+      // 즐겨찾기 추가 시 사이드바가 열려있지 않다면 알림 효과를 줄 수도 있음
+      setFavorites(prev => [...prev, newFav]);
+      if(!isSidebarOpen) setIsSidebarOpen(true); // 편의상 추가 시 사이드바 오픈
     }
   };
 
-  return (
-    <>
-      {/* 메인 컨테이너: 검색 결과가 있으면 레이아웃 변경 */}
-      <div className={`home-container ${searchResults.length > 0 ? 'results-mode' : ''}`}>
-        <h1 className="home-title">KH.Solr AI 검색</h1>
-        
-        {/* 검색 폼 */}
-        <form className="search-form" onSubmit={handleSubmit}>
-          <div className="search-container">
-            <div className="search-bar">
-              <div className="search-icon"></div>
-              
-              <input
-                type="text"
-                className="search-input"
-                placeholder="가장 빠른 AI 검색"
-                value={searchQuery}
-                onChange={handleInputChange}
-              />
-              
-              <button type="submit" className="search-button" disabled={loading}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 11L10 6M10 6L6 6M10 6L10 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          {/* 상태 메시지 */}
-          {loading && <p className="status-message">검색 중...</p>}
-          {error && <p className="error-message">{error}</p>}
-        </form>
+  // 하트 색칠 여부
+  const isFavorite = (item: SearchResult) => {
+    return favorites.some(f => f.id === item.id && f.type === item.type);
+  };
 
-        {/* 검색 결과 리스트 */}
-        <div className="search-results-list">
-          {searchResults.length > 0 ? (
-            searchResults.map((result, index) => (
-              <div key={index} className="result-item">
-                <div className="result-meta">
-                  {(result.start_date || result.end_date) && (
-                    <span className="result-date">
-                      📅 {formatDateRange(result.start_date, result.end_date)}
-                    </span>
-                  )}
-                  {result.place && <span className="result-place">📍 {result.place}</span>}
-                </div>
-                
-                <h3>{result.title}</h3>
-                
-                {result.address && <p className="result-address">{result.address}</p>} 
-                
-                <p>{result.description || '내용 없음'}</p>
-              </div>
-            ))
-          ) : (
-            !loading && !error && searchQuery.trim() && searchResults.length === 0 && (
-              <p className="no-results-message">검색 결과가 없습니다.</p>
-            )
-          )}
+  return (
+    // [CSS] home-container: 기본 레이아웃
+    // [CSS] results-mode: 검색 후 상단 정렬 모드
+    <div className={`home-container ${isSearched ? 'results-mode' : ''}`}>
+      
+      {/* === [A] 타이틀 === */}
+      {/* 검색 결과 화면에서는 타이틀이 작아짐 (.results-mode .home-title 적용됨) */}
+      <h1 className="home-title" onClick={() => window.location.reload()} style={{cursor: 'pointer'}}>
+        KH.Solr
+      </h1>
+
+      {/* === [B] 검색창 영역 === */}
+      <div className="search-form">
+        <div className="search-container">
+          <div className="search-bar">
+            {/* [CSS] search-icon: 초록색 원형 장식 */}
+            <div className="search-icon"></div>
+            
+            <input
+              type="text"
+              className="search-input"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder="검색어를 입력하세요 (예: 가을, 축제)"
+            />
+            
+            <button className="search-button" onClick={handleSearch}>
+              <Search size={18} color="white" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* 사이드바 토글 버튼 */}
-      <button className='history-toggle-button' onClick={toggleSidebar}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="book-icon">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
+      {/* === [C] 검색 결과 리스트 === */}
+      {isSearched && (
+        <div className="search-results-list">
+           {searchResults.length === 0 ? (
+             <div className="no-results-message">
+               <p>검색 결과가 없습니다.</p>
+             </div>
+           ) : (
+             searchResults.map((item) => (
+               <div key={`${item.type}-${item.id}`} className="result-item">
+                 
+                 {/* 메타 정보 (태그, 날짜) */}
+                 <div className="result-meta">
+                   <span style={{ color: item.type === 'NEWS' ? '#16a34a' : '#9333ea' }}>
+                     [{item.type === 'NEWS' ? '뉴스' : '관광'}]
+                   </span>
+                   <span className="result-date">
+                     <Calendar size={14} style={{ marginRight: '4px' }} />
+                     {item.date}
+                   </span>
+                 </div>
+
+                 {/* 제목 및 즐겨찾기 버튼 */}
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <h3>{item.title}</h3>
+                    <button 
+                      onClick={() => toggleFavorite(item)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                      <Heart 
+                        size={24} 
+                        fill={isFavorite(item) ? "#ef4444" : "none"} 
+                        color={isFavorite(item) ? "#ef4444" : "#ccc"} 
+                      />
+                    </button>
+                 </div>
+
+                 {/* 주소 (관광지인 경우만) */}
+                 {item.place && (
+                   <div className="result-address">
+                     {item.place}
+                   </div>
+                 )}
+
+                 {/* 설명 */}
+                 <p>{item.desc}</p>
+               </div>
+             ))
+           )}
+        </div>
+      )}
+
+      {/* === [D] 사이드바 (즐겨찾기/히스토리) === */}
+      
+      {/* 1. 사이드바 토글 버튼 (화면 왼쪽 하단 고정) */}
+      <button className="history-toggle-button" onClick={() => setIsSidebarOpen(true)}>
+        <BookOpen size={24} className="book-icon" />
       </button>
 
-      {/* 사이드바 내용 */}
+      {/* 2. 사이드바 본체 */}
       <div className={`search-history-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
+        
+        {/* 헤더 */}
         <div className="sidebar-header">
-          <div className="sidebar-logo">KH.solr</div>
-          <button className="close-sidebar-button" onClick={toggleSidebar}>
-            &times; 
+          <span className="sidebar-logo">나의 찜 목록 ({favorites.length})</span>
+          <button className="close-sidebar-button" onClick={() => setIsSidebarOpen(false)}>
+            <X size={24} />
           </button>
         </div>
-        
-        <div className="sidebar-content">
-          <div className="no-history">
-            <p>아직 기록이 없어요.</p>
-            <p>새로운 검색을 해보세요.</p>
-          </div>
-        </div>
 
-        {/* 사이드바 푸터 (로그인 상태에 따라 변경) */}
-        <div className="sidebar-footer">
-          {!isLoading && user ? (
-            // 로그인 상태일 때
-            <div className="footer-actions">
-              <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>
-                {user.accountName}님 환영합니다 👋
-              </div>
-              <button className="settings-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              </button>
+        {/* 컨텐츠 (즐겨찾기 목록) */}
+        <div className="sidebar-content" style={{ display: 'block', overflowY: 'auto', textAlign: 'left' }}>
+          {favorites.length === 0 ? (
+            <div className="no-history" style={{ textAlign: 'center', marginTop: '50px' }}>
+              <Heart size={40} style={{ color: '#ddd', marginBottom: '10px' }} />
+              <p>관심있는 정보를<br/>담아보세요.</p>
             </div>
           ) : (
-            // 로그아웃 상태일 때
-            <>
-              <div className="sync-prompt">
-                로그인하고 기록을 동기화 해보세요
-              </div>
-              <div className="footer-actions">
-                <Link to="/login" className="login-button">
-                  로그인
-                </Link>
-                <button className="settings-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </button>
-              </div>
-            </>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {favorites.map((fav) => (
+                <li key={fav.fav_id} style={{ 
+                    padding: '10px', 
+                    borderBottom: '1px solid #eee', 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'center' 
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: fav.type === 'NEWS' ? 'green' : 'purple' }}>
+                      {fav.type === 'NEWS' ? '뉴스' : '관광'}
+                    </div>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>{fav.title}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#999' }}>{fav.date}</div>
+                  </div>
+                  <button 
+                    onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
+
+        {/* 푸터 (로그인/설정) */}
+        <div className="sidebar-footer">
+          <div className="footer-actions">
+            <button className="login-button">
+              <LogIn size={16} style={{ display: 'inline', marginRight: '5px' }} />
+              로그인
+            </button>
+            <button className="settings-button">
+              <Settings size={18} color="#666" />
+            </button>
+          </div>
+        </div>
       </div>
-      
-      {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-    </>
+
+      {/* 3. 사이드바 오버레이 (바깥 클릭 시 닫힘) */}
+      {isSidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+
+    </div>
   );
 };
 

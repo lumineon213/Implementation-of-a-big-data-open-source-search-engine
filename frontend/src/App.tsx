@@ -5,6 +5,7 @@ import Footer from "components/common/footer";
 import Home from "pages/main_Page/home";
 
 
+
 function App() {
   return (
           <>
