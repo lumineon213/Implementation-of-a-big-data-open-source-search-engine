@@ -248,3 +248,30 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 
 이 파일들은 프로젝트 전체 규칙을 결정하므로  
 수정 시 오류가 날 가능성이 큼.
+
+
+## 🔑 api키 설정
+
+본 프로젝트는 보안을 위해 API 키가 포함된 환경 변수 파일을 Git에 업로드하지 않습니다. (`.gitignore` 처리됨)
+프로젝트를 실행하기 위해서는 **개별적으로 Google Gemini API 키를 발급받아 설정**해야 합니다.
+
+### 설정 방법
+1. **Google Gemini API 키 발급** (링크 하단 참조)
+2. `frontend` 폴더 최상위 경로에 **`.env`** 파일을 생성합니다.
+3. 생성한 파일에 아래 내용을 복사하고, `YOUR_API_KEY` 부분에 본인의 키를 입력합니다.
+
+   ```env
+   VITE_GEMINI_API_KEY=본인의_API_키_입력
+
+### 🔗 챗봇 API 키 발급 링크 (Google Gemini)
+
+팀원들에게 공유해주실 링크입니다.
+
+* **사이트:** **[Google AI Studio](https://aistudio.google.com/)**
+* **발급 방법:**
+    1.  위 링크 접속 후 Google 계정으로 로그인
+    2.  왼쪽 상단 **[Get API key]** 클릭
+    3.  **[Create API key]** 버튼 클릭
+    4.  생성된 `AIza`로 시작하는 키 복사
+
+---

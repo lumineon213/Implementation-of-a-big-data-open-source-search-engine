@@ -11,6 +11,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/solr": {
+        target: "http://localhost:8983", // Solr 기본 포트 번호
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   resolve: {
