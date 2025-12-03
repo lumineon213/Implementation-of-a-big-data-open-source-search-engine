@@ -1,245 +1,358 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { Search, Heart, Calendar, MapPin, Trash2, BookOpen, X, LogIn, Settings } from 'lucide-react';
-import './home.css'; // CSS 파일 임포트 필수
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './home.css';
+import Modal from '../../components/common/modal';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// --- [1] 데이터 타입 정의 ---
-interface SearchResult {
-  id: number;
+// .env 키 사용
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+// 타입 정의
+interface SolrResultItem {
+  id: string;
   title: string;
+  description?: string;
+  start_date?: string;
+  end_date?: string;
   place?: string;
-  date: string;
-  desc: string;
-  type: 'NEWS' | 'TRAVEL';
+  address?: string;
+  type?: 'NEWS' | 'TRAVEL'; // 팀원 코드 호환용
+  [key: string]: any;
 }
 
 interface FavoriteItem {
   fav_id: number;
-  id: number;
+  id: string; // Solr ID는 string
   title: string;
   date: string;
-  type: 'NEWS' | 'TRAVEL';
+  type: string;
 }
 
-const Home: React.FC = () => {
-  
-  // --- [2] 상태 관리 ---
-  const [keyword, setKeyword] = useState<string>('');
+interface User {
+  accountId: string;
+  accountName: string;
+  email: string;
+  phoneNumber: string;
+  accountRole: string;
+}
+
+interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+}
+
+// Props 정의
+interface HomeProps {
+  searchResults: SolrResultItem[];
+  setSearchResults: React.Dispatch<React.SetStateAction<SolrResultItem[]>>;
+}
+
+const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const SOLR_CORE_NAME = 'Search'; 
+
+  // --- 상태 관리 ---
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+  // UI & 세션
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   
-  // 사이드바 토글 상태 (CSS에 정의된 사이드바 활용)
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  // 다크모드
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
 
-  // --- [3] 검색 실행 함수 ---
-  const handleSearch = () => {
-    if (keyword.trim() === '') {
-      alert('검색어를 입력해주세요.');
-      return;
-    }
+  // 챗봇
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [chatInput, setChatInput] = useState<string>('');
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'model', text: '안녕하세요! 축제에 대해 궁금한 점을 물어보세요. 🎪' }
+  ]);
+  const [isAiThinking, setIsAiThinking] = useState<boolean>(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-    setIsSearched(true);
-    
-    // 더미 데이터 로직
-    const isWinter = keyword.includes('겨울');
-    const mockData: SearchResult[] = isWinter ? [
-      { id: 201, title: '대관령 눈꽃 축제', place: '강원도 평창', date: '2025.12.15', desc: '하얀 눈과 함께하는 환상의 겨울 축제', type: 'TRAVEL' },
-      { id: 202, title: '전국 스키장 개장 일정', place: '전국', date: '2025.11.20', desc: '올해 스키 시즌, 예년보다 1주 일찍 시작', type: 'NEWS' }
-    ] : [
-      { id: 101, title: '도구로 가을 축제', place: '도구머리공원', date: '2025.10.25', desc: '단풍길 스케치북 및 포토존 + 문화공연 운영', type: 'TRAVEL' },
-      { id: 102, title: '오목공원 가을축제', place: '오목공원', date: '2025.09.20', desc: '가을 영화상영 및 체험부스 운영', type: 'TRAVEL' },
-      { id: 501, title: '[뉴스] 설악산 단풍 절정 시기', place: '기상청', date: '2025.10.15', desc: '올해 단풍은 평년보다 늦어질 전망입니다.', type: 'NEWS' },
-      { id: 103, title: '용마폭포 문화예술축제', place: '용마폭포공원', date: '2025.09.27', desc: '가을 분위기에 어울리는 고품격 공연', type: 'TRAVEL' }
-    ];
-    setSearchResults(mockData);
+  // --- 헬퍼 함수 ---
+  const formatDate = (isoDate: string): string => {
+    try {
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) return isoDate;
+      return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+    } catch { return isoDate; }
   };
 
-  // --- [4] 즐겨찾기 추가/삭제 로직 ---
-  const toggleFavorite = (item: SearchResult) => {
-    const existingIndex = favorites.findIndex(f => f.id === item.id && f.type === item.type);
+  const formatDateRange = (start?: string, end?: string): string => {
+    if (!start) return '날짜 미정';
+    const startStr = formatDate(start);
+    if (!end) return startStr;
+    return `${startStr} ~ ${formatDate(end)}`;
+  };
 
+  // --- 즐겨찾기 로직 ---
+  const toggleFavorite = (item: SolrResultItem) => {
+    const existingIndex = favorites.findIndex(f => f.id === item.id);
     if (existingIndex !== -1) {
-      const newFavorites = favorites.filter((_, index) => index !== existingIndex);
-      setFavorites(newFavorites);
+      setFavorites(prev => prev.filter((_, index) => index !== existingIndex));
     } else {
       const newFav: FavoriteItem = {
         fav_id: Date.now(),
         id: item.id,
         title: item.title,
-        date: item.date,
-        type: item.type
+        date: formatDate(item.start_date || ''),
+        type: 'TRAVEL'
       };
-      // 즐겨찾기 추가 시 사이드바가 열려있지 않다면 알림 효과를 줄 수도 있음
       setFavorites(prev => [...prev, newFav]);
-      if(!isSidebarOpen) setIsSidebarOpen(true); // 편의상 추가 시 사이드바 오픈
+      if(!isSidebarOpen) setIsSidebarOpen(true);
     }
   };
 
-  // 하트 색칠 여부
-  const isFavorite = (item: SearchResult) => {
-    return favorites.some(f => f.id === item.id && f.type === item.type);
+  const isFavorite = (item: SolrResultItem) => {
+    return favorites.some(f => f.id === item.id);
+  };
+
+  // --- 세션 체크 ---
+  const checkSession = async () => {
+    try {
+      const res = await axios.get("/api/login/check", { withCredentials: true });
+      if (res.data.isLogin && res.data.user) setUser(res.data.user);
+      else setUser(null);
+    } catch (err) {
+      console.error("세션 확인 실패:", err);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- Effects ---
+  useEffect(() => {
+    checkSession();
+    const handleLoginSuccess = () => setTimeout(() => checkSession(), 100);
+    const handleLogoutSuccess = () => setTimeout(() => checkSession(), 100);
+    window.addEventListener('loginSuccess', handleLoginSuccess);
+    window.addEventListener('logoutSuccess', handleLogoutSuccess);
+    return () => {
+      window.removeEventListener('loginSuccess', handleLoginSuccess);
+      window.removeEventListener('logoutSuccess', handleLogoutSuccess);
+    };
+  }, []);
+
+  useEffect(() => { checkSession(); }, [location.pathname]);
+
+  useEffect(() => {
+    if (isDarkMode) document.body.classList.add('dark-mode');
+    else document.body.classList.remove('dark-mode');
+    localStorage.setItem('darkMode', String(isDarkMode));
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isChatOpen]);
+
+  // --- 핸들러 ---
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value);
+  const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
+  const toggleChat = () => setIsChatOpen(prev => !prev);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
+
+  // 검색
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) {
+      alert('검색어를 입력해 주세요.');
+      return;
+    }
+    setLoading(true);
+    setIsSearched(true);
+
+    try {
+      const flFields = 'id,title,description,start_date,end_date,place,address';
+      const query = `q=${encodeURIComponent(searchQuery)}&defType=edismax&qf=title^3+place+description&rows=10&wt=json&fl=${flFields}`;
+      const url = `/solr/${SOLR_CORE_NAME}/select?${query}`;
+      
+      const response = await axios.get(url);
+      setSearchResults(response.data.response.docs);
+    } catch (err) {
+      console.error('검색 실패:', err);
+      setError('검색 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 챗봇
+  const handleSendChat = async (e?: FormEvent) => {
+    e?.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMsg = chatInput;
+    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setChatInput('');
+    setIsAiThinking(true);
+
+    try {
+      const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=3&wt=json`;
+      const solrUrl = `/solr/${SOLR_CORE_NAME}/select?${solrQuery}`;
+      
+      let contextText = "";
+      try {
+        const response = await axios.get(solrUrl);
+        if (response.data.response.docs.length > 0) {
+          contextText = JSON.stringify(response.data.response.docs.map((d: any) => ({
+            축제명: d.title, 장소: d.place, 설명: d.description
+          })));
+        }
+      } catch (err) { console.error(err); }
+
+      if (!API_KEY) throw new Error("API Key가 없습니다.");
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = `[축제 정보]: ${contextText || "정보 없음"} \n[질문]: ${userMsg} \n위 정보를 바탕으로 답변해줘.`;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      setMessages(prev => [...prev, { role: 'model', text: response.text() }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'model', text: "오류가 발생했습니다." }]);
+    } finally {
+      setIsAiThinking(false);
+    }
   };
 
   return (
-    // [CSS] home-container: 기본 레이아웃
-    // [CSS] results-mode: 검색 후 상단 정렬 모드
-    <div className={`home-container ${isSearched ? 'results-mode' : ''}`}>
-      
-      {/* === [A] 타이틀 === */}
-      {/* 검색 결과 화면에서는 타이틀이 작아짐 (.results-mode .home-title 적용됨) */}
-      <h1 className="home-title" onClick={() => window.location.reload()} style={{cursor: 'pointer'}}>
-        KH.Solr
-      </h1>
-
-      {/* === [B] 검색창 영역 === */}
-      <div className="search-form">
-        <div className="search-container">
-          <div className="search-bar">
-            {/* [CSS] search-icon: 초록색 원형 장식 */}
-            <div className="search-icon"></div>
-            
-            <input
-              type="text"
-              className="search-input"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="검색어를 입력하세요 (예: 가을, 축제)"
-            />
-            
-            <button className="search-button" onClick={handleSearch}>
-              <Search size={18} color="white" />
-            </button>
+    <>
+      <div className={`home-container ${isSearched ? 'results-mode' : ''}`}>
+        <h1 className="home-title">KH.Solr AI 검색</h1>
+        
+        <form className="search-form" onSubmit={handleSubmit}>
+          <div className="search-container">
+            <div className="search-bar">
+              <div className="search-icon"><Search size={20} /></div>
+              <input type="text" className="search-input" placeholder="가장 빠른 AI 검색" value={searchQuery} onChange={handleInputChange} />
+              <button type="submit" className="search-button" disabled={loading}>
+                <Search size={16} color="white" />
+              </button>
+            </div>
           </div>
-        </div>
+          {loading && <p className="status-message">검색 중...</p>}
+          {error && <p className="error-message">{error}</p>}
+        </form>
+
+        {/* 검색 결과 리스트 */}
+        {isSearched && (
+          <div className="search-results-list">
+            {searchResults.length > 0 ? (
+              searchResults.map((result, index) => (
+                <div key={result.id || index} className="result-item" onClick={() => navigate(`/detail/${result.id}`)} style={{ cursor: 'pointer', position: 'relative' }}>
+                  
+                  {/* 즐겨찾기 버튼 */}
+                  <button onClick={(e) => { e.stopPropagation(); toggleFavorite(result); }} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', zIndex: 10 }}>
+                    <Heart size={24} fill={isFavorite(result) ? "#ef4444" : "none"} color={isFavorite(result) ? "#ef4444" : "#ccc"} />
+                  </button>
+
+                  <div className="result-meta">
+                    {(result.start_date || result.end_date) && <span className="result-date"><Calendar size={14} style={{marginRight:'4px'}}/> {formatDateRange(result.start_date, result.end_date)}</span>}
+                    {result.place && <span className="result-place"><MapPin size={14} style={{marginRight:'4px'}}/> {result.place}</span>}
+                  </div>
+                  <h3 style={{ paddingRight: '30px' }}>{result.title}</h3>
+                  {result.address && <p className="result-address">{result.address}</p>}
+                  <p>{result.description || '내용 없음'}</p>
+                </div>
+              ))
+            ) : (
+              !loading && !error && <p className="no-results-message">검색 결과가 없습니다.</p>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* === [C] 검색 결과 리스트 === */}
-      {isSearched && (
-        <div className="search-results-list">
-           {searchResults.length === 0 ? (
-             <div className="no-results-message">
-               <p>검색 결과가 없습니다.</p>
-             </div>
-           ) : (
-             searchResults.map((item) => (
-               <div key={`${item.type}-${item.id}`} className="result-item">
-                 
-                 {/* 메타 정보 (태그, 날짜) */}
-                 <div className="result-meta">
-                   <span style={{ color: item.type === 'NEWS' ? '#16a34a' : '#9333ea' }}>
-                     [{item.type === 'NEWS' ? '뉴스' : '관광'}]
-                   </span>
-                   <span className="result-date">
-                     <Calendar size={14} style={{ marginRight: '4px' }} />
-                     {item.date}
-                   </span>
-                 </div>
-
-                 {/* 제목 및 즐겨찾기 버튼 */}
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h3>{item.title}</h3>
-                    <button 
-                      onClick={() => toggleFavorite(item)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
-                      <Heart 
-                        size={24} 
-                        fill={isFavorite(item) ? "#ef4444" : "none"} 
-                        color={isFavorite(item) ? "#ef4444" : "#ccc"} 
-                      />
-                    </button>
-                 </div>
-
-                 {/* 주소 (관광지인 경우만) */}
-                 {item.place && (
-                   <div className="result-address">
-                     {item.place}
-                   </div>
-                 )}
-
-                 {/* 설명 */}
-                 <p>{item.desc}</p>
-               </div>
-             ))
-           )}
-        </div>
-      )}
-
-      {/* === [D] 사이드바 (즐겨찾기/히스토리) === */}
-      
-      {/* 1. 사이드바 토글 버튼 (화면 왼쪽 하단 고정) */}
-      <button className="history-toggle-button" onClick={() => setIsSidebarOpen(true)}>
-        <BookOpen size={24} className="book-icon" />
+      {/* 사이드바 */}
+      <button className='history-toggle-button' onClick={toggleSidebar}>
+        <BookOpen size={24} color="#4a4a4a" />
       </button>
 
-      {/* 2. 사이드바 본체 */}
       <div className={`search-history-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
-        
-        {/* 헤더 */}
         <div className="sidebar-header">
-          <span className="sidebar-logo">나의 찜 목록 ({favorites.length})</span>
-          <button className="close-sidebar-button" onClick={() => setIsSidebarOpen(false)}>
-            <X size={24} />
-          </button>
+          <div className="sidebar-logo">KH.solr {favorites.length > 0 && <span style={{fontSize:'0.8em', marginLeft:'5px'}}>({favorites.length})</span>}</div>
+          <button className="close-sidebar-button" onClick={toggleSidebar}><X size={24} /></button>
         </div>
-
-        {/* 컨텐츠 (즐겨찾기 목록) */}
-        <div className="sidebar-content" style={{ display: 'block', overflowY: 'auto', textAlign: 'left' }}>
+        
+        <div className="sidebar-content" style={{ display: 'block', overflowY: 'auto', textAlign: 'left', padding: '0' }}>
           {favorites.length === 0 ? (
-            <div className="no-history" style={{ textAlign: 'center', marginTop: '50px' }}>
+            <div className="no-history" style={{ textAlign: 'center', marginTop: '50px', padding: '20px' }}>
               <Heart size={40} style={{ color: '#ddd', marginBottom: '10px' }} />
-              <p>관심있는 정보를<br/>담아보세요.</p>
+              <p style={{color:'#999'}}>관심있는 정보를<br/>담아보세요.</p>
             </div>
           ) : (
-            <ul style={{ listStyle: 'none', padding: 0 }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {favorites.map((fav) => (
-                <li key={fav.fav_id} style={{ 
-                    padding: '10px', 
-                    borderBottom: '1px solid #eee', 
-                    display: 'flex', 
-                    justifyContent: 'space-between',
-                    alignItems: 'center' 
-                }}>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: fav.type === 'NEWS' ? 'green' : 'purple' }}>
-                      {fav.type === 'NEWS' ? '뉴스' : '관광'}
-                    </div>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>{fav.title}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#999' }}>{fav.date}</div>
+                <li key={fav.fav_id} style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1, marginRight: '10px' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>{fav.title}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>{fav.date}</div>
                   </div>
-                  <button 
-                    onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <button onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}><Trash2 size={18} /></button>
                 </li>
               ))}
             </ul>
           )}
         </div>
 
-        {/* 푸터 (로그인/설정) */}
         <div className="sidebar-footer">
-          <div className="footer-actions">
-            <button className="login-button">
-              <LogIn size={16} style={{ display: 'inline', marginRight: '5px' }} />
-              로그인
-            </button>
-            <button className="settings-button">
-              <Settings size={18} color="#666" />
-            </button>
-          </div>
+          {!isLoading && user ? (
+            <div className="footer-actions">
+              <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>{user.accountName}님 환영합니다 👋</div>
+              <button className="settings-button" onClick={openModal}><Settings size={20} /></button>
+            </div>
+          ) : (
+            <>
+              <div className="sync-prompt">로그인하고 기록을 동기화 해보세요</div>
+              <div className="footer-actions">
+                <Link to="/login" className="login-button"><LogIn size={16} style={{marginRight:'5px'}}/> 로그인</Link>
+                <button className="settings-button" onClick={openModal}><Settings size={20} /></button>
+              </div>
+            </>
+          )}
         </div>
       </div>
+      
+      {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
 
-      {/* 3. 사이드바 오버레이 (바깥 클릭 시 닫힘) */}
-      {isSidebarOpen && (
-        <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
+
+      {/* 챗봇 */}
+      <button className="chat-toggle-button" onClick={toggleChat}>💬</button>
+      {isChatOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <span>축제 AI 도우미</span>
+            <button onClick={toggleChat}><X size={20} color="white"/></button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`message ${msg.role}`}>{msg.text}</div>
+            ))}
+            {isAiThinking && <div className="message thinking">답변 생성 중...</div>}
+            <div ref={chatEndRef} />
+          </div>
+          <form className="chat-input-area" onSubmit={handleSendChat}>
+            <input type="text" placeholder="질문을 입력하세요..." value={chatInput} onChange={(e) => setChatInput(e.target.value)} />
+            <button type="submit">전송</button>
+          </form>
+        </div>
       )}
-
-    </div>
+    </>
   );
 };
 
