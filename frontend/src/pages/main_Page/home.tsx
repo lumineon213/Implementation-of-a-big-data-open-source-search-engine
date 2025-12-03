@@ -1,30 +1,95 @@
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
-import './home.css'; 
+import axios from 'axios';
+import './Home.css';
+
+// 타입 정의: Solr에서 받을 데이터 구조
+interface SolrResultItem {
+  id: string;
+  title: string;
+  description?: string;
+  date?: string; 
+  place?: string; 
+  address?: string; 
+  [key: string]: any; 
+}
 
 const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [searchResults, setSearchResults] = useState<SolrResultItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Solr 코어 이름
+  const SOLR_CORE_NAME = 'Search'; 
 
-  const handleSubmit = (e: FormEvent) => {
+  // Solr 날짜 형식을 YYYY-MM-DD로 변환
+  const formatDate = (isoDate: string | undefined): string => {
+    if (!isoDate) return '날짜 정보 없음';
+    try {
+      return isoDate.split('T')[0]; 
+    } catch {
+      return isoDate;
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('검색어:', searchQuery);
+    setError(null);
+    setSearchResults([]);
+    
+    if (!searchQuery.trim()) {
+      alert('검색어를 입력해 주세요.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Solr이 반환해야 할 필드 목록 (title, date, place, address 포함)
+      const flFields = 'id,title,description,date,place,address'; 
+      
+      const query = 
+        `q=${encodeURIComponent(searchQuery)}` + 
+        `&defType=edismax` + 
+        `&qf=title^3+place+description` + 
+        `&rows=10` + 
+        `&wt=json` +
+        `&fl=${flFields}`;
+        
+      // ⭐️ 최적화된 Solr 요청 URL: /solr 프록시 + 코어 이름 + 핸들러
+      const url = `/solr/${SOLR_CORE_NAME}/select?${query}`; 
+      
+      console.log('Solr 요청 URL:', url);
+
+      const response = await axios.get(url);
+      
+      const docs = response.data.response.docs as SolrResultItem[];
+      setSearchResults(docs);
+      
+      console.log('검색 성공:', docs);
+
+    } catch (err) {
+      console.error('검색 실패:', err);
+      if (axios.isAxiosError(err) && err.response) {
+          setError(`검색 실패: ${err.response.status} (${err.response.statusText}). 서버 및 Solr 경로를 확인해 주세요.`);
+      } else {
+          setError('검색 중 오류가 발생했습니다. 서버 상태를 확인해 주세요.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev)
-  };
-
   return (
-    <>
-      <div className="home-container"> 
-        <h1 className="home-title">KH.Solr AI 검색</h1>
-        
-        <form className="search-form" onSubmit={handleSubmit}>
+    <div className={`home-container ${searchResults.length > 0 ? 'results-mode' : ''}`}>
+      <h1 className="home-title">KH.Solr AI 검색</h1>
+      
+      <form className="search-form" onSubmit={handleSubmit}>
+        <div className="search-container">
           <div className="search-bar">
             <div className="search-icon"></div>
             
@@ -36,7 +101,7 @@ const Home: React.FC = () => {
               onChange={handleInputChange}
             />
             
-            <button type="submit" className="search-button">
+            <button type="submit" className="search-button" disabled={loading}>
               <svg
                 width="16"
                 height="16"
@@ -54,49 +119,38 @@ const Home: React.FC = () => {
               </svg>
             </button>
           </div>
-        </form>
+        </div>
+        {/* 상태 및 오류 메시지 출력 */}
+        {loading && <p className="status-message">검색 중...</p>}
+        {error && <p className="error-message">{error}</p>}
+      </form>
+
+      <div className="search-results-list">
+        {searchResults.length > 0 ? (
+          searchResults.map((result, index) => (
+            <div key={index} className="result-item">
+              
+              <div className="result-meta">
+                {result.date && <span className="result-date">📅 {formatDate(result.date)}</span>}
+                {result.place && <span className="result-place">📍 {result.place}</span>}
+              </div>
+              
+              <h3>{result.title}</h3>
+              
+              {/* 주소 정보 출력 */}
+              {result.address && <p className="result-address">{result.address}</p>} 
+              
+              <p>{result.description || '내용 없음'}</p>
+            </div>
+          ))
+        ) : (
+          !loading && !error && searchQuery.trim() && (
+            <p className="no-results-message">검색 결과가 없습니다.</p>
+          )
+        )}
       </div>
 
-      <button className='history-toggle-button' onClick={toggleSidebar}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="book-icon">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
-      </button>
-
-      <div className={`search-history-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-logo">KH.solr</div>
-          <button className="close-sidebar-button" onClick={toggleSidebar}>
-            &times; 
-          </button>
-        </div>
-        
-        <div className="sidebar-content">
-          <div className="no-history">
-            
-            <p>아직 기록이 없어요.</p>
-            <p>새로운 검색을 해보세요.</p>
-          </div>
-        </div>
-
-        <div className="sidebar-footer">
-          <div className="sync-prompt">
-            로그인하고 기록을 동기화 해보세요
-          </div>
-          <div className="footer-actions">
-            <Link to="/login" className="login-button">
-              로그인
-            </Link>
-            <button className="settings-button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-     
-      {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-    </>
+    </div>
   );
 };
 
