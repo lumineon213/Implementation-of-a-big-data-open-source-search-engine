@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './Home.css';
+import './home.css'; 
 
 // 1. 타입 정의
 interface SolrResultItem {
@@ -30,10 +30,12 @@ const Home: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SolrResultItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
+  const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
 
   const location = useLocation();
 
@@ -101,6 +103,12 @@ const Home: React.FC = () => {
   }, [location.pathname]);
 
   // --- 이벤트 핸들러 ---
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    console.log('검색어:', searchQuery);
+  };
+
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -147,10 +155,13 @@ const Home: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev)
   };
 
   return (
     <>
+
       <div className={`home-container ${searchResults.length > 0 ? 'results-mode' : ''}`}>
         <h1 className="home-title">KH.Solr AI 검색</h1>
         
@@ -207,6 +218,41 @@ const Home: React.FC = () => {
       </div>
 
       {/* 사이드바 */}
+      <div className="home-container"> 
+        <h1 className="home-title">KH.Solr AI 검색</h1>
+        
+        <form className="search-form" onSubmit={handleSubmit}>
+          <div className="search-bar">
+            <div className="search-icon"></div>
+            
+            <input
+              type="text"
+              className="search-input"
+              placeholder="가장 빠른 AI 검색"
+              value={searchQuery}
+              onChange={handleInputChange}
+            />
+            
+            <button type="submit" className="search-button">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 11L10 6M10 6L6 6M10 6L10 10"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
       <button className='history-toggle-button' onClick={toggleSidebar}>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="book-icon">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
@@ -221,6 +267,7 @@ const Home: React.FC = () => {
         
         <div className="sidebar-content">
           <div className="no-history">
+            
             <p>아직 기록이 없어요.</p>
             <p>새로운 검색을 해보세요.</p>
           </div>
@@ -249,7 +296,7 @@ const Home: React.FC = () => {
           )}
         </div>
       </div>
-      
+     
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
     </>
   );
