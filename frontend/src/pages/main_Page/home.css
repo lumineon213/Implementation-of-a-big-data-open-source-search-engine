@@ -44,16 +44,11 @@
 }
 
 .search-form {
-  /* [수정] 검색창 너비 고정 및 상단 고정 (Sticky) */
   width: 100%;
   max-width: 800px;
   
   display: flex;
   justify-content: center;
-  
-  /* Sticky 설정: 스크롤 내려도 천장에 붙음 */
-  position: sticky;
-  top: 0;
   
   /* [중요] 검색 결과보다 위에 보이도록 설정 */
   z-index: 1000; 
