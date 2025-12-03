@@ -7,7 +7,7 @@ interface SolrResultItem {
   id: string;
   title: string;
   description?: string;
-  date?: string; 
+  start_date?: string; 
   place?: string; 
   address?: string; 
   [key: string]: any; 
@@ -24,10 +24,19 @@ const Home: React.FC = () => {
 
   // Solr 날짜 형식을 YYYY-MM-DD로 변환
   const formatDate = (isoDate: string | undefined): string => {
-    if (!isoDate) return '날짜 정보 없음';
-    try {
-      return isoDate.split('T')[0]; 
-    } catch {
+  if (!isoDate) return '날짜 미정';
+  try {
+    const date = new Date(isoDate); // 날짜 객체로 변환
+    
+    // 유효하지 않은 날짜면 원래 문자열 반환
+    if (isNaN(date.getTime())) return isoDate; 
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1)
+    const day = String(date.getDate()).padStart(2, '0'); // 일
+
+    return `${year}.${month}.${day}`; // 2025.06.27 형식
+     } catch {
       return isoDate;
     }
   };
@@ -46,7 +55,7 @@ const Home: React.FC = () => {
 
     try {
       // Solr이 반환해야 할 필드 목록 (title, date, place, address 포함)
-      const flFields = 'id,title,description,date,place,address'; 
+      const flFields = 'id,title,description,start_date,place,address'; 
       
       const query = 
         `q=${encodeURIComponent(searchQuery)}` + 
@@ -131,7 +140,7 @@ const Home: React.FC = () => {
             <div key={index} className="result-item">
               
               <div className="result-meta">
-                {result.date && <span className="result-date">📅 {formatDate(result.date)}</span>}
+                {result.start_date && <span className="result-date">📅 {formatDate(result.start_date)}</span>}
                 {result.place && <span className="result-place">📍 {result.place}</span>}
               </div>
               
