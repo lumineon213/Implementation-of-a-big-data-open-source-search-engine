@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
 import Modal from '../../components/common/modal';
@@ -45,6 +45,7 @@ interface ChatMessage {
 }
 
 const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
+  const navigate = useNavigate();
   // --- 상태 관리 ---
   
   // 1) 검색 관련 (기존 유지)
@@ -280,7 +281,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         <div className="search-results-list">
           {searchResults.length > 0 ? (
             searchResults.map((result, index) => (
-              <div key={index} className="result-item">
+              <div key={index} className="result-item" onClick={() => navigate(`/detail/${result.id}`)}>
                 <div className="result-meta">
                   {(result.start_date || result.end_date) && (
                     <span className="result-date">📅 {formatDateRange(result.start_date, result.end_date)}</span>

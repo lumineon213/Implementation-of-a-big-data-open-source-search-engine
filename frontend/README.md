@@ -275,3 +275,16 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
     4.  생성된 `AIza`로 시작하는 키 복사
 
 ---
+
+### 🔗 KOKAO MAP API 발급
+
+* **사이트:** **[Google AI Studio](https://apis.map.kakao.com/)**
+* **발급 방법:**
+    1. 위 링크 접속 후 Kakao 계정으로 로그인
+    2. 우측 상단 APP KEY 발급 클릭
+    3. 클릭 후 다시 우측 상단에 앱 생성 클릭
+    4. 생성한 앱 클릭 후 좌측 상단 메뉴->카카오맵(제품 설정 아래)
+    5. 사용 설정 상태 on으로 변경
+    6. 좌측 상단 메뉴->앱->플랫폼 키->JavaScript 키->Default JS Key
+    7. JavaScript 키 수정창으로 넘어감 http://localhost:5173으로 도메인 등록
+    8. 이후는 .env 파일에 VITE_KAKAO_MAP_KEY=본인의_API_키_입력
