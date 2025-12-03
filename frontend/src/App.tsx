@@ -5,6 +5,7 @@ import Header from "components/common/header";
 import Footer from "components/common/footer";
 import Home from "pages/main_Page/home";
 import AIChatBot from 'pages/chatbot/chatbot';
+import DetailView from "pages/detail_view/detailview";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -24,9 +25,12 @@ function App() {
   return (
           <>
           <Header />
-                <Routes>
+                <Routes>                
                   <Route path="/" element={<Home searchResults={searchResults} setSearchResults={setSearchResults} />} />
+                  
                   <Route path="/login" element={<Login />} />
+                  
+                  <Route path="/detail/:id" element={<DetailView />} />
                 </Routes>
          
           <AIChatBot searchResults={searchResults} />
