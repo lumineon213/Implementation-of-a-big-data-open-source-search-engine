@@ -1,0 +1,176 @@
+/* --- AIChatBot.css --- */
+
+/* 챗봇 토글 버튼 */
+.chat-toggle-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a8bbe, #0a8bbe);
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px #0a8bbe;
+  z-index: 1500;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-toggle-button:hover {
+  transform: scale(1.1);
+}
+
+/* 챗봇 대화창 */
+.chat-window {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1600;
+  overflow: hidden;
+  border: 1px solid #eee;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 헤더 */
+.chat-header {
+  background: linear-gradient(135deg, #0a8bbe, #0a8bbe);
+  color: white;
+  padding: 15px 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* 메시지 영역 */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 말풍선 */
+.message {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #0a8bbe;
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.message.model {
+  align-self: flex-start;
+  background-color: white;
+  color: #333;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.message.thinking {
+  color: #888;
+  font-size: 0.8rem;
+  font-style: italic;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* 입력 영역 */
+.chat-input-area {
+  padding: 15px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.chat-input-area button {
+  padding: 8px 15px;
+  background-color: #0a8bbe;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.chat-input-area button:hover {
+  background-color: #1c4d61;
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .chat-window {
+    width: 90%;
+    right: 5%;
+    bottom: 90px;
+    height: 60vh;
+  }
+}
+
+/* 마크다운 스타일링 (가독성 UP) */
+.message p {
+  margin: 0 0 10px 0; /* 문단 사이 간격 추가 */
+  line-height: 1.5;   /* 줄 간격 넉넉하게 */
+}
+
+.message p:last-child {
+  margin-bottom: 0;   /* 마지막 문단은 여백 제거 */
+}
+
+.message ul, .message ol {
+  margin: 5px 0 10px 20px; /* 리스트 들여쓰기 */
+  padding: 0;
+}
+
+.message li {
+  margin-bottom: 5px; /* 리스트 항목 사이 간격 */
+}
+
+.message strong {
+  font-weight: 700;
+  color: #6d28d9; /* 강조 문구(굵은 글씨) 색상 포인트 (선택사항) */
+}

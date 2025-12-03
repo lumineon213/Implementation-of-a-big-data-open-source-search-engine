@@ -1,8 +1,14 @@
-import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
+import React, { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
 import Modal from '../../components/common/modal';
+
+import { GoogleGenerativeAI } from "@google/generative-ai"; // 챗봇용
+
+
+// .env 키 사용
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // 1. 타입 정의
 // Solr 결과 데이터 타입
@@ -26,16 +32,27 @@ interface User {
   accountRole: string;
 }
 
-const Home: React.FC = () => {
-  // --- 상태 관리 (State) ---
+// Props 정의 (App.tsx에서 받아옴)
+interface HomeProps {
+  searchResults: SolrResultItem[];
+  setSearchResults: React.Dispatch<React.SetStateAction<SolrResultItem[]>>;
+}
+
+// 챗봇 메시지 타입
+interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+}
+
+const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
+  // --- 상태 관리 ---
   
-  // 1) 검색 관련 상태
+  // 1) 검색 관련 (기존 유지)
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<SolrResultItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 2) UI 및 세션 관련 상태
+  // 2) UI 및 세션 관련 (기존 유지)
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -45,13 +62,21 @@ const Home: React.FC = () => {
     const saved = localStorage.getItem('darkMode');
     return saved === 'true';
   });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // 3) 🤖 챗봇 관련 (새로 추가됨)
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [chatInput, setChatInput] = useState<string>('');
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'model', text: '안녕하세요! 축제에 대해 궁금한 점을 물어보세요. 🎪' }
+  ]);
+  const [isAiThinking, setIsAiThinking] = useState<boolean>(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const location = useLocation();
   const SOLR_CORE_NAME = 'Search'; 
 
-  // --- 헬퍼 함수 ---
-
-  // 날짜 변환 (YYYY.MM.DD)
+  // --- 헬퍼 함수 (기존 유지) ---
   const formatDate = (isoDate: string): string => {
     try {
       const date = new Date(isoDate);
@@ -65,7 +90,6 @@ const Home: React.FC = () => {
     }
   };
 
-  // 날짜 범위 표시 (시작 ~ 종료)
   const formatDateRange = (start?: string, end?: string): string => {
     if (!start) return '날짜 미정';
     const startStr = formatDate(start);
@@ -74,10 +98,9 @@ const Home: React.FC = () => {
     return `${startStr} ~ ${endStr}`;
   };
 
-  // --- 세션(로그인) 관리 로직 ---
+  // --- 세션(로그인) 관리 로직 (팀원 코드 100% 유지) ---
   const checkSession = async () => {
     try {
-      // 백엔드에 로그인 상태 확인 요청
       const res = await axios.get("/api/login/check", { withCredentials: true });
       if (res.data.isLogin && res.data.user) {
         setUser(res.data.user);
@@ -94,21 +117,16 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     checkSession();
-
-    // 로그인/로그아웃 이벤트 리스너 등록
     const handleLoginSuccess = () => setTimeout(() => checkSession(), 100);
     const handleLogoutSuccess = () => setTimeout(() => checkSession(), 100);
-
     window.addEventListener('loginSuccess', handleLoginSuccess);
     window.addEventListener('logoutSuccess', handleLogoutSuccess);
-
     return () => {
       window.removeEventListener('loginSuccess', handleLoginSuccess);
       window.removeEventListener('logoutSuccess', handleLogoutSuccess);
     };
   }, []);
 
-  // 페이지 이동 시 세션 재확인
   useEffect(() => {
     checkSession();
   }, [location.pathname]);
@@ -130,17 +148,19 @@ const Home: React.FC = () => {
       document.body.classList.add('dark-mode');
     }
   }, []);
+  // 챗봇 자동 스크롤 (새로 추가됨)
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isChatOpen]);
 
 
   // --- 이벤트 핸들러 ---
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
+  const toggleChat = () => setIsChatOpen(prev => !prev); // 챗봇 토글
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -155,66 +175,97 @@ const Home: React.FC = () => {
   };
 
   // Solr 검색 요청
+  // Solr 검색 요청 (기존 유지)
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSearchResults([]);
+    setSearchResults([]); 
     
     if (!searchQuery.trim()) {
       alert('검색어를 입력해 주세요.');
       return;
     }
-
     setLoading(true);
 
     try {
       const flFields = 'id,title,description,start_date,end_date,place,address'; 
-      const query = 
-        `q=${encodeURIComponent(searchQuery)}` + 
-        `&defType=edismax` + 
-        `&qf=title^3+place+description` + 
-        `&rows=10` + 
-        `&wt=json` +
-        `&fl=${flFields}`;
-        
+      const query = `q=${encodeURIComponent(searchQuery)}&defType=edismax&qf=title^3+place+description&rows=10&wt=json&fl=${flFields}`;
       const url = `/solr/${SOLR_CORE_NAME}/select?${query}`; 
       
       const response = await axios.get(url);
-      const docs = response.data.response.docs as SolrResultItem[];
-      setSearchResults(docs);
+      setSearchResults(response.data.response.docs); 
 
     } catch (err) {
       console.error('검색 실패:', err);
-      if (axios.isAxiosError(err) && err.response) {
-          setError(`검색 실패: ${err.response.status}. 서버 설정을 확인해주세요.`);
-      } else {
-          setError('검색 중 오류가 발생했습니다.');
-      }
+      setError('검색 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
   };
 
+  // 🤖 챗봇 전송 로직 (새로 추가됨 - RAG)
+  const handleSendChat = async (e?: FormEvent) => {
+    e?.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMsg = chatInput;
+    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setChatInput('');
+    setIsAiThinking(true);
+
+    try {
+      // 1. Solr RAG 검색 (챗봇이 참고할 정보 찾기)
+      const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=3&wt=json`;
+      const solrUrl = `/solr/${SOLR_CORE_NAME}/select?${solrQuery}`;
+      
+      let contextText = "";
+      try {
+        const response = await axios.get(solrUrl);
+        const docs = response.data.response.docs;
+        if (docs.length > 0) {
+          contextText = JSON.stringify(docs.map((d: any) => ({
+            축제명: d.title,
+            장소: d.place,
+            설명: d.description
+          })));
+        }
+      } catch (err) {
+        console.error("챗봇 검색 실패:", err);
+      }
+
+      // 2. Gemini 호출
+      if (!API_KEY) throw new Error("API Key가 없습니다.");
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = `
+        [축제 정보]: ${contextText ? contextText : "정보 없음"}
+        [질문]: ${userMsg}
+        위 정보를 바탕으로 친절하게 답변해줘.
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      setMessages(prev => [...prev, { role: 'model', text: response.text() }]);
+
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'model', text: "오류가 발생했습니다." }]);
+    } finally {
+      setIsAiThinking(false);
+    }
+  };
+
   return (
     <>
-      {/* 메인 컨테이너: 검색 결과가 있으면 레이아웃 변경 */}
+      {/* 1. 메인 화면 (기존 유지) */}
       <div className={`home-container ${searchResults.length > 0 ? 'results-mode' : ''}`}>
         <h1 className="home-title">KH.Solr AI 검색</h1>
         
-        {/* 검색 폼 */}
         <form className="search-form" onSubmit={handleSubmit}>
           <div className="search-container">
             <div className="search-bar">
               <div className="search-icon"></div>
-              
-              <input
-                type="text"
-                className="search-input"
-                placeholder="가장 빠른 AI 검색"
-                value={searchQuery}
-                onChange={handleInputChange}
-              />
-              
+              <input type="text" className="search-input" placeholder="가장 빠른 AI 검색" value={searchQuery} onChange={handleInputChange} />
               <button type="submit" className="search-button" disabled={loading}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 11L10 6M10 6L6 6M10 6L10 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -222,7 +273,6 @@ const Home: React.FC = () => {
               </button>
             </div>
           </div>
-          {/* 상태 메시지 */}
           {loading && <p className="status-message">검색 중...</p>}
           {error && <p className="error-message">{error}</p>}
         </form>
@@ -234,17 +284,12 @@ const Home: React.FC = () => {
               <div key={index} className="result-item">
                 <div className="result-meta">
                   {(result.start_date || result.end_date) && (
-                    <span className="result-date">
-                      📅 {formatDateRange(result.start_date, result.end_date)}
-                    </span>
+                    <span className="result-date">📅 {formatDateRange(result.start_date, result.end_date)}</span>
                   )}
                   {result.place && <span className="result-place">📍 {result.place}</span>}
                 </div>
-                
                 <h3>{result.title}</h3>
-                
                 {result.address && <p className="result-address">{result.address}</p>} 
-                
                 <p>{result.description || '내용 없음'}</p>
               </div>
             ))
@@ -256,7 +301,7 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* 사이드바 토글 버튼 */}
+      {/* 2. 사이드바 (팀원 코드 100% 유지) */}
       <button className='history-toggle-button' onClick={toggleSidebar}>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="book-icon">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -264,53 +309,45 @@ const Home: React.FC = () => {
         </svg>
       </button>
 
-      {/* 사이드바 내용 */}
       <div className={`search-history-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">KH.solr</div>
-          <button className="close-sidebar-button" onClick={toggleSidebar}>
-            &times; 
-          </button>
+          <button className="close-sidebar-button" onClick={toggleSidebar}>&times;</button>
         </div>
-        
         <div className="sidebar-content">
-          <div className="no-history">
-            <p>아직 기록이 없어요.</p>
-            <p>새로운 검색을 해보세요.</p>
-          </div>
+          <div className="no-history"><p>아직 기록이 없어요.</p><p>새로운 검색을 해보세요.</p></div>
         </div>
-
-        {/* 사이드바 푸터 (로그인 상태에 따라 변경) */}
         <div className="sidebar-footer">
           {!isLoading && user ? (
-            // 로그인 상태일 때
             <div className="footer-actions">
               <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>
                 {user.accountName}님 환영합니다 👋
               </div>
               <button className="settings-button" onClick={openModal}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>{user.accountName}님 환영합니다 👋</div>
+              <button className="settings-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
               </button>
             </div>
           ) : (
-            // 로그아웃 상태일 때
             <>
-              <div className="sync-prompt">
-                로그인하고 기록을 동기화 해보세요
-              </div>
+              <div className="sync-prompt">로그인하고 기록을 동기화 해보세요</div>
               <div className="footer-actions">
                 <Link to="/login" className="login-button">
                   로그인
                 </Link>
                 <button className="settings-button" onClick={openModal}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <Link to="/login" className="login-button">로그인</Link>
+                <button className="settings-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
               </div>
             </>
           )}
         </div>
       </div>
-      
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
 
       {/* 모달 */}
@@ -320,6 +357,37 @@ const Home: React.FC = () => {
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
       />
+      {/* 3. 챗봇 UI (새로 추가됨) */}
+      <button className="chat-toggle-button" onClick={toggleChat}>
+        💬
+      </button>
+
+      {isChatOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <span>축제 AI 도우미</span>
+            <button onClick={toggleChat}>&times;</button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`message ${msg.role}`}>
+                {msg.text}
+              </div>
+            ))}
+            {isAiThinking && <div className="message model thinking">답변 생성 중...</div>}
+            <div ref={chatEndRef} />
+          </div>
+          <form className="chat-input-area" onSubmit={handleSendChat}>
+            <input 
+              type="text" 
+              placeholder="질문을 입력하세요..." 
+              value={chatInput} 
+              onChange={(e) => setChatInput(e.target.value)} 
+            />
+            <button type="submit">전송</button>
+          </form>
+        </div>
+      )}
     </>
   );
 };
