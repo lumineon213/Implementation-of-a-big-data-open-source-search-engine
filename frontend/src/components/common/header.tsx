@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ============================================
-  //  기존 세션 검사 로직 — JWT에서는 사용 안 함
+  //  기존 세션 검사 로직 로그
   // ============================================
   /*
   useEffect(() => {
@@ -63,12 +63,12 @@ const Header: React.FC = () => {
   */
 
   // ======================================================
-  // 새로운 JWT 인증 방식 — checkAuth() (이거만 사용함!)
+  // 새로운 JWT 인증 방식 — checkAuth() 
   // ======================================================
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
 
-    // 🔥 토큰 없으면 로그인 안 한 상태
+    //  토큰 없으면 로그인 안 한 상태
     if (!token) {
       setUser(null);
       setIsLoading(false);
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
         },
       });
 
-      //  백엔드가 MyPageDTO 그대로 반환한다고 가정
+     
       setUser(res.data);
     } catch (err) {
       console.error("JWT 인증 실패:", err);
@@ -104,7 +104,7 @@ const Header: React.FC = () => {
   }, [location.pathname]);
 
   // ======================================================
-  //  JWT 방식 로그아웃 — 토큰 제거만 하면 된다!
+  //  JWT 방식 로그아웃 — 토큰 제거
   // ======================================================
   const handleLogout = () => {
     localStorage.removeItem("token"); // JWT 삭제
