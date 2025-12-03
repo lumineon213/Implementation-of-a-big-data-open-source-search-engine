@@ -20,6 +20,7 @@ export interface SolrResultItem {
 }
 
 
+
 function App() {
   const [searchResults, setSearchResults] = useState<SolrResultItem[]>([]);
   return (

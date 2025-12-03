@@ -1,10 +1,10 @@
-package com.boot.login.service;
+package com.boot.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.boot.login.dao.loginDAO;
-import com.boot.login.dto.loginDTO;
+import com.boot.dao.loginDAO;
+import com.boot.dto.loginDTO;
 
 @Service 
 public class loginSerivceImpl implements loginService {

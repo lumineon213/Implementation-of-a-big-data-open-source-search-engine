@@ -1,6 +1,6 @@
-package com.boot.login.service;
+package com.boot.service;
 
-import com.boot.login.dto.loginDTO;
+import com.boot.dto.loginDTO;
 
 public interface loginService {
 

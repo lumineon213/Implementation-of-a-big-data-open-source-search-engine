@@ -1,8 +1,9 @@
-package com.boot.login.dao;
+package com.boot.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.boot.login.dto.loginDTO;
+
+import com.boot.dto.loginDTO;
 
 @Mapper
 public interface loginDAO {
