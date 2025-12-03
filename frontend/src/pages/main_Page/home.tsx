@@ -5,6 +5,7 @@ import axios from 'axios';
 import './home.css';
 import Modal from '../../components/common/modal';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import ReactMarkdown from 'react-markdown'; 
 
 // .env 키 사용
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -18,13 +19,13 @@ interface SolrResultItem {
   end_date?: string;
   place?: string;
   address?: string;
-  type?: 'NEWS' | 'TRAVEL'; // 팀원 코드 호환용
+  type?: 'NEWS' | 'TRAVEL';
   [key: string]: any;
 }
 
 interface FavoriteItem {
   fav_id: number;
-  id: string; // Solr ID는 string
+  id: string;
   title: string;
   date: string;
   type: string;
@@ -191,7 +192,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     }
   };
 
-  // 챗봇
+  // 챗봇 (RAG)
   const handleSendChat = async (e?: FormEvent) => {
     e?.preventDefault();
     if (!chatInput.trim()) return;
@@ -202,14 +203,19 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     setIsAiThinking(true);
 
     try {
-      const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=3&wt=json`;
+      const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=5&wt=json`;
       const solrUrl = `/solr/${SOLR_CORE_NAME}/select?${solrQuery}`;
       
       let contextText = "";
+      let totalFound = 0;
+
       try {
         const response = await axios.get(solrUrl);
-        if (response.data.response.docs.length > 0) {
-          contextText = JSON.stringify(response.data.response.docs.map((d: any) => ({
+        const docs = response.data.response.docs;
+        totalFound = response.data.response.numFound;
+
+        if (docs.length > 0) {
+          contextText = JSON.stringify(docs.map((d: any) => ({
             축제명: d.title, 장소: d.place, 설명: d.description
           })));
         }
@@ -217,9 +223,20 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
 
       if (!API_KEY) throw new Error("API Key가 없습니다.");
       const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-      const prompt = `[축제 정보]: ${contextText || "정보 없음"} \n[질문]: ${userMsg} \n위 정보를 바탕으로 답변해줘.`;
+      const prompt = `
+        너는 한국 축제 전문가 AI야.
+        [검색된 전체 데이터 개수]: ${totalFound}
+        [제공된 정보]: ${contextText || "정보 없음"}
+        [질문]: ${userMsg}
+        
+        위 정보를 바탕으로 답변해줘.
+        만약 [검색된 전체 데이터 개수]가 제공된 정보보다 많다면, 답변 끝에 
+        "> 💡 리스트가 많아 간략하게 소개해드렸습니다. 자세한 내용은 검색창을 이용해주세요." 
+        라는 문구를 줄바꿈 후 추가해줘.
+      `;
+
       const result = await model.generateContent(prompt);
       const response = await result.response;
       setMessages(prev => [...prev, { role: 'model', text: response.text() }]);
@@ -238,7 +255,12 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         <form className="search-form" onSubmit={handleSubmit}>
           <div className="search-container">
             <div className="search-bar">
-              <div className="search-icon"><Search size={20} /></div>
+              
+              {/* ▼▼▼ [수정됨] 초록색 동그라미(div)는 남기고, 내부 아이콘(Search)만 삭제함 ▼▼▼ */}
+              <div className="search-icon">
+                 {/* <Search size={20} />  <-- 돋보기 삭제됨! */}
+              </div> 
+              
               <input type="text" className="search-input" placeholder="가장 빠른 AI 검색" value={searchQuery} onChange={handleInputChange} />
               <button type="submit" className="search-button" disabled={loading}>
                 <Search size={16} color="white" />
@@ -299,7 +321,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
               {favorites.map((fav) => (
                 <li key={fav.fav_id} style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ flex: 1, marginRight: '10px' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>{fav.title}</div>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }} onClick={() => navigate(`/detail/${fav.id}`)}>{fav.title}</div>
                     <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>{fav.date}</div>
                   </div>
                   <button onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}><Trash2 size={18} /></button>
@@ -341,7 +363,9 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
           </div>
           <div className="chat-messages">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`message ${msg.role}`}>{msg.text}</div>
+              <div key={idx} className={`message ${msg.role}`}>
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
+              </div>
             ))}
             {isAiThinking && <div className="message thinking">답변 생성 중...</div>}
             <div ref={chatEndRef} />
