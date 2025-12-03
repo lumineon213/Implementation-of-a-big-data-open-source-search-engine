@@ -1,26 +1,71 @@
+/* ================================== */
+/* 1. 메인 레이아웃 및 검색창 스타일  */
+/* ================================== */
+
 .home-container {
   position: relative;
   width: 100%;
-  height: 100vh;
+  
+  /* [수정 1] 스크롤 시 배경 잘림 방지 */
+  /* height: 100vh; -> min-height: 100vh로 변경 */
+  min-height: 100vh; 
+  
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* 기본: 중앙 정렬 */
+  
   padding: 2rem;
   padding-bottom: 8rem;
   box-sizing: border-box;
+  
+  /* 배경색 (필요시 수정) */
+  background-color: #f8f9fa; 
+}
+
+/* [추가] 검색 결과가 있을 때 레이아웃 변경 (JS에서 클래스 추가 필요) */
+.home-container.results-mode {
+  justify-content: flex-start; /* 위쪽 정렬로 변경 */
+  padding-top: 60px;           /* 상단 여백 확보 */
+  height: auto;                /* 스크롤 가능하도록 높이 자동 */
 }
 
 .home-title {
   text-align: center;
   margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #333;
+  
+  /* [추가] 검색 시 타이틀 자연스럽게 줄어들기 (선택사항) */
+  transition: all 0.3s ease;
+}
+
+/* 검색 시 타이틀 숨기거나 줄이기 */
+.home-container.results-mode .home-title {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .search-form {
+  /* [수정 2] 검색창 너비 고정 및 상단 고정 (Sticky) */
   width: 100%;
   max-width: 800px;
+  
   display: flex;
   justify-content: center;
+  
+  /* Sticky 설정: 스크롤 내려도 천장에 붙음 */
+  position: sticky;
+  top: 0;
+  
+  /* [중요] 검색 결과보다 위에 보이도록 설정 (사라짐 방지) */
+  z-index: 1000; 
+  
+  padding: 1rem 0; /* 위아래 여백 */
+  
+  /* 스크롤 될 때 글자가 뒤에 비치지 않도록 배경 추가 */
+  background-color: rgba(248, 249, 250, 0.95); 
+  backdrop-filter: blur(5px);
 }
 
 .search-container {
@@ -34,7 +79,11 @@
 .search-bar {
   display: flex;
   align-items: center;
+  
+  /* [수정 3] 너비 강제 지정 (줄어듦 방지) */
   width: 100%;
+  box-sizing: border-box;
+  
   background-color: #ffffff;
   border: 1px solid #8b5cf6;
   border-radius: 50px;
@@ -61,6 +110,9 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+    
+  /* 입력창 너비 확보 */
+  min-width: 0; 
 }
 
 .search-input::placeholder {
@@ -85,20 +137,10 @@
   background-color: #6b7280;
 }
 
-@media (max-width: 768px) {
-  .search-bar {
-    padding: 0.625rem 0.875rem;
-  }
 
-  .search-input {
-    font-size: 0.9375rem;
-  }
-
-  .search-button {
-    width: 32px;
-    height: 32px;
-  }
-}
+/* ================================== */
+/* 2. 사이드바 및 히스토리 버튼       */
+/* ================================== */
 
 /* 기록 토글 버튼 (왼쪽 하단) */
 .history-toggle-button {
@@ -115,7 +157,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 1100; /* 검색창(1000)보다 높게 설정 */
   transition: transform 0.2s;
 }
 
@@ -136,7 +178,7 @@
   height: 100%;
   background-color: white;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1002;
+  z-index: 2000; /* 최상위 */
   
   /* 기본적으로 화면 왼쪽 바깥에 숨김 */
   transform: translateX(-100%); 
@@ -195,8 +237,6 @@
   margin: 5px 0;
   font-size: 0.95em;
 }
-
-
 
 /* 사이드바 푸터 */
 .sidebar-footer {
@@ -263,4 +303,147 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 1001;
+}
+
+/* ================================== */
+/* 3. 검색 결과 리스트 스타일링       */
+/* ================================== */
+
+.search-results-list {
+  width: 100%;
+  max-width: 800px; 
+  /* [수정] 검색창과 간격 조정 */
+  margin-top: 1rem; 
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.result-item {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; 
+  border-radius: 12px; 
+  padding: 1.5rem;
+  margin-bottom: 1rem; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: left; /* 왼쪽 정렬 명시 */
+}
+
+.result-item:hover {
+  transform: translateY(-3px); 
+  box-shadow: 0 6px 15px rgba(139, 92, 246, 0.2); 
+  border-color: #8b5cf6; 
+}
+
+.result-meta {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 15px; 
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #8b5cf6; 
+  font-weight: 600;
+}
+
+.result-date, .result-place {
+  display: flex;
+  align-items: center;
+}
+
+.result-item h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937; 
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* ⭐️ 주소 정보 스타일 */
+.result-address {
+  font-size: 0.95rem;
+  color: #4b5563; 
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem; 
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.result-address::before {
+  content: '🏠'; /* 주소 아이콘 */
+  margin-right: 5px;
+}
+
+/* 결과 내용 (description) */
+.result-item p {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ================================== */
+/* 4. 상태/오류 메시지 스타일링       */
+/* ================================== */
+
+.status-message {
+  text-align: center;
+  color: #8b5cf6;
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+}
+
+.error-message {
+  text-align: center;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  max-width: 800px;
+  width: 100%;
+}
+
+.no-results-message {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* ================================== */
+/* 5. 미디어 쿼리                    */
+/* ================================== */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+
+  .search-bar {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .search-input {
+    font-size: 0.9375rem;
+  }
+
+  .search-button {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .result-item {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .result-item h3 {
+    font-size: 1.1rem;
+  }
+  
+  .result-meta {
+    font-size: 0.8rem;
+    gap: 10px;
+  }
 }

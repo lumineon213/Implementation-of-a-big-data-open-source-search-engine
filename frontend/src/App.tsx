@@ -7,21 +7,16 @@ import Home from "pages/main_Page/home";
 
 function App() {
   return (
-<>
-<Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
+          <>
+          <Header />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                </Routes>
 
-      <main style={{ paddingTop: "60px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </main>
-      <Footer />
-    </>
-  );
+          <Footer />
+              </>
+          );
 }
 
 export default App;
