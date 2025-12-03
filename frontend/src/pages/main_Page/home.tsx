@@ -3,15 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
 import Modal from '../../components/common/modal';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { GoogleGenerativeAI } from "@google/generative-ai"; // 챗봇용
-
-
-// .env 키 사용
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-// 1. 타입 정의
-// Solr 결과 데이터 타입
+// 타입 정의
 interface SolrResultItem {
   id: string;
   title: string;
@@ -23,7 +19,6 @@ interface SolrResultItem {
   [key: string]: any; 
 }
 
-// 사용자 정보 타입 (팀원 코드)
 interface User {
   accountId: string;
   accountName: string;
@@ -32,38 +27,37 @@ interface User {
   accountRole: string;
 }
 
-// Props 정의 (App.tsx에서 받아옴)
 interface HomeProps {
   searchResults: SolrResultItem[];
   setSearchResults: React.Dispatch<React.SetStateAction<SolrResultItem[]>>;
 }
 
-// 챗봇 메시지 타입
 interface ChatMessage {
   role: 'user' | 'model';
   text: string;
 }
 
+
+interface SearchLog {
+  logId: number;
+  accountId: string;
+  keyword: string;
+  searchDate: string;
+}
+
 const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
-  // --- 상태 관리 ---
-  
-  // 1) 검색 관련 (기존 유지)
+  // 기존 상태들...
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  // 2) UI 및 세션 관련 (기존 유지)
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // 세션 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    // localStorage에서 다크모드 설정 읽기
     const saved = localStorage.getItem('darkMode');
     return saved === 'true';
   });
-
-  // 3) 🤖 챗봇 관련 (새로 추가됨)
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [chatInput, setChatInput] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -72,10 +66,13 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
   const [isAiThinking, setIsAiThinking] = useState<boolean>(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  //검색 기록 추ㄱ ㅏ 
+  const [searchHistory, setSearchHistory] = useState<SearchLog[]>([]);
+
   const location = useLocation();
   const SOLR_CORE_NAME = 'Search'; 
 
-  // --- 헬퍼 함수 (기존 유지) ---
+  // 헬퍼 함수 (기존 유지)
   const formatDate = (isoDate: string): string => {
     try {
       const date = new Date(isoDate);
@@ -97,7 +94,105 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     return `${startStr} ~ ${endStr}`;
   };
 
-  // --- 세션(로그인) 관리 로직 (팀원 코드 100% 유지) ---
+  // 검색 기록 관련 함수들 
+  
+  // 검색 기록 불러오기
+  const fetchSearchHistory = async () => {
+    try {
+      console.log('검색 기록 불러오기 시도');
+      const res = await axios.get('/api/search-log', { withCredentials: true });
+      console.log('검색 기록 불러오기 성공:', res);
+      console.log('전체 응답:', JSON.stringify(res.data, null, 2));
+      console.log('데이터 타입:', Array.isArray(res.data) ? '배열' : typeof res.data);
+      console.log('데이터 길이:', Array.isArray(res.data) ? res.data.length : '배열 아님');
+      
+      // 배열인지 확인하고 설정
+      if (Array.isArray(res.data)) {
+        console.log('검색 기록 배열 설정:', res.data);
+        // 데이터 형식 확인 및 변환
+        const formattedData = res.data.map((item: any) => ({
+          logId: Number(item.logId) || item.logId,
+          accountId: item.accountId,
+          keyword: item.keyword,
+          searchDate: item.searchDate
+        }));
+        console.log('포맷팅된 데이터:', formattedData);
+        setSearchHistory(formattedData);
+        console.log('searchHistory 상태 업데이트 완료');
+      } else {
+        console.warn('응답이 배열이 아닙니다:', res.data);
+        setSearchHistory([]);
+      }
+    } catch (err: any) {
+      console.error('검색 기록 불러오기 실패:', err);
+      if (err.response) {
+        console.error('응답 상태:', err.response.status);
+        console.error('응답 데이터:', err.response.data);
+      }
+      setSearchHistory([]);
+    }
+  };
+
+  // 검색 기록 저장
+  const saveSearchLog = async (keyword: string) => {
+    try {
+      console.log('검색 기록 저장 시도:', keyword);
+      const response = await axios.post('/api/search-log', 
+        { keyword }, 
+        { withCredentials: true }
+      );
+      console.log('검색 기록 저장 성공:', response);
+      fetchSearchHistory(); // 저장 후 목록 갱신
+    } catch (err: any) {
+      console.error('검색 기록 저장 실패:', err);
+      if (err.response) {
+        console.error('응답 상태:', err.response.status);
+        console.error('응답 데이터:', err.response.data);
+      }
+    }
+  };
+
+  // 검색 기록 개별 삭제
+  const deleteSearchLog = async (logId: number) => {
+    try {
+      console.log('검색 기록 삭제 시도:', logId);
+      console.log('logId 타입:', typeof logId);
+      console.log('logId 값:', logId);
+      
+      const response = await axios.delete(`/api/search-log/${logId}`, { 
+        withCredentials: true 
+      });
+      console.log('검색 기록 삭제 성공:', response);
+      console.log('삭제 후 목록 갱신 시작');
+      await fetchSearchHistory();
+      console.log('목록 갱신 완료');
+    } catch (err: any) {
+      console.error('삭제 실패:', err);
+      if (err.response) {
+        console.error('응답 상태:', err.response.status);
+        console.error('응답 데이터:', err.response.data);
+        console.error('응답 헤더:', err.response.headers);
+      }
+      if (err.request) {
+        console.error('요청 정보:', err.request);
+      }
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 검색 기록 전체 삭제
+  const clearAllSearchLogs = async () => {
+    if (!confirm('모든 검색 기록을 삭제하시겠습니까?')) return;
+    
+    try {
+      await axios.delete('/api/search-log/all', { withCredentials: true });
+      fetchSearchHistory();
+    } catch (err) {
+      console.error('전체 삭제 실패:', err);
+    }
+  };
+
+  // 세션 체크 (기존 유지)
   const checkSession = async () => {
     try {
       const res = await axios.get("/api/login/check", { withCredentials: true });
@@ -114,6 +209,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     }
   };
 
+  // useEffect들
   useEffect(() => {
     checkSession();
     const handleLoginSuccess = () => setTimeout(() => checkSession(), 100);
@@ -130,51 +226,49 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     checkSession();
   }, [location.pathname]);
 
-  // 다크모드 적용
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
     } else {
       document.body.classList.remove('dark-mode');
     }
-    // localStorage에 저장
     localStorage.setItem('darkMode', String(isDarkMode));
   }, [isDarkMode]);
 
-  // 컴포넌트 마운트 시 다크모드 적용
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
     }
   }, []);
-  // 챗봇 자동 스크롤 (새로 추가됨)
+
+  //로그인 시 검색 기록 불러오기
+  useEffect(() => {
+    console.log('user 상태 변경:', user);
+    if (user) {
+      console.log('사용자 로그인됨, 검색 기록 불러오기 시작 - accountId:', user.accountId);
+      fetchSearchHistory();
+    } else {
+      console.log('사용자 로그아웃됨, 검색 기록 초기화');
+      setSearchHistory([]); // 로그아웃 시 기록 초기화
+    }
+  }, [user]);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isChatOpen]);
 
-
-  // --- 이벤트 핸들러 ---
+  // 이벤트 핸들러
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
-  const toggleChat = () => setIsChatOpen(prev => !prev); // 챗봇 토글
+  const toggleChat = () => setIsChatOpen(prev => !prev);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
-  };
-
-  // Solr 검색 요청
-  // Solr 검색 요청 (기존 유지)
+  //Solr 검색 요청 (검색 기록 저장 추가)
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -194,6 +288,18 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
       const response = await axios.get(url);
       setSearchResults(response.data.response.docs); 
 
+      //검색 성공 시 기록 저장 (로그인 상태일 때만)
+      if (user) {
+        console.log('사용자 로그인 상태 확인, 검색 기록 저장 시작');
+        await saveSearchLog(searchQuery);
+        // 저장 후 즉시 목록 갱신
+        setTimeout(() => {
+          fetchSearchHistory();
+        }, 300);
+      } else {
+        console.log('사용자 미로그인 상태, 검색 기록 저장 안 함');
+      }
+
     } catch (err) {
       console.error('검색 실패:', err);
       setError('검색 중 오류가 발생했습니다.');
@@ -202,7 +308,30 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     }
   };
 
-  // 🤖 챗봇 전송 로직 (새로 추가됨 - RAG)
+  //검색 기록 클릭 시 재검색
+  const handleHistoryClick = async (keyword: string) => {
+    setSearchQuery(keyword);
+    setError(null);
+    setSearchResults([]);
+    setLoading(true);
+
+    try {
+      const flFields = 'id,title,description,start_date,end_date,place,address';
+      const query = `q=${encodeURIComponent(keyword)}&defType=edismax&qf=title^3+place+description&rows=10&wt=json&fl=${flFields}`;
+      const url = `/solr/${SOLR_CORE_NAME}/select?${query}`;
+      
+      const response = await axios.get(url);
+      setSearchResults(response.data.response.docs);
+
+    } catch (err) {
+      console.error('검색 실패:', err);
+      setError('검색 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 챗봇 전송 로직 (기존 유지)
   const handleSendChat = async (e?: FormEvent) => {
     e?.preventDefault();
     if (!chatInput.trim()) return;
@@ -213,7 +342,6 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     setIsAiThinking(true);
 
     try {
-      // 1. Solr RAG 검색 (챗봇이 참고할 정보 찾기)
       const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=3&wt=json`;
       const solrUrl = `/solr/${SOLR_CORE_NAME}/select?${solrQuery}`;
       
@@ -232,7 +360,6 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         console.error("챗봇 검색 실패:", err);
       }
 
-      // 2. Gemini 호출
       if (!API_KEY) throw new Error("API Key가 없습니다.");
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -256,7 +383,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
 
   return (
     <>
-      {/* 1. 메인 화면 (기존 유지) */}
+      {/* 메인 화면 */}
       <div className={`home-container ${searchResults.length > 0 ? 'results-mode' : ''}`}>
         <h1 className="home-title">KH.Solr AI 검색</h1>
         
@@ -276,7 +403,6 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
           {error && <p className="error-message">{error}</p>}
         </form>
 
-        {/* 검색 결과 리스트 */}
         <div className="search-results-list">
           {searchResults.length > 0 ? (
             searchResults.map((result, index) => (
@@ -300,7 +426,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         </div>
       </div>
 
-      {/* 2. 사이드바 (팀원 코드 100% 유지) */}
+      {/*사이드바 (검색 기록 표시) */}
       <button className='history-toggle-button' onClick={toggleSidebar}>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="book-icon">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -313,9 +439,62 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
           <div className="sidebar-logo">KH.solr</div>
           <button className="close-sidebar-button" onClick={toggleSidebar}>&times;</button>
         </div>
+        
+        {/*검색 기록 영역 */}
         <div className="sidebar-content">
-          <div className="no-history"><p>아직 기록이 없어요.</p><p>새로운 검색을 해보세요.</p></div>
+          {(() => {
+            const hasUser = !!user;
+            const hasHistory = searchHistory && searchHistory.length > 0;
+            console.log('사이드바 렌더링:', { hasUser, hasHistory, historyLength: searchHistory?.length, history: searchHistory });
+            
+            if (hasUser && hasHistory) {
+              return (
+                <div className="search-history-list">
+                  <div className="history-header">
+                    <h3>최근 검색어</h3>
+                    <button className="clear-all-btn" onClick={clearAllSearchLogs}>
+                      전체 삭제
+                    </button>
+                  </div>
+                  {searchHistory.map((log, index) => {
+                    const logId = log.logId || index;
+                    console.log('검색 기록 렌더링:', { logId, keyword: log.keyword, log, originalLogId: log.logId });
+                    return (
+                      <div key={logId} className="history-item">
+                        <span 
+                          className="history-keyword" 
+                          onClick={() => handleHistoryClick(log.keyword)}
+                        >
+                          🔍 {log.keyword}
+                        </span>
+                        <button 
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('삭제 버튼 클릭:', { logId, originalLogId: log.logId, log });
+                            deleteSearchLog(Number(log.logId || logId));
+                          }}
+                          title="삭제"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            } else {
+              return (
+                <div className="no-history">
+                  <p>아직 기록이 없어요.</p>
+                  <p>새로운 검색을 해보세요.</p>
+                </div>
+              );
+            }
+          })()}
         </div>
+
         <div className="sidebar-footer">
           {!isLoading && user ? (
             <div className="footer-actions">
@@ -343,14 +522,14 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
       </div>
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
 
-      {/* 모달 */}
       <Modal 
         isOpen={isModalOpen} 
         onClose={closeModal}
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
       />
-      {/* 3. 챗봇 UI (새로 추가됨) */}
+
+      {/* 챗봇 UI */}
       <button className="chat-toggle-button" onClick={toggleChat}>
         💬
       </button>
