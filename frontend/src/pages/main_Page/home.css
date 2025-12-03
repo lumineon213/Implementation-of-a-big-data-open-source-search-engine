@@ -6,8 +6,7 @@
   position: relative;
   width: 100%;
   
-  /* [수정 1] 스크롤 시 배경 잘림 방지 */
-  /* height: 100vh; -> min-height: 100vh로 변경 */
+  /* [수정] 스크롤 시 배경 잘림 방지 */
   min-height: 100vh; 
   
   display: flex;
@@ -19,11 +18,11 @@
   padding-bottom: 8rem;
   box-sizing: border-box;
   
-  /* 배경색 (필요시 수정) */
+  /* 배경색 (팀원 코드 유지) */
   background-color: #f8f9fa; 
 }
 
-/* [추가] 검색 결과가 있을 때 레이아웃 변경 (JS에서 클래스 추가 필요) */
+/* [추가] 검색 결과가 있을 때 레이아웃 변경 (JS에서 클래스 추가 시 동작) */
 .home-container.results-mode {
   justify-content: flex-start; /* 위쪽 정렬로 변경 */
   padding-top: 60px;           /* 상단 여백 확보 */
@@ -35,19 +34,17 @@
   margin-bottom: 2rem;
   font-size: 2rem;
   color: #333;
-  
-  /* [추가] 검색 시 타이틀 자연스럽게 줄어들기 (선택사항) */
   transition: all 0.3s ease;
 }
 
-/* 검색 시 타이틀 숨기거나 줄이기 */
+/* 검색 모드일 때 타이틀 크기 줄임 */
 .home-container.results-mode .home-title {
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
 
 .search-form {
-  /* [수정 2] 검색창 너비 고정 및 상단 고정 (Sticky) */
+  /* [수정] 검색창 너비 고정 및 상단 고정 (Sticky) */
   width: 100%;
   max-width: 800px;
   
@@ -58,7 +55,7 @@
   position: sticky;
   top: 0;
   
-  /* [중요] 검색 결과보다 위에 보이도록 설정 (사라짐 방지) */
+  /* [중요] 검색 결과보다 위에 보이도록 설정 */
   z-index: 1000; 
   
   padding: 1rem 0; /* 위아래 여백 */
@@ -80,7 +77,7 @@
   display: flex;
   align-items: center;
   
-  /* [수정 3] 너비 강제 지정 (줄어듦 방지) */
+  /* [수정] 너비 강제 지정 */
   width: 100%;
   box-sizing: border-box;
   
@@ -110,8 +107,6 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-    
-  /* 입력창 너비 확보 */
   min-width: 0; 
 }
 
@@ -157,7 +152,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1100; /* 검색창(1000)보다 높게 설정 */
+  
+  /* [중요] 검색창(1000)보다 높아야 함 */
+  z-index: 1100; 
   transition: transform 0.2s;
 }
 
@@ -178,22 +175,20 @@
   height: 100%;
   background-color: white;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2000; /* 최상위 */
   
-  /* 기본적으로 화면 왼쪽 바깥에 숨김 */
+  /* [중요] 모든 요소 중 최상위 */
+  z-index: 2000; 
+  
   transform: translateX(-100%); 
   transition: transform 0.3s ease-out;
-
   display: flex;
   flex-direction: column;
 }
 
-/* 사이드바가 열렸을 때 */
 .search-history-sidebar.is-open {
   transform: translateX(0);
 }
 
-/* 사이드바 헤더 */
 .sidebar-header {
   padding: 15px 20px;
   display: flex;
@@ -222,7 +217,6 @@
   color: #333;
 }
 
-/* 기록 내용 */
 .sidebar-content {
   flex-grow: 1;
   display: flex;
@@ -238,7 +232,6 @@
   font-size: 0.95em;
 }
 
-/* 사이드바 푸터 */
 .sidebar-footer {
   padding: 15px 20px;
   border-top: 1px solid #eee;
@@ -302,7 +295,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1001;
+  z-index: 1001; /* 사이드바 바로 아래 */
 }
 
 /* ================================== */
@@ -312,7 +305,6 @@
 .search-results-list {
   width: 100%;
   max-width: 800px; 
-  /* [수정] 검색창과 간격 조정 */
   margin-top: 1rem; 
   padding: 0 1rem;
   box-sizing: border-box;
@@ -326,7 +318,7 @@
   margin-bottom: 1rem; 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
-  text-align: left; /* 왼쪽 정렬 명시 */
+  text-align: left;
 }
 
 .result-item:hover {
@@ -358,7 +350,7 @@
   margin-bottom: 0.5rem;
 }
 
-/* ⭐️ 주소 정보 스타일 */
+/* 주소 정보 스타일 */
 .result-address {
   font-size: 0.95rem;
   color: #4b5563; 
@@ -374,7 +366,6 @@
   margin-right: 5px;
 }
 
-/* 결과 내용 (description) */
 .result-item p {
   font-size: 1rem;
   color: #4b5563;
@@ -413,7 +404,7 @@
 }
 
 /* ================================== */
-/* 5. 미디어 쿼리                    */
+/* 5. 미디어 쿼리 (모바일 대응)       */
 /* ================================== */
 @media (max-width: 768px) {
   .home-container {
