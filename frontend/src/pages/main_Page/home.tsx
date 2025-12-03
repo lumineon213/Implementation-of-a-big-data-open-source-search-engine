@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import './home.css';
+import Modal from '../../components/common/modal';
+
 import { GoogleGenerativeAI } from "@google/generative-ai"; // 챗봇용
-import './Home.css';
+
 
 // .env 키 사용
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -51,7 +54,14 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
 
   // 2) UI 및 세션 관련 (기존 유지)
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 세션 로딩 상태
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    // localStorage에서 다크모드 설정 읽기
+    const saved = localStorage.getItem('darkMode');
+    return saved === 'true';
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // 3) 🤖 챗봇 관련 (새로 추가됨)
@@ -121,6 +131,23 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     checkSession();
   }, [location.pathname]);
 
+  // 다크모드 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    // localStorage에 저장
+    localStorage.setItem('darkMode', String(isDarkMode));
+  }, [isDarkMode]);
+
+  // 컴포넌트 마운트 시 다크모드 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+  }, []);
   // 챗봇 자동 스크롤 (새로 추가됨)
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -135,6 +162,19 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
   const toggleChat = () => setIsChatOpen(prev => !prev); // 챗봇 토글
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => !prev);
+  };
+
+  // Solr 검색 요청
   // Solr 검색 요청 (기존 유지)
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -280,6 +320,11 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         <div className="sidebar-footer">
           {!isLoading && user ? (
             <div className="footer-actions">
+              <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>
+                {user.accountName}님 환영합니다 👋
+              </div>
+              <button className="settings-button" onClick={openModal}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
               <div className="sync-prompt" style={{ flexGrow: 1, fontWeight: 'bold' }}>{user.accountName}님 환영합니다 👋</div>
               <button className="settings-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -289,6 +334,11 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
             <>
               <div className="sync-prompt">로그인하고 기록을 동기화 해보세요</div>
               <div className="footer-actions">
+                <Link to="/login" className="login-button">
+                  로그인
+                </Link>
+                <button className="settings-button" onClick={openModal}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.74a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <Link to="/login" className="login-button">로그인</Link>
                 <button className="settings-button">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.74a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.74a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.74a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -300,6 +350,13 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
       </div>
       {isSidebarOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
 
+      {/* 모달 */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={closeModal}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+      />
       {/* 3. 챗봇 UI (새로 추가됨) */}
       <button className="chat-toggle-button" onClick={toggleChat}>
         💬

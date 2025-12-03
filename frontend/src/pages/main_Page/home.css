@@ -1,6 +1,5 @@
-/* ================================== */
+
 /* 1. 메인 레이아웃 및 검색창 스타일  */
-/* ================================== */
 
 .home-container {
   position: relative;
@@ -18,8 +17,14 @@
   padding-bottom: 8rem;
   box-sizing: border-box;
   
-  /* 배경색 (팀원 코드 유지) */
+    /* 배경색 (팀원 코드 유지) */
   background-color: #f8f9fa; 
+  transition: background-color 0.3s ease;
+}
+
+/* 다크모드 */
+body.dark-mode .home-container {
+  background-color: #1a1a1a;
 }
 
 /* [추가] 검색 결과가 있을 때 레이아웃 변경 (JS에서 클래스 추가 시 동작) */
@@ -35,6 +40,10 @@
   font-size: 2rem;
   color: #333;
   transition: all 0.3s ease;
+}
+
+body.dark-mode .home-title {
+  color: #e0e0e0;
 }
 
 /* 검색 모드일 때 타이틀 크기 줄임 */
@@ -58,6 +67,11 @@
   /* 스크롤 될 때 글자가 뒤에 비치지 않도록 배경 추가 */
   background-color: rgba(248, 249, 250, 0.95); 
   backdrop-filter: blur(5px);
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .search-form {
+  background-color: rgba(26, 26, 26, 0.95);
 }
 
 .search-container {
@@ -82,6 +96,12 @@
   padding: 0.75rem 1rem;
   gap: 0.75rem;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .search-bar {
+  background-color: #2a2a2a;
+  border-color: #9b7af5;
 }
 
 .search-icon {
@@ -103,10 +123,19 @@
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   min-width: 0; 
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .search-input {
+  color: #e0e0e0;
 }
 
 .search-input::placeholder {
   color: #9ca3af;
+}
+
+body.dark-mode .search-input::placeholder {
+  color: #666;
 }
 
 .search-button {
@@ -128,9 +157,8 @@
 }
 
 
-/* ================================== */
 /* 2. 사이드바 및 히스토리 버튼       */
-/* ================================== */
+
 
 /* 기록 토글 버튼 (왼쪽 하단) */
 .history-toggle-button {
@@ -150,7 +178,12 @@
   
   /* [중요] 검색창(1000)보다 높아야 함 */
   z-index: 1100; 
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .history-toggle-button {
+  background-color: #2a2a2a;
+  border-color: #444;
 }
 
 .history-toggle-button:hover {
@@ -159,6 +192,11 @@
 
 .book-icon {
   color: #4a4a4a;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .book-icon {
+  color: #e0e0e0;
 }
 
 /* 검색 기록 사이드바 - 왼쪽에서 슬라이드 */
@@ -175,9 +213,14 @@
   z-index: 2000; 
   
   transform: translateX(-100%); 
-  transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out, background-color 0.3s ease;
   display: flex;
   flex-direction: column;
+}
+
+body.dark-mode .search-history-sidebar {
+  background-color: #1e1e1e;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .search-history-sidebar.is-open {
@@ -190,12 +233,22 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eee;
+  transition: border-color 0.3s ease;
+}
+
+body.dark-mode .sidebar-header {
+  border-bottom-color: #333;
 }
 
 .sidebar-logo {
   font-size: 1.2em;
   font-weight: bold;
   color: #4a4a4a;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .sidebar-logo {
+  color: #e0e0e0;
 }
 
 .close-sidebar-button {
@@ -208,8 +261,16 @@
   transition: color 0.2s;
 }
 
+body.dark-mode .close-sidebar-button {
+  color: #666;
+}
+
 .close-sidebar-button:hover {
   color: #333;
+}
+
+body.dark-mode .close-sidebar-button:hover {
+  color: #e0e0e0;
 }
 
 .sidebar-content {
@@ -220,6 +281,11 @@
   text-align: center;
   color: #888;
   padding: 20px;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .sidebar-content {
+  color: #999;
 }
 
 .no-history p {
@@ -231,6 +297,12 @@
   padding: 15px 20px;
   border-top: 1px solid #eee;
   background-color: #f9f9f9;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .sidebar-footer {
+  background-color: #252525;
+  border-top-color: #333;
 }
 
 .sync-prompt {
@@ -238,6 +310,11 @@
   color: #666;
   text-align: center;
   flex: 1;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .sync-prompt {
+  color: #999;
 }
 
 .footer-actions {
@@ -275,11 +352,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, border-color 0.3s ease;
+}
+
+body.dark-mode .settings-button {
+  background-color: #2a2a2a;
+  border-color: #444;
 }
 
 .settings-button:hover {
   background-color: #f5f5f5;
+}
+
+body.dark-mode .settings-button:hover {
+  background-color: #333;
 }
 
 /* 사이드바 외부 클릭 시 닫히는 오버레이 */
@@ -293,9 +379,9 @@
   z-index: 1001; /* 사이드바 바로 아래 */
 }
 
-/* ================================== */
+
 /* 3. 검색 결과 리스트 스타일링       */
-/* ================================== */
+
 
 .search-results-list {
   width: 100%;
@@ -312,14 +398,25 @@
   padding: 1.5rem;
   margin-bottom: 1rem; 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
   text-align: left;
+}
+
+body.dark-mode .result-item {
+  background-color: #2a2a2a;
+  border-color: #444;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .result-item:hover {
   transform: translateY(-3px); 
   box-shadow: 0 6px 15px rgba(139, 92, 246, 0.2); 
   border-color: #8b5cf6; 
+}
+
+body.dark-mode .result-item:hover {
+  box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
+  border-color: #9b7af5;
 }
 
 .result-meta {
@@ -343,6 +440,11 @@
   color: #1f2937; 
   margin: 0;
   margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .result-item h3 {
+  color: #e0e0e0;
 }
 
 /* 주소 정보 스타일 */
@@ -366,11 +468,16 @@
   color: #4b5563;
   margin: 0;
   line-height: 1.5;
+  transition: color 0.3s ease;
 }
 
-/* ================================== */
+body.dark-mode .result-item p {
+  color: #b0b0b0;
+}
+
+
 /* 4. 상태/오류 메시지 스타일링       */
-/* ================================== */
+
 
 .status-message {
   text-align: center;
@@ -396,11 +503,15 @@
   color: #9ca3af;
   font-size: 1rem;
   margin-top: 1.5rem;
+  transition: color 0.3s ease;
 }
 
-/* ================================== */
+body.dark-mode .no-results-message {
+  color: #666;
+}
+
 /* 5. 미디어 쿼리 (모바일 대응)       */
-/* ================================== */
+
 @media (max-width: 768px) {
   .home-container {
     padding: 1rem;
