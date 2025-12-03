@@ -85,9 +85,9 @@ const Header: React.FC = () => {
     <header className="header">
   
       <Link to="/" className="logo">
-        <div className="logo-circle"></div>
-        <span className="logo-text">KH.Solr</span>
-      </Link>
+        <div className="logo-circle"></div>
+        <span className="logo-text">KH.Solr</span>
+      </Link>
 
       <div className="header-right">
         {!isLoading && user && (
@@ -95,9 +95,9 @@ const Header: React.FC = () => {
             {user.accountName}님 환영합니다
           </div>
         )}
-        <button className="btn-dropdown" onClick={toggleDropdown}>
-          =
-        </button>
+      <button className="btn-dropdown" onClick={toggleDropdown}>
+        =
+      </button>
       </div>
 
     
@@ -110,13 +110,13 @@ const Header: React.FC = () => {
               </div>
             </>
           ) : (
-            <Link
-              to="/login"
-              className="dropdown-item"
-              onClick={() => setIsDropDownOpen(false)}
-            >
-              로그인
-            </Link>
+          <Link
+            to="/login"
+            className="dropdown-item"
+            onClick={() => setIsDropDownOpen(false)}
+          >
+            로그인
+          </Link>
           )}
 
           {/* <Link

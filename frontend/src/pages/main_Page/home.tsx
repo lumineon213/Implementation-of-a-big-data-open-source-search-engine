@@ -4,11 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
 import Modal from '../../components/common/modal';
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import ReactMarkdown from 'react-markdown'; 
-
-// .env 키 사용
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+import AIChatBot from '../chatbot/chatbot'; // 챗봇 컴포넌트 경로 확인 필요
 
 // 타입 정의
 interface SolrResultItem {
@@ -31,6 +27,12 @@ interface FavoriteItem {
   type: string;
 }
 
+interface SearchLog {
+  logId: number;
+  keyword: string;
+  date: string;
+}
+
 interface User {
   accountId: string;
   accountName: string;
@@ -39,12 +41,6 @@ interface User {
   accountRole: string;
 }
 
-interface ChatMessage {
-  role: 'user' | 'model';
-  text: string;
-}
-
-// Props 정의
 interface HomeProps {
   searchResults: SolrResultItem[];
   setSearchResults: React.Dispatch<React.SetStateAction<SolrResultItem[]>>;
@@ -63,24 +59,19 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
 
   // UI & 세션
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'favorites' | 'history'>('history'); // 👈 기본값 'history'로 변경!
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   
+  // 데이터 상태 (즐겨찾기 & 검색기록)
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  const [searchHistory, setSearchHistory] = useState<SearchLog[]>([]); // 검색 기록 상태 추가
+
   // 다크모드
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
-
-  // 챗봇
-  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-  const [chatInput, setChatInput] = useState<string>('');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: '안녕하세요! 축제에 대해 궁금한 점을 물어보세요. 🎪' }
-  ]);
-  const [isAiThinking, setIsAiThinking] = useState<boolean>(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // --- 헬퍼 함수 ---
   const formatDate = (isoDate: string): string => {
@@ -112,12 +103,29 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         type: 'TRAVEL'
       };
       setFavorites(prev => [...prev, newFav]);
+      // 찜하면 탭을 즐겨찾기로 바꾸고 사이드바 열기 (선택사항)
+      setActiveTab('favorites');
       if(!isSidebarOpen) setIsSidebarOpen(true);
     }
   };
 
   const isFavorite = (item: SolrResultItem) => {
     return favorites.some(f => f.id === item.id);
+  };
+
+  // --- 검색 기록 로직 ---
+  const addSearchLog = (keyword: string) => {
+    // 중복 제거 후 최신 검색어를 위로
+    const newLog: SearchLog = { logId: Date.now(), keyword, date: new Date().toLocaleDateString() };
+    setSearchHistory(prev => [newLog, ...prev.filter(log => log.keyword !== keyword)].slice(0, 20)); // 최대 20개
+  };
+
+  const deleteSearchLog = (logId: number) => {
+    setSearchHistory(prev => prev.filter(log => log.logId !== logId));
+  };
+
+  const clearAllSearchLogs = () => {
+    setSearchHistory([]);
   };
 
   // --- 세션 체크 ---
@@ -155,25 +163,24 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     localStorage.setItem('darkMode', String(isDarkMode));
   }, [isDarkMode]);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isChatOpen]);
-
   // --- 핸들러 ---
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value);
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
-  const toggleChat = () => setIsChatOpen(prev => !prev);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
-  // 검색
+  // 검색 실행
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
       alert('검색어를 입력해 주세요.');
       return;
     }
+    
+    // 검색 기록 추가
+    addSearchLog(searchQuery);
+    
     setLoading(true);
     setIsSearched(true);
 
@@ -192,59 +199,13 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
     }
   };
 
-  // 챗봇 (RAG)
-  const handleSendChat = async (e?: FormEvent) => {
-    e?.preventDefault();
-    if (!chatInput.trim()) return;
-
-    const userMsg = chatInput;
-    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
-    setChatInput('');
-    setIsAiThinking(true);
-
-    try {
-      const solrQuery = `q=${encodeURIComponent(userMsg)}&defType=edismax&qf=title^3+description&rows=5&wt=json`;
-      const solrUrl = `/solr/${SOLR_CORE_NAME}/select?${solrQuery}`;
-      
-      let contextText = "";
-      let totalFound = 0;
-
-      try {
-        const response = await axios.get(solrUrl);
-        const docs = response.data.response.docs;
-        totalFound = response.data.response.numFound;
-
-        if (docs.length > 0) {
-          contextText = JSON.stringify(docs.map((d: any) => ({
-            축제명: d.title, 장소: d.place, 설명: d.description
-          })));
-        }
-      } catch (err) { console.error(err); }
-
-      if (!API_KEY) throw new Error("API Key가 없습니다.");
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-      const prompt = `
-        너는 한국 축제 전문가 AI야.
-        [검색된 전체 데이터 개수]: ${totalFound}
-        [제공된 정보]: ${contextText || "정보 없음"}
-        [질문]: ${userMsg}
-        
-        위 정보를 바탕으로 답변해줘.
-        만약 [검색된 전체 데이터 개수]가 제공된 정보보다 많다면, 답변 끝에 
-        "> 💡 리스트가 많아 간략하게 소개해드렸습니다. 자세한 내용은 검색창을 이용해주세요." 
-        라는 문구를 줄바꿈 후 추가해줘.
-      `;
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      setMessages(prev => [...prev, { role: 'model', text: response.text() }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "오류가 발생했습니다." }]);
-    } finally {
-      setIsAiThinking(false);
-    }
+  // 검색 기록 클릭 시 재검색
+  const handleHistoryClick = (keyword: string) => {
+    setSearchQuery(keyword);
+    // 폼 제출과 동일한 로직 실행을 위해 별도 함수로 빼거나, 여기서 바로 axios 호출해도 됨.
+    // 편의상 폼 제출 버튼을 클릭하게 하거나 상태 업데이트 후 useEffect로 처리할 수도 있지만,
+    // 여기서는 간단히 검색어 세팅만 하고 사용자에게 검색 버튼을 누르게 하거나
+    // 아래처럼 바로 검색 로직을 수행할 수도 있습니다.
   };
 
   return (
@@ -255,12 +216,7 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         <form className="search-form" onSubmit={handleSubmit}>
           <div className="search-container">
             <div className="search-bar">
-              
-              {/* ▼▼▼ [수정됨] 초록색 동그라미(div)는 남기고, 내부 아이콘(Search)만 삭제함 ▼▼▼ */}
-              <div className="search-icon">
-                 {/* <Search size={20} />  <-- 돋보기 삭제됨! */}
-              </div> 
-              
+              <div className="search-icon"></div> 
               <input type="text" className="search-input" placeholder="가장 빠른 AI 검색" value={searchQuery} onChange={handleInputChange} />
               <button type="submit" className="search-button" disabled={loading}>
                 <Search size={16} color="white" />
@@ -278,7 +234,6 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
               searchResults.map((result, index) => (
                 <div key={result.id || index} className="result-item" onClick={() => navigate(`/detail/${result.id}`)} style={{ cursor: 'pointer', position: 'relative' }}>
                   
-                  {/* 즐겨찾기 버튼 */}
                   <button onClick={(e) => { e.stopPropagation(); toggleFavorite(result); }} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', zIndex: 10 }}>
                     <Heart size={24} fill={isFavorite(result) ? "#ef4444" : "none"} color={isFavorite(result) ? "#ef4444" : "#ccc"} />
                   </button>
@@ -299,35 +254,102 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
         )}
       </div>
 
-      {/* 사이드바 */}
+      {/* 사이드바 토글 */}
       <button className='history-toggle-button' onClick={toggleSidebar}>
         <BookOpen size={24} color="#4a4a4a" />
       </button>
 
+      {/* 사이드바 본체 */}
       <div className={`search-history-sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
+        
         <div className="sidebar-header">
-          <div className="sidebar-logo">KH.solr {favorites.length > 0 && <span style={{fontSize:'0.8em', marginLeft:'5px'}}>({favorites.length})</span>}</div>
+          <div className="sidebar-logo">KH.solr</div>
           <button className="close-sidebar-button" onClick={toggleSidebar}><X size={24} /></button>
         </div>
+
+        {/* 탭 메뉴 */}
+        <div className="sidebar-tabs" style={{ display: 'flex', borderBottom: '1px solid #eee' }}>
+          <button 
+            onClick={() => setActiveTab('history')}
+            style={{ 
+              flex: 1, padding: '10px', background: 'none', border: 'none', cursor: 'pointer',
+              fontWeight: activeTab === 'history' ? 'bold' : 'normal',
+              color: activeTab === 'history' ? '#8b5cf6' : '#666',
+              borderBottom: activeTab === 'history' ? '2px solid #8b5cf6' : 'none'
+            }}
+          >
+            최근검색 ({searchHistory.length})
+          </button>
+          <button 
+            onClick={() => setActiveTab('favorites')}
+            style={{ 
+              flex: 1, padding: '10px', background: 'none', border: 'none', cursor: 'pointer',
+              fontWeight: activeTab === 'favorites' ? 'bold' : 'normal',
+              color: activeTab === 'favorites' ? '#8b5cf6' : '#666',
+              borderBottom: activeTab === 'favorites' ? '2px solid #8b5cf6' : 'none'
+            }}
+          >
+            즐겨찾기 ({favorites.length})
+          </button>
+        </div>
         
-        <div className="sidebar-content" style={{ display: 'block', overflowY: 'auto', textAlign: 'left', padding: '0' }}>
-          {favorites.length === 0 ? (
-            <div className="no-history" style={{ textAlign: 'center', marginTop: '50px', padding: '20px' }}>
-              <Heart size={40} style={{ color: '#ddd', marginBottom: '10px' }} />
-              <p style={{color:'#999'}}>관심있는 정보를<br/>담아보세요.</p>
-            </div>
-          ) : (
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {favorites.map((fav) => (
-                <li key={fav.fav_id} style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ flex: 1, marginRight: '10px' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }} onClick={() => navigate(`/detail/${fav.id}`)}>{fav.title}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>{fav.date}</div>
+        <div className="sidebar-content" style={{ display: 'block', overflowY: 'auto', textAlign: 'left', padding: '0', flex: 1 }}>
+          
+          {/* 탭 1: 검색 기록 */}
+          {activeTab === 'history' && (
+            searchHistory.length === 0 ? (
+              <div className="no-history" style={{ textAlign: 'center', marginTop: '50px', padding: '20px' }}>
+                <Search size={40} style={{ color: '#ddd', marginBottom: '10px' }} />
+                <p style={{color:'#999'}}>최근 검색 기록이<br/>없습니다.</p>
+              </div>
+            ) : (
+              <div className="search-history-list">
+                <div className="history-header" style={{padding: '10px 15px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#f9f9f9'}}>
+                  <span style={{fontSize:'0.85rem', color:'#666'}}>전체 삭제</span>
+                  <button onClick={clearAllSearchLogs} style={{background:'none', border:'none', fontSize:'0.8rem', color:'#999', cursor:'pointer'}}><Trash2 size={14}/></button>
+                </div>
+                {searchHistory.map((log) => (
+                  <div key={log.logId} className="history-item" style={{ padding: '12px 15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span 
+                      className="history-keyword" 
+                      onClick={() => handleHistoryClick(log.keyword)}
+                      style={{ cursor: 'pointer', flex: 1 }}
+                    >
+                      🔍 {log.keyword}
+                    </span>
+                    <button 
+                      className="delete-btn"
+                      onClick={(e) => { e.stopPropagation(); deleteSearchLog(log.logId); }}
+                      style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer' }}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <button onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}><Trash2 size={18} /></button>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            )
+          )}
+
+          {/* 탭 2: 즐겨찾기 목록 */}
+          {activeTab === 'favorites' && (
+            favorites.length === 0 ? (
+              <div className="no-history" style={{ textAlign: 'center', marginTop: '50px', padding: '20px' }}>
+                <Heart size={40} style={{ color: '#ddd', marginBottom: '10px' }} />
+                <p style={{color:'#999'}}>관심있는 정보를<br/>담아보세요.</p>
+              </div>
+            ) : (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {favorites.map((fav) => (
+                  <li key={fav.fav_id} style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ flex: 1, marginRight: '10px' }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }} onClick={() => navigate(`/detail/${fav.id}`)}>{fav.title}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>{fav.date}</div>
+                    </div>
+                    <button onClick={() => setFavorites(prev => prev.filter(f => f.fav_id !== fav.fav_id))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}><Trash2 size={18} /></button>
+                  </li>
+                ))}
+              </ul>
+            )
           )}
         </div>
 
@@ -353,29 +375,8 @@ const Home: React.FC<HomeProps> = ({ searchResults, setSearchResults }) => {
 
       <Modal isOpen={isModalOpen} onClose={closeModal} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
-      {/* 챗봇 */}
-      <button className="chat-toggle-button" onClick={toggleChat}>💬</button>
-      {isChatOpen && (
-        <div className="chat-window">
-          <div className="chat-header">
-            <span>축제 AI 도우미</span>
-            <button onClick={toggleChat}><X size={20} color="white"/></button>
-          </div>
-          <div className="chat-messages">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`message ${msg.role}`}>
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
-              </div>
-            ))}
-            {isAiThinking && <div className="message thinking">답변 생성 중...</div>}
-            <div ref={chatEndRef} />
-          </div>
-          <form className="chat-input-area" onSubmit={handleSendChat}>
-            <input type="text" placeholder="질문을 입력하세요..." value={chatInput} onChange={(e) => setChatInput(e.target.value)} />
-            <button type="submit">전송</button>
-          </form>
-        </div>
-      )}
+      {/* 챗봇 컴포넌트 */}
+      <AIChatBot searchResults={searchResults} /> 
     </>
   );
 };

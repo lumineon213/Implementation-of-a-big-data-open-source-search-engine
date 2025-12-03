@@ -276,11 +276,9 @@ body.dark-mode .close-sidebar-button:hover {
 .sidebar-content {
   flex-grow: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #888;
+  flex-direction: column;
   padding: 20px;
+  overflow-y: auto;
   transition: color 0.3s ease;
 }
 
@@ -288,9 +286,153 @@ body.dark-mode .sidebar-content {
   color: #999;
 }
 
+.no-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #888;
+  flex-grow: 1;
+}
+
+body.dark-mode .no-history {
+  color: #999;
+}
+
 .no-history p {
   margin: 5px 0;
   font-size: 0.95em;
+}
+
+/* 검색 기록 리스트 */
+.search-history-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+body.dark-mode .history-header {
+  border-bottom-color: #333;
+}
+
+.history-header h3 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #333;
+}
+
+body.dark-mode .history-header h3 {
+  color: #e0e0e0;
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  color: #9333ea;
+  font-size: 0.85em;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+body.dark-mode .clear-all-btn {
+  color: #a78bfa;
+}
+
+.clear-all-btn:hover {
+  background-color: #f3f4f6;
+  color: #7e22ce;
+}
+
+body.dark-mode .clear-all-btn:hover {
+  background-color: #333;
+  color: #c084fc;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+body.dark-mode .history-item {
+  background-color: #2a2a2a;
+}
+
+.history-item:hover {
+  background-color: #f3f4f6;
+}
+
+body.dark-mode .history-item:hover {
+  background-color: #333;
+}
+
+.history-keyword {
+  flex: 1;
+  cursor: pointer;
+  color: #333;
+  font-size: 0.95em;
+  transition: color 0.2s;
+}
+
+body.dark-mode .history-keyword {
+  color: #e0e0e0;
+}
+
+.history-keyword:hover {
+  color: #9333ea;
+}
+
+body.dark-mode .history-keyword:hover {
+  color: #a78bfa;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+  line-height: 1;
+}
+
+body.dark-mode .delete-btn {
+  color: #666;
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+body.dark-mode .delete-btn:hover {
+  background-color: #4a1a1a;
+  color: #ef4444;
 }
 
 .sidebar-footer {

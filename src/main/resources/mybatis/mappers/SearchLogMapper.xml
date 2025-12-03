@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.search_histroy.dao.SearchLogDAO">
+
+    <!-- 검색 기록 저장 -->
+    <insert id="insertSearchLog" parameterType="com.boot.search_histroy.dto.SearchLogDTO">
+        <selectKey keyProperty="logId" resultType="long" order="BEFORE">
+            SELECT search_seq.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO search_log_tbl (log_id, account_id, keyword, search_date)
+        VALUES (#{logId}, #{accountId}, #{keyword}, SYSDATE)
+    </insert>
+
+    <!-- 최근 검색어 조회 -->
+    <select id="selectRecentSearches" resultType="com.boot.search_histroy.dto.SearchLogDTO">
+        SELECT * FROM (
+            SELECT log_id AS logId,
+                   account_id AS accountId,
+                   keyword,
+                   search_date AS searchDate
+            FROM search_log_tbl
+            WHERE account_id = #{accountId}
+            ORDER BY search_date DESC
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <!-- 개별 검색 기록 삭제 -->
+    <delete id="deleteSearchLog" parameterType="long">
+        DELETE FROM search_log_tbl
+        WHERE log_id = #{logId}
+    </delete>
+
+    <!-- 전체 검색 기록 삭제 (특정 사용자) -->
+    <delete id="deleteAllSearchLogs" parameterType="string">
+        DELETE FROM search_log_tbl
+        WHERE account_id = #{accountId}
+    </delete>
+
+</mapper>

@@ -11,6 +11,7 @@
     	<mappers>
     	
 		<mapper resource="mybatis/mappers/loginMapper.xml"/>
+		<mapper resource="mybatis/mappers/SearchLogMapper.xml"/>
 		<mapper resource="mybatis/mappers/FavoriteMapper/xml"/>
 
 
