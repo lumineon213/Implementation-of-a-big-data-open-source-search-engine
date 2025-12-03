@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.mypage.dao.MyPageDAO">
+
+    <!-- 마이페이지 정보 조회 -->
+    <select id="getMyInfo" resultType="com.boot.mypage.dto.MyPageDTO">
+        SELECT
+            account_id AS accountId,
+            account_pw AS accountPw,
+            account_name AS accountName,
+            email,
+            phone_number AS phoneNumber,
+            account_role AS accountRole,
+            reg_date AS regDate
+        FROM account_tbl
+        WHERE account_id = #{accountId}
+    </select>
+
+    <!-- 마이페이지 정보 수정 -->
+    <update id="updateMyInfo">
+        UPDATE account_tbl
+        SET
+            account_name = #{accountName},
+            email = #{email},
+            phone_number = #{phoneNumber}
+        WHERE account_id = #{accountId}
+    </update>
+
+</mapper>

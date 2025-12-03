@@ -11,7 +11,7 @@ import com.boot.security.JwtUtil;
 
 @RestController
 @RequestMapping("/api/login")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173") 시큐리티에서 적용
 public class loginController {
 
     @Autowired

@@ -29,7 +29,7 @@ public class loginSerivceImpl implements loginService {
     
     @Override
     public boolean phoneCheck(String phoneNumber) {
-        return dao.phoneCheck(phoneNumber) > 0;  
+        return dao.phoneCheck(phoneNumber) > 0;
     }
 
     @Override
