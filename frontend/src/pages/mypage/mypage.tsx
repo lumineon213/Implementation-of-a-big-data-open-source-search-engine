@@ -21,6 +21,8 @@ interface MyPageDTO {
   nightLifeLevel?: string;
   walkingLevel?: string;
   ageGroup?: string;
+
+  profileImage?: string;
 }
 
 type PageMode = "view" | "edit";
@@ -33,6 +35,7 @@ const MyPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [mode, setMode] = useState<PageMode>("view");
 
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const token = localStorage.getItem("token");
 
   const [currentDate] = useState(new Date());
@@ -50,15 +53,10 @@ const MyPage: React.FC = () => {
 
     const grid: any[] = [];
 
-    for (let i = firstDay - 1; i >= 0; i--) {
-      grid.push({ date: prevLast - i, isCurrentMonth: false });
-    }
-    for (let i = 1; i <= lastDate; i++) {
-      grid.push({ date: i, isCurrentMonth: true });
-    }
-    while (grid.length < 42) {
-      grid.push({ date: grid.length, isCurrentMonth: false });
-    }
+    for (let i = firstDay - 1; i >= 0; i--) grid.push({ date: prevLast - i, isCurrentMonth: false });
+    for (let i = 1; i <= lastDate; i++) grid.push({ date: i, isCurrentMonth: true });
+
+    while (grid.length < 42) grid.push({ date: grid.length, isCurrentMonth: false });
     return grid;
   };
 
@@ -71,7 +69,7 @@ const MyPage: React.FC = () => {
     );
   };
 
-  // ================== 데이터 로딩 ==================
+  // ============== 데이터 로딩 ==============
   const loadMyPage = async () => {
     try {
       const res = await axios.get("/api/mypage", {
@@ -89,6 +87,7 @@ const MyPage: React.FC = () => {
         nightLifeLevel: res.data.nightLifeLevel || "low",
         walkingLevel: res.data.walkingLevel || "mid",
         ageGroup: res.data.ageGroup || "20",
+        profileImage: res.data.profileImage || null,
       };
 
       setUser(data);
@@ -104,30 +103,42 @@ const MyPage: React.FC = () => {
     loadMyPage();
   }, []);
 
+  // ============== 공통 변경 함수 ==============
+  const handleChange = (key: keyof MyPageDTO, value: any) => {
+    setEditData((prev) => (prev ? { ...prev, [key]: value } : prev));
+  };
+
   const toggleTheme = (theme: string) => {
     setEditData((prev) => {
       if (!prev) return prev;
       const list = prev.travelThemes || [];
+
       return list.includes(theme)
         ? { ...prev, travelThemes: list.filter((t) => t !== theme) }
         : { ...prev, travelThemes: [...list, theme] };
     });
   };
 
-  // ⭐ 공통 변경 함수
-  const handleChange = (key: keyof MyPageDTO, value: any) => {
-    setEditData((prev) => (prev ? { ...prev, [key]: value } : prev));
+  // ============== 프로필 이미지 업로드 ==============
+  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setProfilePreview(reader.result as string);
+      setEditData((prev) => (prev ? { ...prev, profileImage: reader.result as string } : prev));
+    };
+    reader.readAsDataURL(file);
   };
 
-  // ⭐ 저장
+  // ============== 저장 ==============
   const handleSave = async () => {
     if (!editData) return;
-
     setIsSaving(true);
+
     try {
-      await axios.put("/api/mypage", editData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put("/api/mypage", editData, { headers: { Authorization: `Bearer ${token}` } });
       setUser(editData);
       setMode("view");
     } finally {
@@ -135,10 +146,11 @@ const MyPage: React.FC = () => {
     }
   };
 
-  // ⭐ 취소 → 원래값 복원 + view 모드로
+  // ============== 취소 ==============
   const handleCancel = () => {
     if (!user) return;
     setEditData(user);
+    setProfilePreview(null);
     setMode("view");
   };
 
@@ -167,9 +179,30 @@ const MyPage: React.FC = () => {
         {/* LEFT */}
         <div className="mypage-left">
           <div className="profile-card">
-            <img src="/default-profile.png" className="profile-image" />
+     
+            {/* 프로필 이미지 */}
+            <img
+              src={profilePreview || user.profileImage || "/default-profile.png"}
+              className="profile-image"
+            />
+
+            {/* 숨겨진 파일 입력 */}
+            <input
+              id="profileUpload"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleProfileUpload}
+            />
+
             <h3 className="profile-name">{user.accountName} 님</h3>
-            <button className="profile-edit-btn">프로필 이미지 설정</button>
+
+            <button
+              className="profile-edit-btn"
+              onClick={() => document.getElementById("profileUpload")?.click()}
+            >
+              프로필 이미지 설정
+            </button>
           </div>
 
           <div className="calendar-box">
@@ -245,8 +278,31 @@ const MyPage: React.FC = () => {
             ) : (
               // EDIT MODE
               <div className="profile-edit-box">
-                <h4>여행 취향 수정</h4>
+                <h4>회원 정보 + 여행 취향 수정</h4>
 
+                {/* 회원 정보 */}
+                <label>이름</label>
+                <input
+                  type="text"
+                  value={editData?.accountName || ""}
+                  onChange={(e) => handleChange("accountName", e.target.value)}
+                />
+
+                <label>이메일</label>
+                <input
+                  type="email"
+                  value={editData?.email || ""}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                />
+
+                <label>전화번호</label>
+                <input
+                  type="tel"
+                  value={editData?.phoneNumber || ""}
+                  onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                />
+
+                {/* 여행 테마 */}
                 <label>여행 테마</label>
                 <div className="theme-options">
                   {["힐링", "맛집", "뚜벅이", "밤문화", "사진명소", "자연", "문화"].map(
@@ -259,6 +315,7 @@ const MyPage: React.FC = () => {
                             : "theme-btn"
                         }
                         onClick={() => toggleTheme(theme)}
+                        type="button"
                       >
                         {theme}
                       </button>
@@ -352,7 +409,7 @@ const MyPage: React.FC = () => {
 
                 <div className="edit-btn-row">
                   <button onClick={handleCancel}>취소</button>
-                  <button onClick={handleSave} disabled={isSaving}>
+                  <button disabled={isSaving} onClick={handleSave}>
                     {isSaving ? "저장중..." : "저장하기"}
                   </button>
                 </div>
