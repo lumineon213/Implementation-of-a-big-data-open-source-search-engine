@@ -4,7 +4,19 @@ import Header from "components/common/header";
 import Footer from "components/common/footer";
 import DetailView from "pages/detail_view/detailview";
 import MainPage from "pages/main_Page/main_page";
+import MyPage from "pages/mypage/mypage";
 
+// 타입 정의
+export interface SolrResultItem {
+  id: string;
+  title: string;
+  description?: string;
+  start_date?: string;
+  end_date?: string;
+  place?: string;
+  address?: string;
+  [key: string]: any;
+}
 
 
 function App() {
@@ -15,6 +27,8 @@ function App() {
                   <Route path="/" element={<MainPage/>} />                   
                   
                   <Route path="/login" element={<Login />} />
+                  
+                   <Route path="/mypage" element={<MyPage />} />
                   
                   <Route path="/detail/:id" element={<DetailView />} />
                 </Routes>

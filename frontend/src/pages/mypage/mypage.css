@@ -1,0 +1,536 @@
+/* 컨테이너 */
+.mypage-container {
+  min-height: 100vh;
+  background: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .mypage-container {
+  background: #1a1a1a;
+}
+
+/* 움직이는 배경 그라데이션 */
+.background-gradient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.gradient-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.gradient-circle-1 {
+  top: -50%;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  background: #e9d5ff;
+  transition: background 0.3s ease;
+}
+
+body.dark-mode .gradient-circle-1 {
+  background: #4c1d95;
+}
+
+.gradient-circle-2 {
+  bottom: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: #ddd6fe;
+  animation-delay: 1s;
+  transition: background 0.3s ease;
+}
+
+body.dark-mode .gradient-circle-2 {
+  background: #5b21b6;
+}
+
+.gradient-circle-3 {
+  top: 25%;
+  left: 33.333%;
+  width: 384px;
+  height: 384px;
+  background: #d8b4fe;
+  opacity: 0.2;
+  animation-delay: 2s;
+  transition: background 0.3s ease;
+}
+
+body.dark-mode .gradient-circle-3 {
+  background: #6d28d9;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+/* 컨텐츠 */
+.mypage-content {
+  width: 100%;
+  max-width: 32rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* 헤더 */
+.mypage-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  font-size: 3.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .logo {
+  color: #e0e0e0;
+}
+
+.logo-accent {
+  color: #9333ea;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .logo-accent {
+  color: #a78bfa;
+}
+
+.tagline {
+  color: #4b5563;
+  font-size: 1.125rem;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .tagline {
+  color: #9ca3af;
+}
+
+/* 카드 */
+.mypage-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(40px);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 2.5rem;
+  border: 1px solid rgba(229, 231, 235, 1);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.dark-mode .mypage-card {
+  background: rgba(30, 30, 30, 0.9);
+  border-color: rgba(51, 51, 51, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* 카드 헤더 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: border-color 0.3s ease;
+}
+
+body.dark-mode .card-header {
+  border-color: #333;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .card-title {
+  color: #e0e0e0;
+}
+
+.edit-button {
+  padding: 0.5rem 1.25rem;
+  background: white;
+  color: #9333ea;
+  border: 1px solid #9333ea;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark-mode .edit-button {
+  background: #1a1a1a;
+  color: #a78bfa;
+  border-color: #a78bfa;
+}
+
+.edit-button:hover {
+  background: #9333ea;
+  color: white;
+}
+
+body.dark-mode .edit-button:hover {
+  background: #a78bfa;
+  color: #1a1a1a;
+}
+
+/* 프로필 보기 */
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .profile-item {
+  background: #2a2a2a;
+}
+
+.item-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .item-label {
+  color: #9ca3af;
+}
+
+.item-value {
+  font-size: 1rem;
+  color: #111827;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .item-value {
+  color: #e0e0e0;
+}
+
+.role-badge {
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(to right, #9333ea, #7c3aed);
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.logout-button {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: white;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark-mode .logout-button {
+  background: #1a1a1a;
+  color: #f87171;
+  border-color: #f87171;
+}
+
+.logout-button:hover {
+  background: #ef4444;
+  color: white;
+}
+
+body.dark-mode .logout-button:hover {
+  background: #f87171;
+  color: #1a1a1a;
+}
+
+/* 프로필 수정 */
+.profile-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .input-label {
+  color: #d1d5db;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  color: #111827;
+  transition: all 0.2s, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  font-size: 1rem;
+}
+
+body.dark-mode .input-field {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+.input-field.disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+body.dark-mode .input-field.disabled {
+  background: #1f1f1f;
+  color: #666;
+}
+
+.input-field::placeholder {
+  color: #9ca3af;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .input-field::placeholder {
+  color: #666;
+}
+
+.input-field:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #9333ea;
+  border-color: transparent;
+}
+
+body.dark-mode .input-field:focus {
+  ring-color: #a78bfa;
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .input-hint {
+  color: #666;
+}
+
+/* 수정 버튼 그룹 */
+.button-group-edit {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.cancel-button,
+.save-button {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cancel-button {
+  background: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+body.dark-mode .cancel-button {
+  background: #2a2a2a;
+  color: #9ca3af;
+  border-color: #444;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #f9fafb;
+  color: #374151;
+}
+
+body.dark-mode .cancel-button:hover:not(:disabled) {
+  background: #333;
+  color: #d1d5db;
+}
+
+.save-button {
+  background: linear-gradient(to right, #9333ea, #7c3aed);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.save-button:hover:not(:disabled) {
+  background: linear-gradient(to right, #7e22ce, #6b21a8);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.save-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 스피너 */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #6b7280;
+  font-size: 1.125rem;
+  position: relative;
+  z-index: 10;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .loading-container,
+body.dark-mode .error-container {
+  color: #9ca3af;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  animation: spin 1s linear infinite;
+  color: #9333ea;
+}
+
+body.dark-mode .spinner {
+  color: #a78bfa;
+}
+
+.spinner-small {
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-circle {
+  opacity: 0.25;
+}
+
+.spinner-path {
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.back-to-login {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #9333ea, #7c3aed);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-to-login:hover {
+  background: linear-gradient(to right, #7e22ce, #6b21a8);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .logo {
+    font-size: 3rem;
+  }
+  
+  .mypage-card {
+    padding: 2rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .edit-button {
+    width: 100%;
+  }
+
+  .profile-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .button-group-edit {
+    flex-direction: column;
+  }
+}

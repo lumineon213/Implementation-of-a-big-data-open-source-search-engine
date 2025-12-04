@@ -26,7 +26,14 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public void deleteFavorite(int favId) {
+<<<<<<< Updated upstream
         // 컨트롤러에서 받은 int ID를 그대로 DAO에 넘깁니다.
         favoriteDAO.deleteFavorite(favId);
+=======
+        // 컨트롤러에서 받은 int ID를 DTO로 변환하여 DAO에 넘깁니다.
+        FavoriteDTO dto = new FavoriteDTO();
+        dto.setFavId(favId);
+        favoriteDAO.deleteFavorite(dto);
+>>>>>>> Stashed changes
     }
 }
