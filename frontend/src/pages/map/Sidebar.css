@@ -1,0 +1,177 @@
+/* 사이드바 - 왼쪽에서 열림 */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  bottom: 100px; /* 푸터 높이만큼 여백 (푸터 높이에 맞게 조정) */
+  left: -360px;
+  width: 360px;
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 1000;
+  transition: left 0.3s ease;
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+footer {
+  z-index: 1100; 
+}
+.sidebar.open {
+  left: 0;
+}
+
+/* 위치 제목 */
+.location-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* 날씨 박스 */
+.weather-box {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.weather-label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.weather-temp {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.weather-sky {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.weather-extra {
+  font-size: 13px;
+  color: #888;
+}
+
+/* 카테고리 그리드 */
+.category-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.category-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex: 1;
+}
+
+.category-item:hover {
+  transform: translateY(-2px);
+}
+
+.category-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-label {
+  font-size: 11px;
+  color: #333;
+  text-align: center;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+
+/* 오른쪽 화살표 버튼 */
+.sidebar-arrow-btn {
+  position: fixed;
+  top: 50%;
+  left: 360px;
+  transform: translateY(-50%);
+  z-index: 1200;
+  width: 34px;
+  height: 70px;
+  background: white;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+  transition: left 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-arrow-btn.open {
+  left: 360px;
+}
+
+.sidebar-arrow-btn:not(.open) {
+  left: 0;
+}
+/* 카테고리 그리드 */
+.category-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.category-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex: 1;
+}
+/* 카테고리 아이템 활성화 스타일 */
+.category-item.active .category-icon {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.category-item.active .category-label {
+  font-weight: bold;
+  color: #000;
+}
+
+/* 아이콘에 트랜지션 추가 */
+.category-icon {
+  transition: all 0.3s ease;
+}
