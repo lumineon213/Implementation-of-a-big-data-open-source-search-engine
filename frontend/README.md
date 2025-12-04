@@ -290,6 +290,8 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
     8. 이후는 .env 파일에 VITE_KAKAO_MAP_KEY=본인의_API_키_입력
 
 ### 공공 데이터 API
+* **아래 경로에서 api 활용신청** **
+https://www.data.go.kr/data/15063472/openapi.do
 
 * **API키 위치** **
 스프링 부트에서 src/main/java 바로 아래
@@ -306,5 +308,6 @@ solr create -c food_core
 2. 스프링 부트 실행 후 
 http://localhost:8484/api/food/save-data 
 접속 후 solr가서 확인하기
+
 
 
