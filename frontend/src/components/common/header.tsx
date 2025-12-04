@@ -3,7 +3,6 @@ import "./header.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-//TypeScript에서 객체의 타입(구조)를 정의하는 방법
 interface User {
   accountId: string;
   accountName: string;
@@ -15,120 +14,310 @@ interface User {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null); 
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 세션 확인
-  useEffect(() => {
-    checkSession();
+  
+  // JWT 인증 방식 — checkAuth() 
+  
+  const checkAuth = async () => {
+    const token = localStorage.getItem("token");
 
-    // 로그인 성공 이벤트 리스너
-    const handleLoginSuccess = () => {
-      // 약간의 딜레이를 주어 세션이 완전히 설정되도록 함
-      setTimeout(() => {
-        checkSession();
-      }, 100);
-    };
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
 
-    window.addEventListener('loginSuccess', handleLoginSuccess);
-
-    return () => {
-      window.removeEventListener('loginSuccess', handleLoginSuccess);
-    };
-  }, []);
-
-  // 페이지 이동 시 세션 확인
-  useEffect(() => {
-    checkSession();
-  }, [location.pathname]);
-
-  const checkSession = async () => {
     try {
-      const res = await axios.get("/api/login/check", {
-        withCredentials: true
+      const res = await axios.get("/api/mypage", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (res.data.isLogin && res.data.user) {
-        setUser(res.data.user);
-      } else {
-        setUser(null);
-      }
+      setUser(res.data);
     } catch (err) {
-      console.error("세션 확인 실패:", err);
+      console.error("JWT 인증 실패:", err);
+      localStorage.removeItem("token");
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const toggleDropdown = () => {
-    setIsDropDownOpen((prev) => !prev);
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [location.pathname]);
+
+ 
+  // 로그아웃
+  
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsMenuOpen(false);
+    setExpandedMenu(null);
+    navigate("/");
   };
 
-  const handleLogout = async () => {
-    try {
-      await axios.post("/api/login/logout", {}, {
-        withCredentials: true
-      });
-      setUser(null);
-      setIsDropDownOpen(false);
-      // 로그아웃 성공 이벤트 발생
-      window.dispatchEvent(new Event('logoutSuccess'));
-      navigate("/");
-    } catch (err) {
-      console.error("로그아웃 실패:", err);
-    }
+  const toggleMenu = (menuName: string) => {
+    setExpandedMenu(expandedMenu === menuName ? null : menuName);
+  };
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false);
+    setExpandedMenu(null);
   };
 
   return (
-    <header className="header">
-  
-      <Link to="/" className="logo">
-        <div className="logo-circle"></div>
-        <span className="logo-text">KH.Solr</span>
-      </Link>
-
-      <div className="header-right">
-        {!isLoading && user && (
-          <div className="user-welcome">
-            {user.accountName}님 환영합니다
-          </div>
-        )}
-      <button className="btn-dropdown" onClick={toggleDropdown}>
-        =
-      </button>
-      </div>
-
-    
-      {isDropDownOpen && (
-        <div className="dropdown-menu">
-          {user ? (
-            <>
-              <div className="dropdown-item" onClick={handleLogout}>
-                로그아웃
-              </div>
-            </>
-          ) : (
-          <Link
-            to="/login"
-            className="dropdown-item"
-            onClick={() => setIsDropDownOpen(false)}
-          >
-            로그인
+    <>
+ 
+      <header className="header-container">
+        <div className="header-inner">
+          
+         
+          <Link to="/" className="header-logo">
+            우리 <span className="header-logo-round">부산 GO?</span>
           </Link>
-          )}
 
-          {/* <Link
-            to="/register"
-            className="dropdown-item"
-            onClick={() => setIsDropDownOpen(false)}
-          >
-            회원가입
-          </Link> */}
+        
+          <nav className="header-desktop-menu">
+            <Link to="/" className="menu-item">홈</Link>
+            <Link to="/theme" className="menu-item">명소</Link>
+            <Link to="/area" className="menu-item">맛집</Link>
+            <Link to="/course" className="menu-item">여행코스</Link>
+            <Link to="/info" className="menu-item">여행정보</Link>
+            <Link to="/benefits" className="menu-item">여행혜택</Link>
+          </nav>
+
+         
+          <div className="header-right">
+
+       
+            {isSearchOpen && (
+              <div className="header-search-wrapper">
+                <input
+                  className="header-search"
+                  placeholder="어디로, 어떤 여행을 떠날 예정인가요?"
+                  autoFocus
+                />
+                <button 
+                  className="header-search-close" 
+                  onClick={() => setIsSearchOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+           
+            <div className="header-icons">
+              <button 
+                className="icon-btn" 
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+              >
+                🔍
+              </button>
+
+              <Link to="/map" className="icon-btn">
+                🗺️
+              </Link>
+
+             
+              {user ? (
+                <Link to="/mypage" className="icon-btn" title="마이페이지">
+                  👤
+                </Link>
+              ) : (
+                <Link to="/login" className="icon-btn" title="로그인">
+                  👤
+                </Link>
+              )}
+
+              <button className="icon-btn language-btn">
+                한국어 ▼
+              </button>
+            </div>
+
+          
+            {!isLoading && user && (
+              <span className="header-welcome">{user.accountName}님</span>
+            )}
+
+          
+            <button
+              className="header-ham"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              ☰
+            </button>
+          </div>
         </div>
-      )}
-    </header>
+
+     
+        <div className="header-mobile-search-wrapper">
+          <input className="header-mobile-search" placeholder="검색어 입력" />
+          <button className="header-mobile-search-btn">🔍</button>
+        </div>
+
+      
+        <nav className="header-mobile-tabs">
+          <Link to="/" className="mobile-tab-item">홈</Link>
+          <Link to="/theme" className="mobile-tab-item">추천 명소</Link>
+          <Link to="/area" className="mobile-tab-item">맛집</Link>
+          <Link to="/course" className="mobile-tab-item">여행코스</Link>
+          <Link to="/info" className="mobile-tab-item">여행정보</Link>
+          <Link to="/benefits" className="mobile-tab-item">여행혜택</Link>
+        </nav>
+      </header>
+
+     
+      <nav className="mobile-bottom-nav">
+        <Link to="/" className="bottom-nav-item">
+          🏠 <span>홈</span>
+        </Link>
+        <Link to="/search" className="bottom-nav-item">
+          🔍 <span>검색</span>
+        </Link>
+        <Link to="/map" className="bottom-nav-item">
+          🗺️ <span>여행지도</span>
+        </Link>
+      </nav>
+
+      
+      <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
+        <div className="mobile-inner">
+
+         
+          <div className="mobile-user-section">
+            <div className="mobile-user-icon">👤</div>
+
+            {user ? (
+              <Link
+                to="/mypage"
+                className="mobile-user-link"
+                onClick={handleMenuClose}
+              >
+                <p className="user-greeting">{user.accountName}님 안녕하세요</p>
+                <p className="user-subtitle">
+                  마이페이지에서 회원정보를 확인하세요.
+                </p>
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="mobile-user-link"
+                onClick={handleMenuClose}
+              >
+                <p className="user-greeting">로그인 해주세요</p>
+                <p className="user-subtitle">더 많은 서비스를 이용할 수 있어요.</p>
+              </Link>
+            )}
+          </div>
+
+         
+          <nav className="mobile-nav">
+
+            <Link to="/" className="mobile-nav-item" onClick={handleMenuClose}>
+              🏠 홈
+            </Link>
+
+            <Link to="/theme" className="mobile-nav-item" onClick={handleMenuClose}>
+              ⭐ 테마
+            </Link>
+
+            <Link to="/area" className="mobile-nav-item" onClick={handleMenuClose}>
+              🗺️ 지역
+            </Link>
+
+           
+            <div
+              className="mobile-nav-item expandable"
+              onClick={() => toggleMenu("course")}
+            >
+              🎯 여행코스
+              <span className={`nav-arrow ${expandedMenu === "course" ? "expanded" : ""}`}>
+                ›
+              </span>
+            </div>
+
+            {expandedMenu === "course" && (
+              <div className="mobile-sub-nav">
+                <Link to="/course/recommended" onClick={handleMenuClose}>
+                  추천코스
+                </Link>
+                <Link to="/course/planner" onClick={handleMenuClose}>
+                  스크랩 플래너
+                </Link>
+              </div>
+            )}
+
+           
+            <div
+              className="mobile-nav-item expandable"
+              onClick={() => toggleMenu("info")}
+            >
+              ℹ️ 여행정보
+              <span className={`nav-arrow ${expandedMenu === "info" ? "expanded" : ""}`}>
+                ›
+              </span>
+            </div>
+
+            {expandedMenu === "info" && (
+              <div className="mobile-sub-nav">
+                <Link to="/info/magazine" onClick={handleMenuClose}>여행지역</Link>
+                <Link to="/info/history" onClick={handleMenuClose}>여행기사</Link>
+                <Link to="/info/festival" onClick={handleMenuClose}>축제</Link>
+                <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
+              </div>
+            )}
+
+            
+            <div
+              className="mobile-nav-item expandable"
+              onClick={() => toggleMenu("benefits")}
+            >
+              🎁 여행혜택
+              <span className={`nav-arrow ${expandedMenu === "benefits" ? "expanded" : ""}`}>
+                ›
+              </span>
+            </div>
+
+            {expandedMenu === "benefits" && (
+              <div className="mobile-sub-nav">
+                <Link to="/benefits/event" onClick={handleMenuClose}>이벤트</Link>
+                <Link to="/benefits/coupon" onClick={handleMenuClose}>기플래카드</Link>
+                <Link to="/benefits/badge" onClick={handleMenuClose}>베지패드</Link>
+              </div>
+            )}
+
+            <Link to="/map" className="mobile-nav-item" onClick={handleMenuClose}>
+              🗺️ 여행지도
+            </Link>
+          </nav>
+
+        
+          {user ? (
+            <button className="mobile-auth-btn" onClick={handleLogout}>
+              로그아웃
+            </button>
+          ) : (
+            <Link to="/login" onClick={handleMenuClose} className="mobile-auth-btn">
+              로그인
+            </Link>
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
