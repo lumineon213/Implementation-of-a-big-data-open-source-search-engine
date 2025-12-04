@@ -3,6 +3,7 @@ package com.boot.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< Updated upstream
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +22,29 @@ import jakarta.servlet.http.HttpSession;
         origins = "http://localhost:5173",
         allowCredentials = "true" // ⭐ React <-> Spring 세션 공유 허용
 )
+=======
+import org.springframework.web.bind.annotation.*;
+
+import com.boot.dto.loginDTO;
+import com.boot.security.JwtUtil;
+import com.boot.service.loginService;
+
+@RestController
+@RequestMapping("/api/login")
+//@CrossOrigin(origins = "http://localhost:5173") 시큐리티에서 적용
+>>>>>>> Stashed changes
 public class loginController {
 
     @Autowired
     private loginService service;
 
+<<<<<<< Updated upstream
+=======
+    @Autowired
+    private JwtUtil jwtUtil;
+
+
+>>>>>>> Stashed changes
     // 회원가입
     @PostMapping("/signup")
     public Map<String, Object> signup(@RequestBody loginDTO dto) {
@@ -41,6 +60,7 @@ public class loginController {
         return Map.of("success", result > 0);
     }
 
+<<<<<<< Updated upstream
     // 로그인 (세션 저장)
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody loginDTO dto, HttpSession session) {
@@ -83,3 +103,26 @@ public class loginController {
         return Map.of("success", true);
     }
 }
+=======
+
+    // 로그인 (JWT 발급)
+    @PostMapping("/login")
+    public Map<String, Object> login(@RequestBody loginDTO dto) {
+
+        loginDTO user = service.login(dto.getAccountId(), dto.getAccountPw());
+
+        if (user == null) {
+            return Map.of("success", false, "msg", "아이디 또는 비밀번호 오류");
+        }
+
+        // JWT 발급
+        String token = jwtUtil.createToken(user.getAccountId());
+
+        return Map.of(
+                "success", true,
+                "token", token,
+                "user", user
+        );
+    }
+}
+>>>>>>> Stashed changes

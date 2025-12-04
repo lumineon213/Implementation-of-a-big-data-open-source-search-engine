@@ -12,7 +12,11 @@ public interface FavoriteService {
     // 추가
     void insertFavorite(FavoriteDTO favoriteDTO);
     
+<<<<<<< Updated upstream
     // 삭제 (DTO가 아니라 int id만 받도록 수정)
+=======
+    // 삭제
+>>>>>>> Stashed changes
     void deleteFavorite(int favId);
 
 }

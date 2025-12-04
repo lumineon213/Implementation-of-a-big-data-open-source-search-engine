@@ -45,5 +45,11 @@
         WHERE account_id = #{accountId}
         AND account_pw = #{accountPw}
     </select>
+    
+ <select id="findById" resultMap="loginResultMap">
+    SELECT *
+    FROM account_tbl
+    WHERE account_id = #{accountId}
+</select>
 
 </mapper>
