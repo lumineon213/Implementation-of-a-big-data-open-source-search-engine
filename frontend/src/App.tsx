@@ -6,6 +6,7 @@ import DetailView from "pages/detail_view/detailview";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 
+import MapPage from "pages/map/MapPage";
 // 타입 정의
 export interface SolrResultItem {
   id: string;
@@ -31,6 +32,9 @@ function App() {
                    <Route path="/mypage" element={<MyPage />} />
                   
                   <Route path="/detail/:id" element={<DetailView />} />
+
+                   <Route path="/map" element={<MapPage />} />
+
                 </Routes>
          
           <Footer />
