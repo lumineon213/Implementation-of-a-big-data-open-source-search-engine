@@ -304,7 +304,7 @@ ignore file 클릭
 solr create -c food_core
 
 2. 스프링 부트 실행 후 
-http://localhost:8484/api/food/search 
+http://localhost:8484/api/food/save-data 
 접속 후 solr가서 확인하기
 
 
