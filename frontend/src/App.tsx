@@ -2,9 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import Login from "pages/login/login";
 import Header from "components/common/header";
 import Footer from "components/common/footer";
-import DetailView from "pages/detail_view/detailview";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
+import FoodList from "pages/foodList/foodList";
 
 import MapPage from "pages/map/MapPage";
 // 타입 정의
@@ -25,14 +25,15 @@ function App() {
           <>
           <Header />
                 <Routes>                
+                  //새로운 메인 페이지
                   <Route path="/" element={<MainPage/>} />                   
-                  
+                  //로그인
                   <Route path="/login" element={<Login />} />
-                  
+                  //마이페이지
                    <Route path="/mypage" element={<MyPage />} />
-                  
-                  <Route path="/detail/:id" element={<DetailView />} />
-
+                  //맛집 리스트
+                  <Route path="/food" element={<FoodList />} />
+                  //지도 페이지
                    <Route path="/map" element={<MapPage />} />
 
                 </Routes>
