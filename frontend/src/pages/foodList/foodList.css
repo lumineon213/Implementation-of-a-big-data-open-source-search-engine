@@ -1,0 +1,107 @@
+/* FoodList.css */
+.food-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #333;
+}
+
+.food-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 카드 사이 간격 */
+}
+
+/* 카드 디자인 */
+.food-card {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  transition: transform 0.2s;
+}
+
+.food-card:hover {
+  background-color: #f9f9f9;
+}
+
+/* 왼쪽 이미지 */
+.food-image-box {
+  width: 200px; /* 사진 너비 고정 */
+  height: 140px;
+  flex-shrink: 0; /* 사이즈 줄어들지 않게 */
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 20px;
+  background-color: #ddd;
+}
+
+.food-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비율 유지하며 꽉 채우기 */
+}
+
+/* 오른쪽 정보 */
+.food-info-box {
+  flex: 1; /* 남은 공간 다 쓰기 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.food-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.food-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.food-address {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.food-desc {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.food-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-size: 0.85rem;
+  color: #888;
+  background-color: #f1f1f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.more-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #999;
+}

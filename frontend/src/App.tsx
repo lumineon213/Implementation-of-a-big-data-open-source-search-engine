@@ -5,6 +5,7 @@ import Footer from "components/common/footer";
 import DetailView from "pages/detail_view/detailview";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
+import FoodList from "pages/foodList/foodList"; // 방금 만든 파일 import
 
 // 타입 정의
 export interface SolrResultItem {
@@ -31,6 +32,8 @@ function App() {
                    <Route path="/mypage" element={<MyPage />} />
                   
                   <Route path="/detail/:id" element={<DetailView />} />
+
+                  <Route path="/food" element={<FoodList />} />
                 </Routes>
          
           <Footer />
