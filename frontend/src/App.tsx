@@ -5,8 +5,8 @@ import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
-
 import MapPage from "pages/map/MapPage";
+import FoodDetail from "pages/foodList/foodDetail";
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
@@ -39,6 +39,8 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   //지도 페이지
                    <Route path="/map" element={<MapPage />} />
+                  //상세보기
+                  <Route path="/food/:id" element={<FoodDetail />} />
                   //여행 코스
                   <Route path="/course" element={<CourseHome />} />
                   //도보여행

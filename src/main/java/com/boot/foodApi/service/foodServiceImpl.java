@@ -30,7 +30,7 @@ public class foodServiceImpl implements foodService{
 
     // Solr 코어 이름
     private static final String CORE_NAME = "food_core";
-
+    
     @Override
     public String syncFoodData() throws Exception {
         System.out.println(">>> [Service] 맛집 데이터 동기화 시작...");
@@ -209,7 +209,47 @@ public class foodServiceImpl implements foodService{
 	    responseMap.put("list", list);            // 잘라낸 데이터 10개
 	    responseMap.put("total", results.getNumFound()); // 검색된 전체 데이터 개수
 
-	    return responseMap;	}
-	
+	    return responseMap;	
+	    }
+	@Override
+	public Map<String, Object> getFoodDetail(String id) throws Exception {
+	    // Solr에서 ID로 문서 가져오기
+	    SolrDocument doc = solrClient.getById(CORE_NAME, id);
 
+	    if (doc == null) {
+	        return null; // 없으면 null 리턴
+	    }
+
+	    // Map으로 예쁘게 포장
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("id", doc.getFieldValue("id"));
+	    map.put("title", doc.getFieldValue("title"));
+	    map.put("address", doc.getFieldValue("address"));
+	    map.put("image_url", doc.getFieldValue("image_url"));
+	    map.put("description", doc.getFieldValue("description"));
+	    map.put("menu_t", doc.getFieldValue("menu_t"));
+	    map.put("opentime_t", doc.getFieldValue("opentime_t")); // 운영시간
+	    map.put("latitude", doc.getFieldValue("latitude"));     // 위도 (지도용)
+	    map.put("longitude", doc.getFieldValue("longitude"));   // 경도 (지도용)
+	    map.put("view_count", doc.getFieldValue("view_count_i"));
+
+	    return map;
+	}
+	
+	@Override
+	public void increaseViewCount(String id) throws Exception {
+	    SolrInputDocument doc = new SolrInputDocument();
+	    doc.addField("id", id);
+	    
+	    // Solr의 부분 업데이트 문법: {"inc": 1} -> view_count_i 필드 값을 1 증가
+	    Map<String, Object> modifier = new HashMap<>();
+	    modifier.put("inc", 1); 
+	    doc.addField("view_count_i", modifier); // view_count_i 필드 기준으로 업데이트
+
+	    // Solr에 전송 및 반영
+	    solrClient.add(CORE_NAME, doc);
+	    solrClient.commit(CORE_NAME); 
+	  }
+	    return responseMap;	
+  }
 }

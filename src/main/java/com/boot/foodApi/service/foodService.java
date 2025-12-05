@@ -9,4 +9,8 @@ public interface foodService {
     List<Map<String, Object>> searchFood(String keyword) throws Exception;
     
     Map<String, Object> searchFood(String keyword, int page, int size) throws Exception;
+    
+    Map<String, Object> getFoodDetail(String id) throws Exception;
+    
+    void increaseViewCount(String id) throws Exception;
 }
