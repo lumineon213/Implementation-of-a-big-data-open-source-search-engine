@@ -32,3 +32,15 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+# 민감 정보 파일 (GitHub에 올리면 안 됨)
+application-secret.properties
+application-local.properties
+# ⭐ 보완 1: 최상단 .env 파일과 모든 하위 디렉토리의 .env 파일을 무시
+.env 
+**/.env 
+
+# ⭐ 보완 2: .env.local 파일과 모든 하위 디렉토리의 .env.local 파일을 무시
+.env.local
+**/.env.local
