@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#frontend안에 네이버 id 인식
+.env
+.env.local

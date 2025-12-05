@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.boot.login.dao.loginDAO;
 import com.boot.login.dto.loginDTO;
+import java.util.Map;
 
 @Service 
 public class loginSerivceImpl implements loginService {
@@ -30,5 +31,24 @@ public class loginSerivceImpl implements loginService {
 	    @Override
 	    public loginDTO login(String accountId, String accountPw) {
 	        return dao.login(accountId, accountPw);
-}
+	    }
+	    
+	    @Override
+	    public loginDTO processNaverLogin(Map<String, Object> userInfo) {
+	        String email = (String) userInfo.get("email");
+	        String name = (String) userInfo.get("name");
+	        String id = (String) userInfo.get("id");
+	        
+	        // 이메일로 기존 사용자 확인
+	        loginDTO user = dao.findByEmail(email);
+	        
+	        if (user == null) {
+	            // 신규 사용자 - 자동 회원가입
+	            String accountId = "naver_" + id;
+	            dao.naverSignup(accountId, name, email, "naver");
+	            user = dao.findByEmail(email);
+	        }
+	        
+	        return user;
+	    }
 }

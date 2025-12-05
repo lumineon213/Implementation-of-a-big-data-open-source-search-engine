@@ -12,6 +12,7 @@
         <result property="phoneNumber" column="PHONE_NUMBER"/>
         <result property="accountRole" column="ACCOUNT_ROLE"/>
         <result property="regDate" column="REG_DATE"/>
+        <result property="provider" column="PROVIDER"/>
     </resultMap>
 
     <!-- 회원가입 -->
@@ -45,5 +46,22 @@
         WHERE account_id = #{accountId}
         AND account_pw = #{accountPw}
     </select>
+
+    <!-- 네이버 로그인 - 이메일로 사용자 조회 -->
+    <select id="findByEmail" resultMap="loginResultMap">
+        SELECT * FROM account_tbl
+        WHERE email = #{email}
+    </select>
+
+    <!-- 네이버 회원가입 -->
+    <insert id="naverSignup">
+        INSERT INTO account_tbl (
+            account_id, account_name, email, 
+            account_role, reg_date, provider
+        ) VALUES (
+            #{accountId}, #{accountName}, #{email},
+            'USER', SYSDATE, #{provider}
+        )
+    </insert>
 
 </mapper>
