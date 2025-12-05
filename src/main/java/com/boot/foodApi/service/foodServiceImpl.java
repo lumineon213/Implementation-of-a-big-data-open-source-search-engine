@@ -168,4 +168,48 @@ public class foodServiceImpl implements foodService{
         return list;
 	}
 
+	@Override
+	public Map<String, Object> searchFood(String keyword, int page, int size) throws Exception {
+		SolrQuery query = new SolrQuery();
+
+	    // 1. 검색어 설정
+	    if (keyword == null || keyword.trim().isEmpty()) {
+	        query.setQuery("*:*");
+	    } else {
+	        query.setQuery("title:*" + keyword + "* OR menu_t:*" + keyword + "*");
+	    }
+
+	    // 2. 페이징 설정 (핵심!)
+	    // page가 1이면 start=0, page가 2이면 start=10 ...
+	    int start = (page - 1) * size;
+	    query.setStart(start);
+	    query.setRows(size); 
+
+	    // 3. Solr 요청
+	    QueryResponse response = solrClient.query(CORE_NAME, query);
+	    SolrDocumentList results = response.getResults();
+
+	    // 4. 결과 변환 (리스트 + 전체 개수)
+	    List<Map<String, Object>> list = new ArrayList<>();
+	    
+	    for (SolrDocument doc : results) {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("id", doc.getFieldValue("id"));
+	        map.put("title", doc.getFieldValue("title"));
+	        map.put("address", doc.getFieldValue("address"));
+	        map.put("image_url", doc.getFieldValue("image_url"));
+	        map.put("description", doc.getFieldValue("description"));
+	        map.put("menu_t", doc.getFieldValue("menu_t"));
+	        
+	        list.add(map);
+	    }
+
+	    // 5. 최종 리턴용 맵 생성
+	    Map<String, Object> responseMap = new HashMap<>();
+	    responseMap.put("list", list);            // 잘라낸 데이터 10개
+	    responseMap.put("total", results.getNumFound()); // 검색된 전체 데이터 개수
+
+	    return responseMap;	}
+
+}
 }
