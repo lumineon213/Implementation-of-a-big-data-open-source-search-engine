@@ -210,6 +210,6 @@ public class foodServiceImpl implements foodService{
 	    responseMap.put("total", results.getNumFound()); // 검색된 전체 데이터 개수
 
 	    return responseMap;	}
+	
 
-}
 }
