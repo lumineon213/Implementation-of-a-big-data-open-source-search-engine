@@ -235,7 +235,6 @@ public class foodServiceImpl implements foodService{
 
 	    return map;
 	}
-	
 	@Override
 	public void increaseViewCount(String id) throws Exception {
 	    SolrInputDocument doc = new SolrInputDocument();
@@ -249,7 +248,5 @@ public class foodServiceImpl implements foodService{
 	    // Solr에 전송 및 반영
 	    solrClient.add(CORE_NAME, doc);
 	    solrClient.commit(CORE_NAME); 
-	  }
-	    return responseMap;	
-  }
+	}
 }
