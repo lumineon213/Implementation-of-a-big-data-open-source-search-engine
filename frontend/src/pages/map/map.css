@@ -33,39 +33,77 @@
   cursor: pointer;
   z-index: 10;
 }
-/* 내 위치 버튼 */
-.btn-my-location {
+/* 상단 중앙 검색바 */
+.search-top-bar {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 80px; /* 헤더 아래로 배치 */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 10;
   background: white;
-  border: 1px solid #ccc;
-  padding: 10px 14px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* 모바일에서는 더 아래로 */
+@media (max-width: 900px) {
+  .search-top-bar {
+    top: 140px; /* 모바일 헤더 + 검색창 + 탭 높이 고려 */
+  }
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 20px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: transparent;
+  width: 250px;
+}
+
+.btn-search {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-search:hover {
+  opacity: 0.7;
+}
+
+.btn-my-location-top {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  z-index: 10;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.btn-my-location:hover {
-  background: #f5f5f5;
-}
-.btn-my-location {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.btn-my-location:hover {
-  background: #f5f5f5;
+.btn-my-location-top:hover {
+  background: #45a049;
 }
 .map-container {
   position: relative;

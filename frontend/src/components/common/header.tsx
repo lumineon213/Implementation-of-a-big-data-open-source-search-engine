@@ -235,7 +235,7 @@ const Header: React.FC = () => {
               ⭐ 테마
             </Link>
 
-            <Link to="/area" className="mobile-nav-item" onClick={handleMenuClose}>
+            <Link to="/map" className="mobile-nav-item" onClick={handleMenuClose}>
               🗺️ 지역
             </Link>
 

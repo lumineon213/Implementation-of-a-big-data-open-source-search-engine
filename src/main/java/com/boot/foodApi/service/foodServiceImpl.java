@@ -123,6 +123,7 @@ public class foodServiceImpl implements foodService{
         
         for (SolrDocument doc : results) {
             Map<String, Object> map = new HashMap<>();
+            
             // Solr 필드명 -> 자바 Map 키로 옮기기
             map.put("id", doc.getFieldValue("id"));
             map.put("title", doc.getFieldValue("title"));
@@ -130,6 +131,36 @@ public class foodServiceImpl implements foodService{
             map.put("image_url", doc.getFieldValue("image_url"));
             map.put("description", doc.getFieldValue("description"));
             map.put("menu_t", doc.getFieldValue("menu_t"));
+            
+            // ✨ 좌표 정보 추가 - 디버깅 추가
+            Object latObj = doc.getFieldValue("latitude");
+            Object lngObj = doc.getFieldValue("longitude");
+            
+            System.out.println(">>> 음식점: " + doc.getFieldValue("title"));
+            System.out.println(">>> latitude 원본: " + latObj + " (타입: " + (latObj != null ? latObj.getClass().getName() : "null") + ")");
+            System.out.println(">>> longitude 원본: " + lngObj + " (타입: " + (lngObj != null ? lngObj.getClass().getName() : "null") + ")");
+            
+            // 배열인 경우 첫 번째 값을 꺼내고, 아니면 그대로 사용
+            if (latObj instanceof java.util.Collection) {
+                java.util.Collection<?> latCol = (java.util.Collection<?>) latObj;
+                Object latValue = latCol.isEmpty() ? null : latCol.iterator().next();
+                map.put("latitude", latValue);
+                System.out.println(">>> latitude 변환: " + latValue);
+            } else {
+                map.put("latitude", latObj);
+            }
+            
+            if (lngObj instanceof java.util.Collection) {
+                java.util.Collection<?> lngCol = (java.util.Collection<?>) lngObj;
+                Object lngValue = lngCol.isEmpty() ? null : lngCol.iterator().next();
+                map.put("longitude", lngValue);
+                System.out.println(">>> longitude 변환: " + lngValue);
+            } else {
+                map.put("longitude", lngObj);
+            }
+            
+            System.out.println(">>> 최종 Map: " + map);
+            System.out.println("====================");
             
             list.add(map);
         }
@@ -180,4 +211,5 @@ public class foodServiceImpl implements foodService{
 
 	    return responseMap;	}
 
+}
 }
