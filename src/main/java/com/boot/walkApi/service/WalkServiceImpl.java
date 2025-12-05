@@ -33,15 +33,24 @@ public class WalkServiceImpl implements WalkService {
 
     @Override
     public String syncWalkData() throws Exception {
-
-        String apiUrl = "http://apis.data.go.kr/6260000/WalkService/getWalkingKr";
+    	System.out.println(">>> [Service] 맛집 데이터 동기화 시작...");
+    	
+        String apiUrl = "http://apis.data.go.kr/6260000/WalkingService/getWalkingKr";
         String serviceKey = URLEncoder.encode(apiKey, "UTF-8");
-        
-        String requestUrl = apiUrl + "?serviceKey=" + serviceKey
-                + "&numOfRows=999&pageNo=1&resultType=json";
 
-        RestTemplate rt = new RestTemplate();
-        String response = rt.getForObject(requestUrl, String.class);
+        String requestUrl =
+                apiUrl
+                + "?serviceKey=" + serviceKey
+                + "&pageNo=1"
+                + "&numOfRows=999"
+                + "&resultType=JSON";
+
+        System.out.println(">>> 요청 URL: " + requestUrl);
+
+        RestTemplate restTemplate = new RestTemplate();
+        URI uri = new URI(requestUrl);
+        String response = restTemplate.getForObject(uri, String.class);
+
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(response);
@@ -74,16 +83,24 @@ public class WalkServiceImpl implements WalkService {
     }
 
     @Override
-    public List<Map<String, Object>> searchWalk(String keyword) throws Exception {
+    public Map<String, Object> searchWalk(String keyword, int page, int size) throws Exception {
 
         SolrQuery query = new SolrQuery();
-        query.setQuery(keyword == null ? "*:*" : "title:*" + keyword + "*");
-        query.setRows(200);
+        query.setQuery(
+            (keyword == null || keyword.isEmpty())
+                ? "*:*"
+                : "title:*" + keyword + "*"
+        );
+
+        // 페이징
+        int start = (page - 1) * size;
+        query.setStart(start);
+        query.setRows(size);
 
         QueryResponse res = solrClient.query(CORE_NAME, query);
         SolrDocumentList list = res.getResults();
 
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> resultList = new ArrayList<>();
 
         for (SolrDocument doc : list) {
             Map<String, Object> map = new HashMap<>();
@@ -91,11 +108,15 @@ public class WalkServiceImpl implements WalkService {
             map.put("title", doc.get("title"));
             map.put("address", doc.get("address"));
             map.put("image_url", doc.get("image_url"));
-            map.put("latitude", doc.get("latitude"));
-            map.put("longitude", doc.get("longitude"));
-            result.add(map);
+            resultList.add(map);
         }
 
-        return result;
+        // total 값 반드시 넣어야 함
+        Map<String, Object> response = new HashMap<>();
+        response.put("list", resultList);
+        response.put("total", list.getNumFound());
+
+        return response;
     }
+
 }
