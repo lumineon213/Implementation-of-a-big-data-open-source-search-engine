@@ -1,0 +1,172 @@
+
+/* 전체 컨테이너 스타일 */
+.distance-slider-popup {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    position: absolute;
+    
+    top: 70px; 
+    
+    right: 10px; 
+    
+    z-index: 10;
+    /* 초기에는 숨겨져 있음 */
+    display: none; 
+}
+
+/* 팝업 토글 시 표시 */
+.distance-slider-popup.is-open {
+    display: block;
+}
+
+/* 제목 스타일 */
+.distance-slider-popup h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+/* 슬라이더 영역 (relative 기준으로 사용) */
+.slider-area {
+    position: relative;
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+/* 트랙 (배경) */
+.slider-track {
+    position: absolute;
+    top: 21px;
+    height: 4px;
+    background-color: #D9D9D9;
+    width: 100%;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+/* 활성화된 트랙 (파란색) */
+.slider-active-track {
+    position: absolute;
+    top: 21px;
+    height: 4px;
+    background-color: #4A90E2;
+    border-radius: 2px 0 0 2px;
+    z-index: 1;
+}
+
+/* 썸 (핸들) */
+.slider-thumb {
+    position: absolute;
+    top: 21px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #4A90E2;
+    border: 3px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+    pointer-events: none; /* 썸은 클릭되지 않도록 설정 */
+    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+}
+
+/* 실제 Input Range 스타일 */
+.slider-input {
+    width: 100%;
+    position: absolute;
+    top: 18px;
+    left: 0;
+    height: 6px;
+    cursor: pointer;
+    z-index: 2;
+    
+    /* 기본 브라우저 스타일 제거 */
+    appearance: none; 
+    -webkit-appearance: none;
+    background-color: transparent;
+}
+
+/* Input Range의 썸(핸들) 스타일 (CSS에서만 가능) */
+.slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: transparent; /* 실제 썸은 투명하게 하고 위에 .slider-thumb 요소를 겹침 */
+    cursor: pointer;
+    margin-top: -5px; /* 트랙 중앙에 오도록 조정 */
+}
+
+/* 눈금 컨테이너 */
+.slider-ticks {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+/* 눈금 레이블 */
+.slider-tick-label {
+  position: absolute;
+    transform: translateX(-50%);
+    padding-top: 35px;
+    
+    font-size: 11px; 
+    
+    text-align: center;
+    font-weight: bold;
+}
+
+/* 활성화된 눈금 레이블 */
+.slider-tick-label.is-active {
+    color: #4A90E2;
+}
+.slider-tick-label:not(.is-active) {
+    color: #999;
+}
+
+/* 설정 완료 버튼 */
+.slider-complete-button {
+    background-color: #666;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 40px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.slider-complete-button:hover {
+    background-color: #444;
+}
+
+/* 지도 토글 버튼 (필터 모양) */
+.btn-toggle-slider {
+    position: absolute;
+    
+    top: 10px; 
+    right: 10px; 
+    
+    z-index: 9999; 
+    
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-icon {
+    font-size: 30px; /* 아이콘 크기 */
+    color: #333;
+}

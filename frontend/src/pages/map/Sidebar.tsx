@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Sidebar.css";
 
 interface SidebarProps {
   open: boolean;
   info: any;
+  activeCategories: string[];
+  onCategoryClick: (category: string) => void;
+  restaurants: any[];
+  onRestaurantClick: (restaurant: any) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
-  const [activeCategories, setActiveCategories] = useState<string[]>([]);
-
-  const handleCategoryClick = (category: string) => {
-    if (activeCategories.includes(category)) {
-      // 이미 선택되어 있으면 제거
-      setActiveCategories(activeCategories.filter(c => c !== category));
-    } else {
-      // 선택되어 있지 않으면 추가
-      setActiveCategories([...activeCategories, category]);
-    }
-    console.log(`${category} 클릭됨`);
-  };
+const Sidebar: React.FC<SidebarProps> = ({ 
+  open, 
+  info, 
+  activeCategories, 
+  onCategoryClick,
+  restaurants,
+  onRestaurantClick
+}) => {
 
   return (
     <div className={`sidebar ${open ? "open" : ""}`}>
@@ -41,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
             <div className="category-row">
               <div 
                 className={`category-item ${activeCategories.includes('주변 여행지') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('주변 여행지')}
+                onClick={() => onCategoryClick('주변 여행지')}
               >
                 <div 
                   className="category-icon" 
@@ -53,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('음식점') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('음식점')}
+                onClick={() => onCategoryClick('음식점')}
               >
                 <div 
                   className="category-icon" 
@@ -65,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('카페') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('카페')}
+                onClick={() => onCategoryClick('카페')}
               >
                 <div 
                   className="category-icon" 
@@ -77,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('숙소') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('숙소')}
+                onClick={() => onCategoryClick('숙소')}
               >
                 <div 
                   className="category-icon" 
@@ -89,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('주차장') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('주차장')}
+                onClick={() => onCategoryClick('주차장')}
               >
                 <div 
                   className="category-icon" 
@@ -103,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
             <div className="category-row">
               <div 
                 className={`category-item ${activeCategories.includes('전기차충전소') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('전기차충전소')}
+                onClick={() => onCategoryClick('전기차충전소')}
               >
                 <div 
                   className="category-icon" 
@@ -115,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('품질인증') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('품질인증')}
+                onClick={() => onCategoryClick('품질인증')}
               >
                 <div 
                   className="category-icon" 
@@ -127,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('추천테마') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('추천테마')}
+                onClick={() => onCategoryClick('추천테마')}
               >
                 <div 
                   className="category-icon" 
@@ -139,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('여행코스') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('여행코스')}
+                onClick={() => onCategoryClick('여행코스')}
               >
                 <div 
                   className="category-icon" 
@@ -151,7 +150,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('나의여행') ? 'active' : ''}`}
-                onClick={() => handleCategoryClick('나의여행')}
+                onClick={() => onCategoryClick('나의여행')}
               >
                 <div 
                   className="category-icon" 
@@ -163,6 +162,48 @@ const Sidebar: React.FC<SidebarProps> = ({ open, info }) => {
               </div>
             </div>
           </div>
+
+          {/*음식점 목록 표시 */}
+          {activeCategories.includes('음식점') && restaurants.length > 0 && (
+            <div className="restaurant-list">
+              <div className="restaurant-header">
+                <h3>🍴 주변 맛집 ({restaurants.length})</h3>
+              </div>
+              
+              <div className="restaurant-items">
+                {restaurants.map((restaurant) => (
+                  <div 
+                    key={restaurant.id} 
+                    className="restaurant-card"
+                    onClick={() => onRestaurantClick(restaurant)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="restaurant-image">
+                      <img 
+                        src={restaurant.image || restaurant.image_url || "https://via.placeholder.com/80?text=No+Image"} 
+                        alt={restaurant.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Food";
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info">
+                      <div className="restaurant-title">
+                        {Array.isArray(restaurant.title) ? restaurant.title[0] : restaurant.title}
+                      </div>
+                      <div className="restaurant-distance">📍 {restaurant.distance.toFixed(2)}km</div>
+                      <div className="restaurant-menu">
+                        {restaurant.menu && restaurant.menu.split(',').slice(0, 2).map((item: string, idx: number) => (
+                          <span key={idx} className="menu-tag">#{item.trim()}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
