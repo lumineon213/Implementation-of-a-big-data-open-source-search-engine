@@ -10,6 +10,7 @@ import FoodDetail from "pages/foodList/foodDetail";
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
+import ThemeCourseList from "pages/course/ThemeCourseList";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -45,6 +46,7 @@ function App() {
                   <Route path="/course" element={<CourseHome />} />
                   //도보여행
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  <Route path="/course/theme" element={<ThemeCourseList />} />
                 </Routes>
          
           <Footer />

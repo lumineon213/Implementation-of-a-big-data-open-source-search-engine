@@ -249,7 +249,6 @@ public class foodServiceImpl implements foodService{
 	    // Solr에 전송 및 반영
 	    solrClient.add(CORE_NAME, doc);
 	    solrClient.commit(CORE_NAME); 
-	  }
-	    return responseMap;	
+
   }
 }

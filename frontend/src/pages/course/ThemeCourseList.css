@@ -1,0 +1,45 @@
+.theme-list-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.theme-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.theme-card:hover {
+  transform: translateY(-6px);
+}
+
+.theme-image-box img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.theme-info-box {
+  padding: 15px;
+}
+
+.theme-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.theme-sub {
+  margin-top: 5px;
+  color: #555;
+}
+
+.theme-address {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #777;
+}
