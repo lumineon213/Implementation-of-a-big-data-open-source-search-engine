@@ -5,8 +5,9 @@ import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
-
 import MapPage from "pages/map/MapPage";
+import FoodDetail from "pages/foodList/foodDetail";
+
 // 타입 정의
 export interface SolrResultItem {
   id: string;
@@ -35,7 +36,8 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   //지도 페이지
                    <Route path="/map" element={<MapPage />} />
-
+                  //상세보기
+                  <Route path="/food/:id" element={<FoodDetail />} />
                 </Routes>
          
           <Footer />
