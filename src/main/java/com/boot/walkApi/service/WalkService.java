@@ -5,5 +5,6 @@ import java.util.Map;
 
 public interface WalkService {
     String syncWalkData() throws Exception;
-    List<Map<String, Object>> searchWalk(String keyword) throws Exception;
+    Map<String, Object> searchWalk(String keyword, int page, int size) throws Exception;
+
 }

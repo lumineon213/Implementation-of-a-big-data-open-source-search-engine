@@ -8,6 +8,9 @@ import FoodList from "pages/foodList/foodList";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
 
+import CourseHome from "pages/course/CourseHome";
+import WalkCourseList from "pages/course/WalkCourseList";
+
 // 타입 정의
 export interface SolrResultItem {
   id: string;
@@ -38,6 +41,10 @@ function App() {
                    <Route path="/map" element={<MapPage />} />
                   //상세보기
                   <Route path="/food/:id" element={<FoodDetail />} />
+                  //여행 코스
+                  <Route path="/course" element={<CourseHome />} />
+                  //도보여행
+                  <Route path="/course/walk" element={<WalkCourseList />} />
                 </Routes>
          
           <Footer />

@@ -293,6 +293,9 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 * **아래 경로에서 api 활용신청** **
 https://www.data.go.kr/data/15063472/openapi.do
 
+https://www.data.go.kr/data/15063454/openapi.do - 도보여행정보 api
+walk.api.key="본인 키"
+
 * **API키 위치** **
 스프링 부트에서 src/main/resources 바로 아래
 secret.properties에 food.api.key="본인 인증 키"
