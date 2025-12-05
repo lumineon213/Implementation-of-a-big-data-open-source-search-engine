@@ -4,6 +4,7 @@ package com.boot.foodApi.controller;
 import com.boot.foodApi.service.foodService;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,16 +36,20 @@ public class foodController {
         }
     }
 	
+	
 	@GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam(value = "keyword", required = false) String keyword) {
+    public ResponseEntity<?> search(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "page", defaultValue = "1") int page,  // 기본 1페이지
+            @RequestParam(value = "size", defaultValue = "10") int size  // 기본 10개씩
+    ) {
         try {
-            // 서비스에서 검색 결과 가져오기 (키워드 없으면 전체 리스트 반환됨)
-            List<?> result = foodService.searchFood(keyword);
+            // 수정된 서비스 호출
+            Map<String, Object> result = foodService.searchFood(keyword, page, size);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("검색 실패: " + e.getMessage());
         }
     }
-	
 }
