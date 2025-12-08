@@ -31,7 +31,7 @@ const NoticeWrite: React.FC = () => {
           },
         }
       );
-      alert("공지사항 등록 요청을 전송했습니다. (백엔드 INSERT 구현이 필요할 수 있습니다.)");
+      alert("공지사항 등록 요청을 전송했습니다.");
       setTitle("");
       setContent("");
     } catch (e: any) {
