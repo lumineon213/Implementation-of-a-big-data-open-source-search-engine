@@ -1,11 +1,13 @@
-package com.boot.dao;
+package com.boot.notice.dao;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.boot.dto.NoticeDTO;
+import com.boot.notice.dto.NoticeDTO;
+
+
 
 @Mapper
 public interface NoticeDAO {

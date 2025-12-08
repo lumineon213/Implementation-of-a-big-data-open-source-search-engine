@@ -1,4 +1,4 @@
-package com.boot.controller;
+package com.boot.notice.controller;
 
 import java.util.List;
 
@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.boot.dao.loginDAO;
-import com.boot.dto.NoticeDTO;
+
 import com.boot.dto.loginDTO;
+import com.boot.notice.dto.NoticeDTO;
+import com.boot.notice.service.NoticeService;
 import com.boot.security.JwtUtil;
-import com.boot.service.NoticeService;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 

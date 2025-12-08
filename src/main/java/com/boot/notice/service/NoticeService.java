@@ -1,8 +1,10 @@
-package com.boot.service;
+package com.boot.notice.service;
 
 import java.util.List;
 
-import com.boot.dto.NoticeDTO;
+import com.boot.notice.dto.NoticeDTO;
+
+
 
 public interface NoticeService {
 

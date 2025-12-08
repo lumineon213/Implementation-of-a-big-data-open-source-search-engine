@@ -1,12 +1,14 @@
-package com.boot.service;
+package com.boot.notice.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.boot.dao.NoticeDAO;
-import com.boot.dto.NoticeDTO;
+import com.boot.notice.dao.NoticeDAO;
+import com.boot.notice.dto.NoticeDTO;
+
+
 
 @Service
 public class NoticeServiceImpl implements NoticeService {

@@ -15,6 +15,14 @@ import Terms from "pages/footer_details/Terms";
 import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
+import TravelInfoHome from "pages/travel/TravelInfoHome";
+import TravelFestival from "pages/travel/TravelFestival";
+import TravelFestivalDetail from "pages/travel/TravelFestivalDetail";
+import TravelShopping from "pages/travel/TravelShopping";
+import TravelParking from "pages/travel/TravelParking";
+import TravelAccessible from "pages/travel/TravelAccessible";
+import TravelTouristCenter from "pages/travel/TravelTouristCenter";
+import TravelHospital from "pages/travel/TravelHospital";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -50,6 +58,15 @@ function App() {
                   <Route path="/course" element={<CourseHome />} />
                   {/* 도보여행 */}
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  {/* 여행정보 메인 및 하위 카테고리 */}
+                  <Route path="/info" element={<TravelInfoHome />} />
+                  <Route path="/info/festival" element={<TravelFestival />} />
+                  <Route path="/info/festival/:id" element={<TravelFestivalDetail />} />
+                  <Route path="/info/shopping" element={<TravelShopping />} />
+                  <Route path="/info/parking" element={<TravelParking />} />
+                  <Route path="/info/accessible" element={<TravelAccessible />} />
+                  <Route path="/info/tourist-center" element={<TravelTouristCenter />} />
+                  <Route path="/info/hospital" element={<TravelHospital />} />
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />
                   <Route path="/notice/:id" element={<NoticeDetail />} />
