@@ -4,7 +4,7 @@
   right: 0;
   bottom: 40px; /* 푸터 높이 */
   width: 400px;
-  z-index: 1001;
+  z-index: 10000;
   animation: slideInRight 0.3s ease;
 }
 

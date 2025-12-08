@@ -88,6 +88,9 @@ public class MarineServiceImpl implements MarineService {
 
         query.setStart(start);
         query.setRows(size);
+        
+        // 모든 필드 반환
+        query.setFields("*");
 
         QueryResponse res = solrClient.query(CORE_NAME, query);
         SolrDocumentList list = res.getResults();
@@ -98,14 +101,21 @@ public class MarineServiceImpl implements MarineService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", doc.get("id"));
             map.put("title", doc.get("title"));
+            map.put("subtitle", doc.get("subtitle"));
             map.put("address", doc.get("address"));
+            map.put("latitude", doc.get("latitude"));
+            map.put("longitude", doc.get("longitude"));
             map.put("image_url", doc.get("image_url"));
+            map.put("type", doc.get("type"));
             resultList.add(map);
         }
 
         Map<String, Object> response = new HashMap<>();
         response.put("list", resultList);
         response.put("total", list.getNumFound());
+        response.put("page", page);
+        response.put("size", size);
+        response.put("totalPages", (int) Math.ceil(list.getNumFound() / (double) size));
 
         return response;
     }

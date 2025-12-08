@@ -10,6 +10,8 @@ const MapPage: React.FC = () => {
   const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [walks, setWalks] = useState<any[]>([]);
+  const [themes, setThemes] = useState<any[]>([]);
+  const [marines, setMarines] = useState<any[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState<any | null>(null);
 
   // 컴포넌트 마운트 시 푸터 숨기기
@@ -59,6 +61,10 @@ const MapPage: React.FC = () => {
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
         walks={walks}
         onWalkClick={(walk) => setSelectedRestaurant(walk)}
+        themes={themes}
+        onThemeClick={(theme) => setSelectedRestaurant(theme)}
+        marines={marines}
+        onMarineClick={(marine) => setSelectedRestaurant(marine)}
       />
 
       <KakaoMap 
@@ -66,6 +72,8 @@ const MapPage: React.FC = () => {
         activeCategories={activeCategories}
         setRestaurants={setRestaurants}
         setWalks={setWalks}
+        setThemes={setThemes}
+        setMarines={setMarines}
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
       />
      
