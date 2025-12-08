@@ -328,6 +328,14 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         });
 
         mapRef.current = map;
+
+        // 지도 크기 재조정 - 약간의 지연 후 실행
+        setTimeout(() => {
+          if (map && map.relayout) {
+            map.relayout();
+            map.setCenter(new window.kakao.maps.LatLng(35.146, 129.1));
+          }
+        }, 100);
       });
     };
 
@@ -347,6 +355,25 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       document.body.appendChild(script);
     }
   }, [kakaoKey]);
+
+  /* 지도 리사이즈 처리 */
+  useEffect(() => {
+    const handleResize = () => {
+      const map = mapRef.current;
+      if (map && map.relayout) {
+        map.relayout();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // 컴포넌트 마운트 시에도 한 번 실행
+    setTimeout(handleResize, 200);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   /* 음식점 마커 제거 */
   const clearRestaurantMarkers = () => {

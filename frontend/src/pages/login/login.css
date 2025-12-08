@@ -25,11 +25,10 @@ body.dark-mode .login-container {
   background: #0a1929;
 }
 
-body, html, #root {
+body, html {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
 }
 
 /* 움직이는 배경 그라데이션 - 바다 테마 */
