@@ -10,6 +10,10 @@ interface SidebarProps {
   onRestaurantClick: (restaurant: any) => void;
   walks: any[];
   onWalkClick: (walk: any) => void;
+  themes: any[];
+  onThemeClick: (theme: any) => void;
+  marines: any[];
+  onMarineClick: (marine: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -20,7 +24,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   restaurants,
   onRestaurantClick,
   walks,
-  onWalkClick
+  onWalkClick,
+  themes,
+  onThemeClick,
+  marines,
+  onMarineClick
 }) => {
 
   return (
@@ -129,28 +137,28 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="category-label">여행코스<br/>도보여행</div>
               </div>
               <div 
-                className={`category-item ${activeCategories.includes('추천테마') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('추천테마')}
+                className={`category-item ${activeCategories.includes('테마여행') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('테마여행')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('추천테마') ? '#59ce16ff' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('테마여행') ? '#59ce16ff' : '#9E9E9E'}}
                 >
                   🎭
                 </div>
-                <div className="category-label">추천테마</div>
+                <div className="category-label">여행코스<br/>테마여행</div>
               </div>
               <div 
-                className={`category-item ${activeCategories.includes('여행코스') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('여행코스')}
+                className={`category-item ${activeCategories.includes('해양여행') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('해양여행')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('여행코스') ? '#0866f1ff' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('해양여행') ? '#0866f1ff' : '#9E9E9E'}}
                 >
-                  📍
+                  🌊
                 </div>
-                <div className="category-label">여행코스</div>
+                <div className="category-label">여행코스<br/>해양여행</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('나의여행') ? 'active' : ''}`}
@@ -348,6 +356,200 @@ const Sidebar: React.FC<SidebarProps> = ({
                             whiteSpace: 'nowrap',
                             maxWidth: '100%'
                           }}>{Array.isArray(walk.subtitle) ? walk.subtitle[0] : walk.subtitle}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*테마여행 목록 표시 */}
+          {activeCategories.includes('테마여행') && themes.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #59ce16 0%, #47a811 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🎭 테마여행 코스 ({themes.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {themes.map((theme) => (
+                  <div 
+                    key={theme.id} 
+                    className="restaurant-card"
+                    onClick={() => onThemeClick(theme)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={theme.image || theme.image_url || "https://via.placeholder.com/80?text=Theme"} 
+                        alt={theme.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Theme";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(theme.title) ? theme.title[0] : theme.title}
+                      </div>
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {theme.distance.toFixed(2)}km
+                      </div>
+                      {theme.subtitle && (
+                        <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#E8F5E9',
+                            color: '#2E7D32',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(theme.subtitle) ? theme.subtitle[0] : theme.subtitle}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*해양여행 목록 표시 */}
+          {activeCategories.includes('해양여행') && marines.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #0866f1 0%, #0652c7 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🌊 해양여행 코스 ({marines.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {marines.map((marine) => (
+                  <div 
+                    key={marine.id} 
+                    className="restaurant-card"
+                    onClick={() => onMarineClick(marine)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={marine.image || marine.image_url || "https://via.placeholder.com/80?text=Marine"} 
+                        alt={marine.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Marine";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(marine.title) ? marine.title[0] : marine.title}
+                      </div>
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {marine.distance.toFixed(2)}km
+                      </div>
+                      {marine.subtitle && (
+                        <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#E3F2FD',
+                            color: '#1565C0',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(marine.subtitle) ? marine.subtitle[0] : marine.subtitle}</span>
                         </div>
                       )}
                     </div>

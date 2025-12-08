@@ -1,10 +1,12 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import "./App.css";
 import Login from "pages/login/login";
 import Header from "components/common/header";
 import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
+import ThemePage from "pages/tourtheme/ThemePage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
 
@@ -37,8 +39,11 @@ export interface SolrResultItem {
 
 
 function App() {
+  const location = useLocation();
+  const isMapPage = location.pathname === '/map';
+  
   return (
-          <>
+          <div className={`app-wrapper ${isMapPage ? 'map-page-mode' : ''}`}>
           <Header />
                 <Routes>                
                   {/* 새로운 메인 페이지 */}
@@ -51,6 +56,8 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
+                  //여행 페이지
+                  <Route path="/theme" element={<ThemePage />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
                   {/* 여행 코스 */}
@@ -76,8 +83,8 @@ function App() {
                   <Route path="/footer_details/event" element={<Event />} />
                 </Routes>
          
-          <Footer />
-              </>
+          {!isMapPage && <Footer />}
+              </div>
           );
 }
 export default App;

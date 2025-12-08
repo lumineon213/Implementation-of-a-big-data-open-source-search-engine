@@ -2,7 +2,7 @@
 .sidebar {
   position: fixed;
   top: 60px;
-  bottom: 100px; /* 푸터 높이만큼 여백 (푸터 높이에 맞게 조정) */
+  bottom: 0; /* 전체 화면 사용 */
   left: -360px;
   width: 360px;
   background: white;
