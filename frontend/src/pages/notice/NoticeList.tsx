@@ -23,6 +23,7 @@ const NoticeList: React.FC = () => {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,17 @@ const NoticeList: React.FC = () => {
 
   const handleClick = (id: number) => {
     navigate(`/notice/${id}`);
+  };
+
+  const itemsPerPage = 10;
+  const totalPages = notices.length > 0 ? Math.ceil(notices.length / itemsPerPage) : 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentNotices = notices.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
   };
 
   if (loading) {
@@ -98,9 +110,9 @@ const NoticeList: React.FC = () => {
                 <td colSpan={5} className="notice-empty">등록된 공지사항이 없습니다.</td>
               </tr>
             ) : (
-              notices.map((n, idx) => (
+              currentNotices.map((n, idx) => (
                 <tr key={n.noticeId} onClick={() => handleClick(n.noticeId)} className="notice-row">
-                  <td>{notices.length - idx}</td>
+                  <td>{notices.length - (startIndex + idx)}</td>
                   <td className="notice-title">{n.title}</td>
                   <td>{n.writerId}</td>
                   <td>{new Date(n.createdDate).toLocaleDateString()}</td>
@@ -111,6 +123,36 @@ const NoticeList: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {notices.length > itemsPerPage && (
+        <div className="notice-pagination">
+          <button
+            className="page-btn prev-next"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              className={`page-btn ${currentPage === page ? "active" : ""}`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            className="page-btn prev-next"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
     </div>
   );
 };
