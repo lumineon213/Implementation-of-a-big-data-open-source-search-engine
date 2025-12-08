@@ -313,6 +313,10 @@ ignore file 클릭
 * **solr에 데이터 넣는 방법**
 1. solr에 코어 생성
 solr create -c food_core
+marine_core
+walk_core
+urban_core
+theme_core
 
 2. 스프링 부트 실행 후 
 http://localhost:8484/api/food/save-data 

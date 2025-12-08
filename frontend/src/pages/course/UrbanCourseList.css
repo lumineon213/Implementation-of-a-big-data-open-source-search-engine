@@ -1,0 +1,173 @@
+/* 전체 컨테이너 */
+.urban-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 20px 100px;
+  animation: fadeIn 0.4s ease;
+}
+
+/* 제목 영역 */
+.search-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #444; /* 도시 느낌 다크그레이 */
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.search-sub {
+  text-align: center;
+  color: #777;
+  margin-bottom: 30px;
+  font-size: 15px;
+}
+
+/* 검색창 */
+.search-box-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.main-search-input {
+  width: 350px;
+  padding: 12px 16px;
+  border: 1px solid #cfd4da;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.main-search-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #ff6f3c; /* 따뜻한 오렌지 */
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.15s;
+}
+.main-search-btn:hover {
+  background: #e85a24;
+}
+
+/* 리스트 정보 바 */
+.list-info-bar {
+  margin: 20px 0 20px;
+  font-size: 15px;
+  color: #444;
+}
+
+.list-info-bar b {
+  color: #ff6f3c;
+}
+
+/* 카드 리스트 */
+.urban-list-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* 카드 */
+.urban-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: 0.25s;
+  cursor: pointer;
+}
+.urban-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.urban-image-box img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.urban-info-box {
+  padding: 16px 14px 20px;
+}
+
+.urban-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.urban-sub {
+  margin-top: 4px;
+  color: #555;
+  font-size: 14px;
+}
+
+.urban-address {
+  color: #666;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* 페이징 */
+.pagination-wrapper {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.page-btn {
+  margin: 0 4px;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.page-btn:hover {
+  background: #fff4ee;
+  border-color: #ff6f3c;
+}
+.page-btn.active {
+  background: #ff6f3c;
+  border-color: #ff6f3c;
+  color: #fff;
+  font-weight: 700;
+}
+
+.prev-next {
+  font-weight: 700;
+}
+
+/* 점프 */
+.pagination-jump {
+  margin-top: 15px;
+}
+.jump-input {
+  width: 60px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.jump-btn {
+  padding: 6px 12px;
+  margin-left: 5px;
+  border-radius: 6px;
+  background: #ff6f3c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

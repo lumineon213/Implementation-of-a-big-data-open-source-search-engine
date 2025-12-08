@@ -4,6 +4,7 @@ import "./CourseHome.css";
 import walk from '../../components/common/img/walk.png'; 
 import theme from '../../components/common/img/theme.png';
 import marine from '../../components/common/img/marine.png';
+import urban from '../../components/common/img/urban.png';
 
 
 const CourseHome = () => {
@@ -29,6 +30,12 @@ const CourseHome = () => {
           <img src={marine} alt="해양여행" />
           <h3>해양 여행</h3>
           <p>바다를 즐기는 특별한 코스</p>
+        </Link>
+
+        <Link to="/course/urban" className="category-card">
+          <img src={urban} alt="도시여행" />
+          <h3>도시 여행</h3>
+          <p>도시를 즐기는 특별한 코스</p>
         </Link>
       </div>
     </div>
