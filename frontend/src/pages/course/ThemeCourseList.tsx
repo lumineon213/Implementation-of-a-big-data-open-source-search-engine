@@ -14,14 +14,13 @@ const ThemeCourseList: React.FC = () => {
   const [courses, setCourses] = useState<ThemeCourse[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 검색 / 페이징
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [inputPage, setInputPage] = useState("");
 
-  const size = 9; // 테마 여행은 3×3 구성 추천
+  const size = 9;
   const pageGroupSize = 10;
 
   useEffect(() => {
@@ -32,15 +31,15 @@ const ThemeCourseList: React.FC = () => {
           params: { page, size, keyword }
         });
 
-        console.log("🔥 theme search:", res.data);
+        console.log("🔍 theme search:", res.data);
 
-        const listData = res.data.data || [];
-        const totalCount = res.data.total || 0;
+        const listData = res.data.data || res.data.list || [];
+        const totalCount = res.data.total || res.data.count || 0;
 
         setCourses(listData);
         setTotal(totalCount);
       } catch (err) {
-        console.error("[theme] 데이터 로딩 실패", err);
+        console.error("[Theme] 검색 오류:", err);
       } finally {
         setLoading(false);
       }
@@ -68,7 +67,7 @@ const ThemeCourseList: React.FC = () => {
       return;
     }
     if (pageNum < 1 || pageNum > totalPages) {
-      alert(`1~${totalPages} 사이의 숫자를 입력해주세요.`);
+      alert(`1~${totalPages} 범위의 숫자를 입력해주세요.`);
       return;
     }
     setPage(pageNum);
@@ -95,7 +94,7 @@ const ThemeCourseList: React.FC = () => {
       {/* 검색 영역 */}
       <div className="search-filter-container">
         <h2 className="search-title">부산 테마 여행 🌴</h2>
-        <p className="search-sub">바다 · 숲 · 감성 · 사진 명소까지 하나로!</p>
+        <p className="search-sub">바다 · 숲 · 감성 · 사진 명소까지 한눈에!</p>
 
         <div className="search-box-wrapper">
           <input
@@ -114,9 +113,7 @@ const ThemeCourseList: React.FC = () => {
 
       {/* 리스트 정보 */}
       <div className="list-info-bar">
-        <div className="total-count">
-          총 <b>{total.toLocaleString()}</b>개의 테마 여행
-        </div>
+        총 <b>{total.toLocaleString()}</b>개의 테마 여행
       </div>
 
       {/* 리스트 출력 */}
@@ -172,7 +169,7 @@ const ThemeCourseList: React.FC = () => {
           </button>
         </div>
 
-        {/* 페이지 점프 */}
+        {/* 점프 */}
         <div className="pagination-jump">
           <input
             type="number"

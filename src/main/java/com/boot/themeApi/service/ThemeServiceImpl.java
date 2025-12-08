@@ -76,8 +76,22 @@ public class ThemeServiceImpl implements ThemeService {
     public Map<String, Object> searchTheme(String keyword, int page, int size) throws Exception {
 
         SolrQuery query = new SolrQuery();
-        query.setQuery(keyword == null ? "*:*" : "title:*" + keyword + "*");
-        query.setStart((page - 1) * size);
+
+        // 빈 문자열도 전체 검색 처리
+        boolean empty = (keyword == null || keyword.trim().isEmpty());
+
+        if (empty) {
+            query.setQuery("*:*");
+        } else {
+            String kw = keyword.trim();
+            query.setQuery(
+                    "title:*" + kw + "* OR subtitle:*" + kw + "* OR address:*" + kw + "*"
+            );
+        }
+
+        // 페이징
+        int start = (page - 1) * size;
+        query.setStart(start);
         query.setRows(size);
 
         QueryResponse res = solrClient.query(CORE, query);
@@ -98,7 +112,11 @@ public class ThemeServiceImpl implements ThemeService {
         Map<String, Object> response = new HashMap<>();
         response.put("data", result);
         response.put("total", list.getNumFound());
+        response.put("page", page);
+        response.put("size", size);
+        response.put("totalPages", (int) Math.ceil(list.getNumFound() / (double) size));
 
         return response;
     }
+
 }

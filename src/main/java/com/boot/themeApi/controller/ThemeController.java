@@ -28,9 +28,9 @@ public class ThemeController {
 
     @GetMapping("/search")
     public ResponseEntity<?> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "9") int size
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "9") int size
     ) {
         try {
             return ResponseEntity.ok(
