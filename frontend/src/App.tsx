@@ -5,6 +5,7 @@ import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
+import ThemePage from "pages/tourtheme/ThemePage";
 
 import MapPage from "pages/map/MapPage";
 // 타입 정의
@@ -35,6 +36,8 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   //지도 페이지
                    <Route path="/map" element={<MapPage />} />
+                  //여행 페이지
+                  <Route path="/theme" element={<ThemePage />} />
 
                 </Routes>
          
