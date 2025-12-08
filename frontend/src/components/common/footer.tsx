@@ -33,9 +33,9 @@ const Footer: React.FC = () => {
             <h4 className="footer-subtitle">고객 지원</h4>
             <ul className="footer-links">
               <li><a href="/notice">공지사항</a></li>
-              <li><a href="#">자주 묻는 질문</a></li>
-              <li><a href="#">문의하기</a></li>
-              <li><a href="#">이벤트</a></li>
+              <li><a href="/footer_details/faq">자주 묻는 질문</a></li>
+              <li><a href="/footer_details/inquiry">문의하기</a></li>
+              <li><a href="/footer_details/event">이벤트</a></li>
             </ul>
           </div>
 
