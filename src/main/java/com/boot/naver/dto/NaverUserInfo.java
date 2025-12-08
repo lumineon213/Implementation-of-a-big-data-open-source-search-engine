@@ -1,0 +1,16 @@
+package com.boot.naver.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+/**
+ * 네이버 사용자 정보 API 응답을 매핑할 DTO
+ */
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true) // 모르는 필드는 무시
+public class NaverUserInfo {
+    private String id;       // 네이버의 고유 사용자 ID (이것을 socialId로 사용)
+    private String email;
+    private String name;
+    private String profile_image;  // 프로필 사진 URL
+}

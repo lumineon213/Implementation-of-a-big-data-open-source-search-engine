@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "pages/login/login";
 import Header from "components/common/header";
@@ -25,6 +26,17 @@ export interface SolrResultItem {
 
 
 function App() {
+   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+
+      // URL에 남은 ?token= 제거
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
   return (
           <>
           <Header />

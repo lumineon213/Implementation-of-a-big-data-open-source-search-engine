@@ -11,4 +11,7 @@ public interface loginService {
     boolean phoneCheck(String phoneNumber);
 
     loginDTO login(String accountId, String accountPw);
+    
+    loginDTO findOrCreateSocialUser(String type, String socialId, String email, String name);
+
 }

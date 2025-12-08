@@ -19,4 +19,9 @@ public interface loginDAO {
             @Param("accountPw") String accountPw);
     
     loginDTO findById(@Param("accountId") String accountId);
+    
+    loginDTO findSocialUser(@Param("socialType") String socialType,
+            @Param("socialId") String socialId);
+    
+    int insertSocial(loginDTO dto);
 }

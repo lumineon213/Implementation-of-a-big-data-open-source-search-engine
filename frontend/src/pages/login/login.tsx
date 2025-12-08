@@ -45,7 +45,7 @@ const Login: React.FC = () => {
       });
 
       if (res.data.success) {
-        // ⭐ JWT 저장
+        //  JWT 저장
         localStorage.setItem("token", res.data.token);
 
         alert("로그인 성공!");
@@ -151,8 +151,35 @@ const Login: React.FC = () => {
   };
 
   const handleSocialLogin = (provider: 'google' | 'kakao' | 'naver') => {
-    alert(`${provider} 로그인은 아직 미구현`);
+
+    if (provider === "google") {
+      window.location.href =
+        "https://accounts.google.com/o/oauth2/v2/auth?" +
+        "client_id=702207143548-874896trotrrlmq7f6ujcag9m4c3oujv.apps.googleusercontent.com&" +
+        "redirect_uri=http://localhost:8484/login/oauth2/code/google&" +
+        "response_type=code&" +
+        "scope=email%20profile";
+    }
+
+    if (provider === "naver") {
+      window.location.href =
+        "https://nid.naver.com/oauth2.0/authorize?" +
+        "client_id=4J0_WLp1ESBS1kMGnjX9&" +
+        "redirect_uri=http://localhost:8484/login/oauth2/code/naver&" +
+        "response_type=code&" +
+        "state=XYZ123ABC";
+    }
+
+    if (provider === "kakao") {
+      window.location.href =
+        "https://kauth.kakao.com/oauth/authorize?" +
+        "client_id=b78f006042277f7decbde1f0f797012f&" +
+        "redirect_uri=http://localhost:8484/oauth2/callback/kakao&" +
+        "response_type=code";
+    }
+
   };
+
 
   return (
     <div className="login-container">
@@ -169,7 +196,7 @@ const Login: React.FC = () => {
               kh<span className="logo-accent">.solr</span>
             </Link>
           </h1>
-          <p className="tagline">가장 빠른 AI 검색을 경험하세요</p>
+          <p className="tagline">부산 여행 GO?</p>
         </div>
 
         <div className="login-card">

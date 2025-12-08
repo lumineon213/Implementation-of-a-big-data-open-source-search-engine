@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.boot.dao.loginDAO;
 import com.boot.dto.loginDTO;
 
-@Service 
+@Service
 public class loginSerivceImpl implements loginService {
 
     @Autowired
@@ -16,16 +16,16 @@ public class loginSerivceImpl implements loginService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     @Override
     public int signup(loginDTO dto) {
-        // 비밀번호 암호화 후 저장
-        dto.setAccountPw(passwordEncoder.encode(dto.getAccountPw()));
+        dto.setAccountPw(passwordEncoder.encode(dto.getAccountPw())); // 암호화 저장
         return dao.signup(dto);
     }
 
     @Override
     public boolean emailCheck(String email) {
-        return dao.emailCheck(email) > 0;  
+        return dao.emailCheck(email) > 0;
     }
 
     @Override
@@ -38,13 +38,60 @@ public class loginSerivceImpl implements loginService {
 
         loginDTO user = dao.findById(accountId);
 
-        if (user == null) return null; // 아이디 없음
+        if (user == null) return null;
 
-        // 입력 PW vs 암호화 PW 비교
         if (!passwordEncoder.matches(accountPw, user.getAccountPw())) {
-            return null; 
+            return null;
         }
 
         return user;
     }
+
+
+    // ⭐ 소셜 로그인 시 실행되는 핵심 로직 메서드
+    @Override
+    public loginDTO findOrCreateSocialUser(String type, String socialId, String email, String name) {
+
+        // ① 이미 존재하는지 검사
+        loginDTO user = dao.findSocialUser(type, socialId);
+        if (user != null) {
+            return user;
+        }
+
+        // ② 신규 생성
+        loginDTO dto = new loginDTO();
+
+        // ⭐ login 계정 ID 규칙
+        dto.setAccountId(type + "_" + socialId); // ex) google_129987312
+
+        // ⭐ 이름값 비어있을 때 대비
+        if (name == null || name.isBlank()) {
+            if (email != null && !email.isBlank()) {
+                name = email.split("@")[0];
+            } else {
+                name = type + "_user"; // fallback
+            }
+        }
+        dto.setAccountName(name);
+
+        // ⭐ 이메일 nullable 허용
+        dto.setEmail(email);
+
+        // ⭐ 소셜 회원은 비번 없음
+        dto.setAccountPw(null);
+
+        // 소셜 타입 저장 (google / kakao / naver)
+        dto.setSocialType(type);
+
+        // 소셜 ID 저장 (원시값 사용)
+        dto.setSocialId(socialId);
+
+        // 전화번호 없음
+        dto.setPhoneNumber(null);
+
+        dao.insertSocial(dto);
+
+        return dto;
+    }
+
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class loginDTO {
 
+	
 	 private String accountId;
 	    private String accountPw;
 	    private String accountName;
@@ -12,5 +13,8 @@ public class loginDTO {
 	    private String phoneNumber;
 	    private String accountRole;
 	    private String regDate;
+	    
+	    private String socialType;  
+	    private String socialId;
 	    
 }
