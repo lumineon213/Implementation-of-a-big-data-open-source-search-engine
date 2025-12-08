@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
           <div className="footer-section">
             <h4 className="footer-subtitle">고객 지원</h4>
             <ul className="footer-links">
-              <li><a href="#">공지사항</a></li>
+              <li><a href="/notice">공지사항</a></li>
               <li><a href="#">자주 묻는 질문</a></li>
               <li><a href="#">문의하기</a></li>
               <li><a href="#">이벤트</a></li>
@@ -51,9 +51,9 @@ const Footer: React.FC = () => {
 
         <div className="footer-bottom">
           <div className="footer-bottom-left">
-            <a href="#" className="footer-legal">개인정보 처리방침</a>
+            <a href="/footer_details/privacy" className="footer-legal">개인정보 처리방침</a>
             <span className="footer-divider">|</span>
-            <a href="#" className="footer-legal">이용약관</a>
+            <a href="/footer_details/terms" className="footer-legal">이용약관</a>
             <span className="footer-divider">|</span>
             <a href="#" className="footer-legal">사이트맵</a>
           </div>
