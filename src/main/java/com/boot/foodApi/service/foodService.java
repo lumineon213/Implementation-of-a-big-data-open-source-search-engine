@@ -7,7 +7,7 @@ public interface foodService {
     String syncFoodData() throws Exception; 
     
     // ✅ 목록 조회: sort, userLat, userLng를 모두 받음
-    Map<String, Object> searchFood(String keyword, int page, int size, String sort, double userLat, double userLng) throws Exception;    
+    Map<String, Object> searchFood(String keyword, int page, int size) throws Exception;    
     // 상세 조회
     Map<String, Object> getFoodDetail(String id) throws Exception;
     

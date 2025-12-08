@@ -48,7 +48,7 @@ public class foodController {
     ) {
         try {
             // ✅ Service 호출 시 모든 파라미터 전달
-            Map<String, Object> result = foodService.searchFood(keyword, page, size, sort, userLat, userLng);
+            Map<String, Object> result = foodService.searchFood(keyword, page, size);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             e.printStackTrace();
