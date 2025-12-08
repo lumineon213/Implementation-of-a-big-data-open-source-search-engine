@@ -293,8 +293,17 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 * **아래 경로에서 api 활용신청** **
 https://www.data.go.kr/data/15063472/openapi.do
 
+https://www.data.go.kr/data/15063454/openapi.do - 도보여행정보 api
+walk.api.key="본인 키"
+
+https://www.data.go.kr/data/15063564/openapi.do - 해양테마정보 api
+marine.api.key="본인 키"
+
+https://www.data.go.kr/data/15063506/openapi.do - 테마여행정보 api
+theme.api.key="본인 키
+
 * **API키 위치** **
-스프링 부트에서 src/main/java 바로 아래
+스프링 부트에서 src/main/resources 바로 아래
 secret.properties에 food.api.key="본인 인증 키"
 gitignore에 secret.properties가 들어가있으나 인식을 못하는지
 깃허브 데스크 탑에 남아있었음
