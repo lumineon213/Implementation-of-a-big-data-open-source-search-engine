@@ -8,6 +8,8 @@ interface SidebarProps {
   onCategoryClick: (category: string) => void;
   restaurants: any[];
   onRestaurantClick: (restaurant: any) => void;
+  walks: any[];
+  onWalkClick: (walk: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -16,7 +18,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeCategories, 
   onCategoryClick,
   restaurants,
-  onRestaurantClick
+  onRestaurantClick,
+  walks,
+  onWalkClick
 }) => {
 
   return (
@@ -113,16 +117,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="category-label">전기차<br/>충전소</div>
               </div>
               <div 
-                className={`category-item ${activeCategories.includes('품질인증') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('품질인증')}
+                className={`category-item ${activeCategories.includes('도보여행') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('도보여행')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('품질인증') ? '#0b7691ff' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('도보여행') ? '#0b7691ff' : '#9E9E9E'}}
                 >
-                  📋
+                  🚶
                 </div>
-                <div className="category-label">품질인증<br/>업소추천</div>
+                <div className="category-label">여행코스<br/>도보여행</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('추천테마') ? 'active' : ''}`}
@@ -165,39 +169,187 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           {/*음식점 목록 표시 */}
           {activeCategories.includes('음식점') && restaurants.length > 0 && (
-            <div className="restaurant-list">
-              <div className="restaurant-header">
-                <h3>🍴 주변 맛집 ({restaurants.length})</h3>
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #FF9800 0%, #FF5722 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🍴 주변 맛집 ({restaurants.length}개)
+                </h3>
               </div>
               
-              <div className="restaurant-items">
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                 {restaurants.map((restaurant) => (
                   <div 
                     key={restaurant.id} 
                     className="restaurant-card"
                     onClick={() => onRestaurantClick(restaurant)}
-                    style={{ cursor: 'pointer' }}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
                   >
-                    <div className="restaurant-image">
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
                       <img 
                         src={restaurant.image || restaurant.image_url || "https://via.placeholder.com/80?text=No+Image"} 
                         alt={restaurant.title}
                         onError={(e) => {
                           e.currentTarget.src = "https://via.placeholder.com/80?text=Food";
                         }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </div>
                     
-                    <div className="restaurant-info">
-                      <div className="restaurant-title">
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
                         {Array.isArray(restaurant.title) ? restaurant.title[0] : restaurant.title}
                       </div>
-                      <div className="restaurant-distance">📍 {restaurant.distance.toFixed(2)}km</div>
-                      <div className="restaurant-menu">
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {restaurant.distance.toFixed(2)}km
+                      </div>
+                      <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                         {restaurant.menu && restaurant.menu.split(',').slice(0, 2).map((item: string, idx: number) => (
-                          <span key={idx} className="menu-tag">#{item.trim()}</span>
+                          <span key={idx} className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#FFF3E0',
+                            color: '#F57C00',
+                            borderRadius: '12px'
+                          }}>#{item.trim()}</span>
                         ))}
                       </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*도보여행 목록 표시 */}
+          {activeCategories.includes('도보여행') && walks.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #0b7691 0%, #0a5c75 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🚶 도보여행 코스 ({walks.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {walks.map((walk) => (
+                  <div 
+                    key={walk.id} 
+                    className="restaurant-card"
+                    onClick={() => onWalkClick(walk)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={walk.image || walk.image_url || "https://via.placeholder.com/80?text=Walk"} 
+                        alt={walk.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Walk";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(walk.title) ? walk.title[0] : walk.title}
+                      </div>
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {walk.distance.toFixed(2)}km
+                      </div>
+                      {walk.subtitle && (
+                        <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#E0F2F7',
+                            color: '#0277BD',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(walk.subtitle) ? walk.subtitle[0] : walk.subtitle}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -25,12 +25,18 @@ const MapDetail: React.FC<MapDetailProps> = ({ restaurant, onClose }) => {
   };
 
   const title = getValue(restaurant.title);
+  const subtitle = getValue(restaurant.subtitle);
   const address = getValue(restaurant.address);
   const description = getValue(restaurant.description);
   const imageUrl = getValue(restaurant.image || restaurant.image_url);
   const menu = restaurant.menu || restaurant.menu_t || "";
   const openTime = restaurant.opentime_t || "";
+  const tags = getValue(restaurant.tags);
+  const type = getValue(restaurant.type);
   const distance = restaurant.distance ? restaurant.distance.toFixed(2) : "";
+  
+  // 도보여행 여부 확인
+  const isWalk = type === "WALK";
 
   return (
     <div className="map-detail-panel">
@@ -69,6 +75,13 @@ const MapDetail: React.FC<MapDetailProps> = ({ restaurant, onClose }) => {
             </div>
           )}
 
+          {isWalk && subtitle && (
+            <div className="map-detail-item">
+              <span className="map-detail-label">💬 부제</span>
+              <span className="map-detail-value">{subtitle}</span>
+            </div>
+          )}
+
           {address && (
             <div className="map-detail-item">
               <span className="map-detail-label">📍 주소</span>
@@ -76,7 +89,14 @@ const MapDetail: React.FC<MapDetailProps> = ({ restaurant, onClose }) => {
             </div>
           )}
 
-          {menu && (
+          {isWalk && tags && (
+            <div className="map-detail-item">
+              <span className="map-detail-label">🚌 교통정보</span>
+              <span className="map-detail-value" style={{ whiteSpace: 'pre-line' }}>{tags}</span>
+            </div>
+          )}
+
+          {!isWalk && menu && (
             <div className="map-detail-item">
               <span className="map-detail-label">🍽️ 대표 메뉴</span>
               <div className="map-detail-menu">
@@ -89,7 +109,7 @@ const MapDetail: React.FC<MapDetailProps> = ({ restaurant, onClose }) => {
             </div>
           )}
 
-          {openTime && (
+          {!isWalk && openTime && (
             <div className="map-detail-item">
               <span className="map-detail-label">🕐 영업시간</span>
               <span className="map-detail-value">{openTime.replace(/\n/g, " ")}</span>
