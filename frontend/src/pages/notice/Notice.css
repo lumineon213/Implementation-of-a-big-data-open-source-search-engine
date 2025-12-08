@@ -1,0 +1,144 @@
+.notice-page {
+  max-width: 960px;
+  margin: 80px auto 40px;
+  padding: 20px;
+}
+
+.notice-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.notice-header h1,
+.notice-detail-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.notice-header p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.notice-table-wrapper {
+  border-top: 2px solid #333;
+}
+
+.notice-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.notice-table th,
+.notice-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.notice-table th {
+  background-color: #fafafa;
+}
+
+.notice-row {
+  cursor: pointer;
+}
+
+.notice-row:hover {
+  background-color: #f5faff;
+}
+
+.notice-title {
+  text-align: left;
+}
+
+.notice-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #888;
+}
+
+.notice-loading {
+  padding: 120px 20px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.notice-detail-header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.notice-detail-title {
+  margin-bottom: 8px;
+}
+
+.notice-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.notice-detail-content {
+  min-height: 200px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.notice-detail-footer {
+  margin-top: 30px;
+  text-align: right;
+}
+
+.notice-back-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  cursor: pointer;
+}
+
+.notice-back-btn:hover {
+  background-color: #eee;
+}
+
+.notice-write-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notice-write-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice-write-form input,
+.notice-write-form textarea {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.notice-write-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.notice-write-btn:hover {
+  background-color: #0069d9;
+}

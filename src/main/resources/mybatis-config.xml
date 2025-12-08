@@ -13,6 +13,7 @@
 		<mapper resource="mybatis/mappers/loginMapper.xml"/>
 		<mapper resource="mybatis/mappers/SearchLogMapper.xml"/>
 		<mapper resource="mybatis/mappers/MyPageMapper.xml"/>
+		<mapper resource="mybatis/mappers/NoticeMapper.xml"/>
 
 	</mappers>
 </configuration>
