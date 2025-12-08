@@ -10,6 +10,9 @@ import FoodDetail from "pages/foodList/foodDetail";
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
+import ThemeCourseList from "pages/course/ThemeCourseList";
+import MarineCourseList from "pages/course/MarineCourseList";
+
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
 import NoticeList from "pages/notice/NoticeList";
@@ -48,8 +51,10 @@ function App() {
                   <Route path="/food/:id" element={<FoodDetail />} />
                   {/* 여행 코스 */}
                   <Route path="/course" element={<CourseHome />} />
-                  {/* 도보여행 */}
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  <Route path="/course/theme" element={<ThemeCourseList />} />
+                  <Route path="/course/marine" element={<MarineCourseList />} />
+
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />
                   <Route path="/notice/:id" element={<NoticeDetail />} />
