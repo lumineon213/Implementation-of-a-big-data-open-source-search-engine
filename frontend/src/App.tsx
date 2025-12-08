@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import "./App.css";
 import Login from "pages/login/login";
 import Header from "components/common/header";
 import Footer from "components/common/footer";
@@ -36,8 +37,11 @@ export interface SolrResultItem {
 
 
 function App() {
+  const location = useLocation();
+  const isMapPage = location.pathname === '/map';
+  
   return (
-          <>
+          <div className={`app-wrapper ${isMapPage ? 'map-page-mode' : ''}`}>
           <Header />
                 <Routes>                
                   {/* 새로운 메인 페이지 */}
@@ -74,8 +78,8 @@ function App() {
                   <Route path="/footer_details/event" element={<Event />} />
                 </Routes>
          
-          <Footer />
-              </>
+          {!isMapPage && <Footer />}
+              </div>
           );
 }
 export default App;

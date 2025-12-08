@@ -22,7 +22,7 @@ interface FestivalDetailData {
 const FestivalDetail: React.FC = () => {
   // 카카오 지도 로더
   const [loadingMap, errorMap] = useKakaoLoader({
-    appkey: import.meta.env.VITE_KAKAO_MAP_KEY, 
+    appkey: import.meta.env.VITE_KAKAOMAP_KEY, 
     libraries: ["services", "clusterer"],
   });
 
