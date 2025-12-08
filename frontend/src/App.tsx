@@ -12,6 +12,7 @@ import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
 import ThemeCourseList from "pages/course/ThemeCourseList";
 import MarineCourseList from "pages/course/MarineCourseList";
+import UrbanCourseList from "pages/course/UrbanCourseList";
 
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
@@ -57,6 +58,7 @@ function App() {
                   <Route path="/course/walk" element={<WalkCourseList />} />
                   <Route path="/course/theme" element={<ThemeCourseList />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
+                  <Route path="/course/urban" element={<UrbanCourseList />} />
 
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />

@@ -1,4 +1,4 @@
-package com.boot.marineApi.service;
+package com.boot.urbanApi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 @Service
-public class MarineServiceImpl implements MarineService {
+public class UrbanServiceImpl implements UrbanService {
 
     @Value("${marine.api.key}")
     private String apiKey;
@@ -24,9 +24,10 @@ public class MarineServiceImpl implements MarineService {
     @Autowired
     private SolrClient solrClient;
 
-    private static final String CORE_NAME = "marine_core";
+    private static final String CORE_NAME = "urban_core";
 
-    private static final Set<String> ALLOWED_IDS = Set.of(
+    // Marine에서 쓰는 ALLOWED_IDS 그대로 공유
+    private static final Set<String> MARINE_ALLOWED_IDS = Set.of(
 
         // --- 기존 Marine 33개 ---
         "MARINE_139", "MARINE_338", "MARINE_339", "MARINE_341",
@@ -56,9 +57,9 @@ public class MarineServiceImpl implements MarineService {
 
 
     @Override
-    public String syncMarineData() throws Exception {
+    public String syncUrbanData() throws Exception {
 
-        // 기존 Solr 데이터 전체 삭제
+        // urban_core 싹 초기화
         solrClient.deleteByQuery(CORE_NAME, "*:*");
         solrClient.commit(CORE_NAME);
 
@@ -81,9 +82,9 @@ public class MarineServiceImpl implements MarineService {
 
             String id = "MARINE_" + item.path("UC_SEQ").asText();
 
-            // 🔥 S + A 화이트리스트 필터
-            if (!ALLOWED_IDS.contains(id)) {
-                continue; // 업로드 제외
+            // 🔥 Marine에 포함된 애들은 Urban에서 제외한다
+            if (MARINE_ALLOWED_IDS.contains(id)) {
+                continue;
             }
 
             SolrInputDocument doc = new SolrInputDocument();
@@ -95,7 +96,7 @@ public class MarineServiceImpl implements MarineService {
             doc.addField("latitude", item.path("LAT").asDouble());
             doc.addField("longitude", item.path("LNG").asDouble());
             doc.addField("image_url", item.path("MAIN_IMG_NORMAL").asText());
-            doc.addField("type", "MARINE_FILTERED");
+            doc.addField("type", "URBAN_TOURISM");
 
             docs.add(doc);
         }
@@ -103,23 +104,15 @@ public class MarineServiceImpl implements MarineService {
         solrClient.add(CORE_NAME, docs);
         solrClient.commit(CORE_NAME);
 
-        return "필터링 완료: " + docs.size() + "건 업로드됨";
+        return "Urban 관광 데이터 저장 완료: " + docs.size() + "건";
     }
 
     @Override
-    public Map<String, Object> searchMarine(String keyword, int page, int size) throws Exception {
-
-        // 🔥 keyword sanitizing (undefined/null/공백 처리)
-        if (keyword == null
-                || keyword.trim().isEmpty()
-                || "undefined".equalsIgnoreCase(keyword)
-                || "null".equalsIgnoreCase(keyword)) {
-            keyword = "";
-        }
+    public Map<String, Object> searchUrban(String keyword, int page, int size) throws Exception {
 
         SolrQuery query = new SolrQuery();
 
-        if (keyword.isEmpty()) {
+        if (keyword == null || keyword.isBlank()) {
             query.setQuery("*:*");
         } else {
             query.setQuery("title:*" + keyword + "* OR subtitle:*" + keyword + "*");
@@ -149,5 +142,4 @@ public class MarineServiceImpl implements MarineService {
 
         return result;
     }
-
 }
