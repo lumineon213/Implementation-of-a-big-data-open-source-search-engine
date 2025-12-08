@@ -15,6 +15,9 @@ import MarineCourseList from "pages/course/MarineCourseList";
 
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
+import FAQpage from "pages/footer_details/FAQpage";
+import Inquiry from "pages/footer_details/inquiry";
+import Event from "pages/footer_details/Event";
 import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
@@ -63,6 +66,12 @@ function App() {
                   <Route path="/footer_details/privacy" element={<PrivacyPolicy />} />
                   {/* 이용약관 */}
                   <Route path="/footer_details/terms" element={<Terms />} />
+                  {/* FAQ */}
+                  <Route path="/footer_details/faq" element={<FAQpage />} />
+                  {/* 문의하기 */}
+                  <Route path="/footer_details/inquiry" element={<Inquiry />} />
+                  {/* 이벤트 */}
+                  <Route path="/footer_details/event" element={<Event />} />
                 </Routes>
          
           <Footer />
