@@ -48,23 +48,23 @@ public class loginSerivceImpl implements loginService {
     }
 
 
-    // ⭐ 소셜 로그인 시 실행되는 핵심 로직 메서드
+    //  소셜 로그인 시 실행되는 핵심 로직 메서드
     @Override
     public loginDTO findOrCreateSocialUser(String type, String socialId, String email, String name) {
 
-        // ① 이미 존재하는지 검사
+        //  이미 존재하는지 검사
         loginDTO user = dao.findSocialUser(type, socialId);
         if (user != null) {
             return user;
         }
 
-        // ② 신규 생성
+        // 신규 생성
         loginDTO dto = new loginDTO();
 
-        // ⭐ login 계정 ID 규칙
+        //  login 계정 ID 규칙
         dto.setAccountId(type + "_" + socialId); // ex) google_129987312
 
-        // ⭐ 이름값 비어있을 때 대비
+        //  이름값 비어있을 때 대비
         if (name == null || name.isBlank()) {
             if (email != null && !email.isBlank()) {
                 name = email.split("@")[0];
@@ -74,10 +74,10 @@ public class loginSerivceImpl implements loginService {
         }
         dto.setAccountName(name);
 
-        // ⭐ 이메일 nullable 허용
+        //  이메일 nullable 허용
         dto.setEmail(email);
 
-        // ⭐ 소셜 회원은 비번 없음
+        //  소셜 회원은 비번 없음
         dto.setAccountPw(null);
 
         // 소셜 타입 저장 (google / kakao / naver)
