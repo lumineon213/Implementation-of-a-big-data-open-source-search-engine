@@ -22,8 +22,9 @@ body {
 }
 
 body.dark-mode .login-container {
-  background: #1a1a1a;
+  background: #0a1929;
 }
+
 body, html, #root {
   margin: 0;
   padding: 0;
@@ -31,7 +32,7 @@ body, html, #root {
   height: 100%;
 }
 
-/* 움직이는 배경 그라데이션 */
+/* 움직이는 배경 그라데이션 - 바다 테마 */
 .background-gradient {
   position: absolute;
   inset: 0;
@@ -51,12 +52,12 @@ body, html, #root {
   left: -50%;
   width: 100%;
   height: 100%;
-  background: #e9d5ff;
+  background: #bbdefb;
   transition: background 0.3s ease;
 }
 
 body.dark-mode .gradient-circle-1 {
-  background: #4c1d95;
+  background: #0d47a1;
 }
 
 .gradient-circle-2 {
@@ -64,13 +65,13 @@ body.dark-mode .gradient-circle-1 {
   right: -50%;
   width: 100%;
   height: 100%;
-  background: #ddd6fe;
+  background: #e3f2fd;
   animation-delay: 1s;
   transition: background 0.3s ease;
 }
 
 body.dark-mode .gradient-circle-2 {
-  background: #5b21b6;
+  background: #1565c0;
 }
 
 .gradient-circle-3 {
@@ -78,14 +79,14 @@ body.dark-mode .gradient-circle-2 {
   left: 33.333%;
   width: 384px;
   height: 384px;
-  background: #d8b4fe;
+  background: #90caf9;
   opacity: 0.2;
   animation-delay: 2s;
   transition: background 0.3s ease;
 }
 
 body.dark-mode .gradient-circle-3 {
-  background: #6d28d9;
+  background: #1976d2;
 }
 
 @keyframes pulse {
@@ -126,17 +127,18 @@ body.dark-mode .logo {
 }
 
 .logo-accent {
-  color: #9333ea;
+  color: #1976d2;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .logo-accent {
-  color: #a78bfa;
+  color: #64b5f6;
 }
 
 .logo:hover {
-  color: inherit; /* hover 되어도 색 그대로 */
+  color: inherit;
 }
+
 .tagline {
   color: #4b5563;
   font-size: 1.125rem;
@@ -149,18 +151,18 @@ body.dark-mode .tagline {
 
 /* 카드 */
 .login-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(40px);
   border-radius: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(25, 118, 210, 0.15);
   padding: 2.5rem;
-  border: 1px solid rgba(229, 231, 235, 1);
+  border: 1px solid rgba(227, 242, 253, 1);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 body.dark-mode .login-card {
-  background: rgba(30, 30, 30, 0.9);
-  border-color: rgba(51, 51, 51, 1);
+  background: rgba(13, 27, 42, 0.9);
+  border-color: rgba(21, 101, 192, 0.3);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -169,14 +171,14 @@ body.dark-mode .login-card {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  background: #f3f4f6;
+  background: #e3f2fd;
   padding: 0.25rem;
   border-radius: 0.75rem;
   transition: background-color 0.3s ease;
 }
 
 body.dark-mode .tab-container {
-  background: #2a2a2a;
+  background: rgba(21, 101, 192, 0.2);
 }
 
 .tab-button {
@@ -187,32 +189,32 @@ body.dark-mode .tab-container {
   transition: all 0.2s;
   border: none;
   background: transparent;
-  color: #4b5563;
+  color: #546e7a;
   cursor: pointer;
 }
 
 body.dark-mode .tab-button {
-  color: #9ca3af;
+  color: #90caf9;
 }
 
 .tab-button:hover {
-  color: #111827;
+  color: #1565c0;
 }
 
 body.dark-mode .tab-button:hover {
-  color: #e0e0e0;
+  color: #e3f2fd;
 }
 
 .tab-active {
   background: white;
-  color: #9333ea;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  color: #1976d2;
+  box-shadow: 0 2px 4px 0 rgba(25, 118, 210, 0.1);
   transition: background-color 0.3s ease;
 }
 
 body.dark-mode .tab-active {
-  background: #1a1a1a;
-  color: #a78bfa;
+  background: rgba(13, 71, 161, 0.4);
+  color: #64b5f6;
 }
 
 /* 폼 섹션 */
@@ -231,24 +233,24 @@ body.dark-mode .tab-active {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: #37474f;
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .input-label {
-  color: #d1d5db;
+  color: #b3e5fc;
 }
 
 .required {
-  color: #ef4444;
+  color: #ef5350;
 }
 
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: #f9fafb;
-  border: 1px solid #d1d5db;
+  background: #f0f9ff;
+  border: 1px solid #b3e5fc;
   border-radius: 0.75rem;
   color: #111827;
   transition: all 0.2s, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
@@ -256,29 +258,31 @@ body.dark-mode .input-label {
 }
 
 body.dark-mode .input-field {
-  background: #2a2a2a;
-  border-color: #444;
+  background: rgba(21, 101, 192, 0.1);
+  border-color: rgba(100, 181, 246, 0.3);
   color: #e0e0e0;
 }
 
 .input-field::placeholder {
-  color: #9ca3af;
+  color: #78909c;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .input-field::placeholder {
-  color: #666;
+  color: #546e7a;
 }
 
 .input-field:focus {
   outline: none;
   ring: 2px;
-  ring-color: #9333ea;
-  border-color: transparent;
+  ring-color: #1976d2;
+  border-color: #42a5f5;
+  box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.1);
 }
 
 body.dark-mode .input-field:focus {
-  ring-color: #a78bfa;
+  ring-color: #64b5f6;
+  border-color: #64b5f6;
 }
 
 /* 로그인 유지 & 비밀번호 찾기 */
@@ -292,28 +296,30 @@ body.dark-mode .input-field:focus {
 .checkbox-label {
   display: flex;
   align-items: center;
-  color: #374151;
+  color: #455a64;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .checkbox-label {
-  color: #d1d5db;
+  color: #90caf9;
 }
 
 .checkbox-input {
   margin-right: 0.5rem;
   border-radius: 0.25rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #b3e5fc;
   transition: border-color 0.3s ease;
+  accent-color: #1976d2;
 }
 
 body.dark-mode .checkbox-input {
-  border-color: #555;
+  border-color: #546e7a;
+  accent-color: #64b5f6;
 }
 
 .forgot-password {
-  color: #9333ea;
+  color: #1976d2;
   font-weight: 500;
   transition: color 0.2s;
   border: none;
@@ -323,13 +329,21 @@ body.dark-mode .checkbox-input {
 }
 
 .forgot-password:hover {
-  color: #7e22ce;
+  color: #1565c0;
+}
+
+body.dark-mode .forgot-password {
+  color: #64b5f6;
+}
+
+body.dark-mode .forgot-password:hover {
+  color: #90caf9;
 }
 
 /* 제출 버튼 */
 .submit-button {
   width: 100%;
-  background: linear-gradient(to right, #9333ea, #7c3aed);
+  background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
   color: white;
   font-weight: 600;
   padding: 0.875rem 1rem;
@@ -339,19 +353,21 @@ body.dark-mode .checkbox-input {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
   border: none;
   cursor: pointer;
 }
 
 .submit-button:hover:not(:disabled) {
-  background: linear-gradient(to right, #7e22ce, #6b21a8);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+  box-shadow: 0 6px 16px rgba(30, 136, 229, 0.4);
+  transform: translateY(-2px);
 }
 
 .submit-button:disabled {
-  background: linear-gradient(to right, #c084fc, #a78bfa);
+  background: linear-gradient(135deg, #90caf9 0%, #64b5f6 100%);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .signup-submit {
@@ -398,12 +414,12 @@ body.dark-mode .checkbox-input {
 .divider-line::before {
   content: '';
   width: 100%;
-  border-top: 1px solid #d1d5db;
+  border-top: 1px solid #b3e5fc;
   transition: border-color 0.3s ease;
 }
 
 body.dark-mode .divider-line::before {
-  border-top-color: #444;
+  border-top-color: rgba(100, 181, 246, 0.2);
 }
 
 .divider-text {
@@ -413,13 +429,13 @@ body.dark-mode .divider-line::before {
   font-size: 0.875rem;
   padding: 0 1rem;
   background: white;
-  color: #6b7280;
+  color: #78909c;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode .divider-text {
-  background: #1a1a1a;
-  color: #9ca3af;
+  background: #0d1b2a;
+  color: #90caf9;
 }
 
 /* 소셜 로그인 버튼 */
@@ -441,11 +457,12 @@ body.dark-mode .divider-text {
   transition: all 0.2s;
   border: none;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
 .social-button:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .social-icon {
@@ -456,24 +473,24 @@ body.dark-mode .divider-text {
 .google {
   background: white;
   color: #1f2937;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e3f2fd;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 body.dark-mode .google {
-  background: #2a2a2a;
+  background: rgba(13, 71, 161, 0.2);
   color: #e0e0e0;
-  border-color: #444;
+  border-color: rgba(100, 181, 246, 0.3);
 }
 
 .google:hover {
-  background: #f9fafb;
-  border-color: #d8b4fe;
+  background: #f0f9ff;
+  border-color: #90caf9;
 }
 
 body.dark-mode .google:hover {
-  background: #333;
-  border-color: #7c3aed;
+  background: rgba(13, 71, 161, 0.3);
+  border-color: #64b5f6;
 }
 
 .kakao {
@@ -509,31 +526,31 @@ body.dark-mode .google:hover {
 }
 
 .signup-form::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: #e3f2fd;
   border-radius: 3px;
   transition: background 0.3s ease;
 }
 
 body.dark-mode .signup-form::-webkit-scrollbar-track {
-  background: #2a2a2a;
+  background: rgba(21, 101, 192, 0.1);
 }
 
 .signup-form::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #90caf9;
   border-radius: 3px;
   transition: background 0.3s ease;
 }
 
 body.dark-mode .signup-form::-webkit-scrollbar-thumb {
-  background: #555;
+  background: rgba(100, 181, 246, 0.4);
 }
 
 .signup-form::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #64b5f6;
 }
 
 body.dark-mode .signup-form::-webkit-scrollbar-thumb:hover {
-  background: #666;
+  background: rgba(100, 181, 246, 0.6);
 }
 
 /* 푸터 */
@@ -541,12 +558,12 @@ body.dark-mode .signup-form::-webkit-scrollbar-thumb:hover {
   margin-top: 2rem;
   text-align: center;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #78909c;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .footer {
-  color: #9ca3af;
+  color: #90caf9;
 }
 
 /* 반응형 */

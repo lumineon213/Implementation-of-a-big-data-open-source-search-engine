@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+#API키 숨김 파일
+secret.properties

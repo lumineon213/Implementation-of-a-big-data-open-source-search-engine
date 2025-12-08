@@ -93,7 +93,7 @@ const Header: React.FC = () => {
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
             <Link to="/theme" className="menu-item">명소</Link>
-            <Link to="/area" className="menu-item">맛집</Link>
+            <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
             <Link to="/info" className="menu-item">여행정보</Link>
             <Link to="/benefits" className="menu-item">여행혜택</Link>
@@ -173,7 +173,7 @@ const Header: React.FC = () => {
         <nav className="header-mobile-tabs">
           <Link to="/" className="mobile-tab-item">홈</Link>
           <Link to="/theme" className="mobile-tab-item">추천 명소</Link>
-          <Link to="/area" className="mobile-tab-item">맛집</Link>
+          <Link to="/food" className="mobile-tab-item">맛집</Link>
           <Link to="/course" className="mobile-tab-item">여행코스</Link>
           <Link to="/info" className="mobile-tab-item">여행정보</Link>
           <Link to="/benefits" className="mobile-tab-item">여행혜택</Link>
@@ -235,7 +235,7 @@ const Header: React.FC = () => {
               ⭐ 테마
             </Link>
 
-            <Link to="/area" className="mobile-nav-item" onClick={handleMenuClose}>
+            <Link to="/map" className="mobile-nav-item" onClick={handleMenuClose}>
               🗺️ 지역
             </Link>
 

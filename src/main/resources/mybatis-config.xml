@@ -11,14 +11,9 @@
     	<mappers>
     	
 		<mapper resource="mybatis/mappers/loginMapper.xml"/>
-		<mapper resource="mybatis/mappers/FavoriteMapper.xml"/>
 		<mapper resource="mybatis/mappers/SearchLogMapper.xml"/>
-<<<<<<< Updated upstream
-		<mapper resource="mybatis/mappers/FavoriteMapper/xml"/>
-
-
-=======
 		<mapper resource="mybatis/mappers/MyPageMapper.xml"/>
->>>>>>> Stashed changes
+		<mapper resource="mybatis/mappers/NoticeMapper.xml"/>
+
 	</mappers>
 </configuration>

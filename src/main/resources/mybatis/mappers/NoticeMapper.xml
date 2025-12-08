@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.NoticeDAO">
+
+    <!-- 공지사항 전체 목록 -->
+    <select id="findAllNotices" resultType="com.boot.dto.NoticeDTO">
+        SELECT 
+            notice_id   AS noticeId,
+            writer_id   AS writerId,
+            title,
+            content,
+            created_date AS createdDate,
+            views
+        FROM notices
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 공지사항 단건 조회 -->
+    <select id="findById" parameterType="long" resultType="com.boot.dto.NoticeDTO">
+        SELECT 
+            notice_id   AS noticeId,
+            writer_id   AS writerId,
+            title,
+            content,
+            created_date AS createdDate,
+            views
+        FROM notices
+        WHERE notice_id = #{noticeId}
+    </select>
+
+    <!-- 공지사항 등록 -->
+    <insert id="insertNotice" parameterType="com.boot.dto.NoticeDTO">
+        INSERT INTO notices (
+            notice_id,
+            writer_id,
+            title,
+            content,
+            created_date,
+            views
+        ) VALUES (
+            NULL,
+            #{writerId},
+            #{title},
+            #{content},
+            SYSDATE,
+            0
+        )
+    </insert>
+
+    <!-- 공지사항 삭제 -->
+    <delete id="deleteNotice" parameterType="long">
+        DELETE FROM notices
+        WHERE notice_id = #{noticeId}
+    </delete>
+
+</mapper>

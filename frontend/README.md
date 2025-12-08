@@ -288,3 +288,29 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
     6. 좌측 상단 메뉴->앱->플랫폼 키->JavaScript 키->Default JS Key
     7. JavaScript 키 수정창으로 넘어감 http://localhost:5173으로 도메인 등록
     8. 이후는 .env 파일에 VITE_KAKAO_MAP_KEY=본인의_API_키_입력
+
+### 공공 데이터 API
+* **아래 경로에서 api 활용신청** **
+https://www.data.go.kr/data/15063472/openapi.do
+
+https://www.data.go.kr/data/15063454/openapi.do - 도보여행정보 api
+walk.api.key="본인 키"
+
+* **API키 위치** **
+스프링 부트에서 src/main/resources 바로 아래
+secret.properties에 food.api.key="본인 인증 키"
+gitignore에 secret.properties가 들어가있으나 인식을 못하는지
+깃허브 데스크 탑에 남아있었음
+같은 문제 발생시 깃허브 데스크 탑에서 secret.properties 우클릭 후
+ignore file 클릭
+
+* **solr에 데이터 넣는 방법**
+1. solr에 코어 생성
+solr create -c food_core
+
+2. 스프링 부트 실행 후 
+http://localhost:8484/api/food/save-data 
+접속 후 solr가서 확인하기
+
+
+
