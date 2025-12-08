@@ -9,6 +9,7 @@ const MapPage: React.FC = () => {
   const [open, setOpen] = useState(true);
   const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [walks, setWalks] = useState<any[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState<any | null>(null);
 
   const handleCategoryClick = (category: string) => {
@@ -30,12 +31,15 @@ const MapPage: React.FC = () => {
         onCategoryClick={handleCategoryClick}
         restaurants={restaurants}
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
+        walks={walks}
+        onWalkClick={(walk) => setSelectedRestaurant(walk)}
       />
 
       <KakaoMap 
         setSidebarInfo={setSidebarInfo}
         activeCategories={activeCategories}
         setRestaurants={setRestaurants}
+        setWalks={setWalks}
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
       />
      
