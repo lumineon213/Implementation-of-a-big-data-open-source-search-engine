@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useSearchParams } from "react-router-dom"; // URL 상태 관리를 위해 useSearchParams 추가
+import { useNavigate, useSearchParams } from "react-router-dom"; 
 import "./FoodList.css";
 
 // FoodData 인터페이스
@@ -12,24 +12,25 @@ interface FoodData {
   image_url?: string;
   description?: string;
   view_count?: number;
+  // distance_km 필드 제거됨
 }
 
 const FoodList: React.FC = () => {
   const navigate = useNavigate();
-  // ▼▼▼ 1. URL 상태 관리 (useSearchParams 사용) ▼▼▼
   const [searchParams, setSearchParams] = useSearchParams();
   
   // URL에서 현재 상태 읽기
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const currentKeyword = searchParams.get('keyword') || "";
-  const currentSort = searchParams.get('sort') || "latest";
+  const currentSort = searchParams.get('sort') || "name"; // 기본값: 가나다순
+  // currentUserLat, currentUserLng 제거됨
 
   // 로컬 상태 (API 호출 결과 및 임시 입력값)
   const [foods, setFoods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0); 
-  const [searchInput, setSearchInput] = useState(currentKeyword); // 검색창 입력값
-  const [inputPage, setInputPage] = useState("");   // 페이지 점프 입력값
+  const [searchInput, setSearchInput] = useState(currentKeyword); 
+  const [inputPage, setInputPage] = useState("");  
 
   const size = 10;
   const pageGroupSize = 10;
@@ -44,7 +45,8 @@ const FoodList: React.FC = () => {
             page: currentPage, 
             size: size,
             keyword: currentKeyword,
-            sort: currentSort 
+            sort: currentSort,
+            // userLat, userLng 파라미터 제거됨
           }
         });
 
@@ -58,12 +60,22 @@ const FoodList: React.FC = () => {
       }
     };
 
+    // 의존성 배열에서 userLat, userLng 제거됨
     fetchFoods();
-  }, [currentPage, currentKeyword, currentSort]); // URL에서 읽은 변수를 의존성 배열로 사용
+  }, [currentPage, currentKeyword, currentSort]); 
 
-  // 3. 핸들러 함수들: URL 파라미터를 변경하도록 수정
   
-  // 페이지 변경
+  // ▼▼▼ 3. 정렬 핸들러 (거리순 로직 제거) ▼▼▼
+  const handleSortChange = (newSort: string) => {
+    // Geolocation 로직이 완전히 제거되고, 모든 정렬은 바로 URL 업데이트로 처리됨
+    setSearchParams(prev => {
+        prev.set('sort', newSort);
+        prev.set('page', '1');
+        return prev;
+    });
+  };
+
+  // 4. 기타 핸들러 및 로직 (유지)
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setSearchParams(prev => {
@@ -74,30 +86,20 @@ const FoodList: React.FC = () => {
     }
   };
 
-  // 검색 실행
   const handleSearch = () => {
     setSearchParams(prev => {
       prev.set('keyword', searchInput);
-      prev.set('page', '1'); // 검색하면 1페이지로 이동
+      prev.set('page', '1'); 
       return prev;
     });
   };
 
-  // 정렬 변경 핸들러
-  const handleSortChange = (newSort: string) => {
-    setSearchParams(prev => {
-      prev.set('sort', newSort);
-      prev.set('page', '1'); // 정렬 바꾸면 1페이지로 리셋
-      return prev;
-    });
-  };
-
-  // 상세 페이지 이동
   const handleCardClick = (id: string) => {
-    navigate(`/food/${id}`); 
+    // 상세보기 클릭 시, 현재 URL의 모든 상태(페이지, 정렬 등)를 유지
+    const currentPath = `/food/${id}?${searchParams.toString()}`;
+    navigate(currentPath); 
   };
 
-  // 페이지 점프 (Go)
   const handleJumpToPage = () => {
     const pageNum = Number(inputPage);
     if (!inputPage || isNaN(pageNum) || pageNum < 1 || pageNum > totalPages) {
@@ -112,7 +114,6 @@ const FoodList: React.FC = () => {
     window.scrollTo(0, 0);
   };
   
-  // 엔터키 처리
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, type: 'search' | 'jump') => {
     if (e.key === 'Enter') {
       if (type === 'search') handleSearch();
@@ -120,7 +121,6 @@ const FoodList: React.FC = () => {
     }
   };
 
-  // 4. 계산 로직
   const totalPages = total > 0 ? Math.ceil(total / size) : 1;
   const startPage = Math.floor((currentPage - 1) / pageGroupSize) * pageGroupSize + 1;
   const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
@@ -155,26 +155,7 @@ const FoodList: React.FC = () => {
       <div className="list-info-bar">
         <div className="total-count">
           총 <b>{total.toLocaleString()}</b>개의 맛집이 검색되었습니다.
-        </div>
-        <div className="sort-buttons">
-          <button 
-            className={currentSort === "latest" ? "active" : ""} 
-            onClick={() => handleSortChange("latest")}
-          >
-            최신순
-          </button> | 
-          <button 
-            className={currentSort === "popular" ? "active" : ""} 
-            onClick={() => handleSortChange("popular")}
-          >
-            인기순
-          </button> | 
-          <button 
-            className={currentSort === "name" ? "active" : ""} 
-            onClick={() => handleSortChange("name")}
-          >
-            가나다순
-          </button>
+          {/* 거리순 정렬 중 표시 제거됨 */}
         </div>
       </div>
 
@@ -205,6 +186,9 @@ const FoodList: React.FC = () => {
                     ? food.description.substring(0, 50) + "..." 
                     : food.description}
                 </p>
+                {/* 거리 표시 제거됨 */}
+                
+                {/* 조회수 표시 */}
                 {food.view_count !== undefined && food.view_count > 0 && (
                    <span style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
                      👀 {food.view_count}회 조회
