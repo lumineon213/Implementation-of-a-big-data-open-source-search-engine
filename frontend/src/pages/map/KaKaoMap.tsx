@@ -124,19 +124,26 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   /*Solr에서 음식점 데이터 가져오기 (radiusKm 인자 추가, keyword 추가) */
   const fetchRestaurants = useCallback(async (lat: number, lng: number, radiusKm: number, keyword?: string) => {
     try {
-      const url = keyword 
-        ? `http://localhost:8484/api/food/search?keyword=${encodeURIComponent(keyword)}`
-        : "http://localhost:8484/api/food/search";
-      const response = await fetch(url);
+      // size=100으로 더 많은 데이터 요청
+      const baseUrl = keyword 
+        ? `http://localhost:8484/api/food/search?keyword=${encodeURIComponent(keyword)}&page=1&size=100`
+        : "http://localhost:8484/api/food/search?page=1&size=100";
+      
+      const response = await fetch(baseUrl);
       const data = await response.json();
 
-      if (data.length === 0) {
+      // 백엔드 응답이 {list: [], total: N} 형태
+      const resultsArray = data?.list || [];
+      console.log(">>> 백엔드에서 가져온 데이터 수:", resultsArray.length);
+      
+      if (resultsArray.length === 0) {
         setRestaurants([]);
+        displayRestaurantMarkers([]);
         return;
       }
 
       // 좌표가 있는 음식점만 필터링하고 거리 계산
-      const nearbyRestaurants = data
+      const nearbyRestaurants = resultsArray
         .filter((food: any) => {
           if (!food.latitude || !food.longitude) return false;
           
@@ -275,7 +282,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       // 마커 클릭 이벤트 리스너 - 상세 패널 열기
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        // 인포윈도우 대신 상세 패널 열기
         onRestaurantClick(restaurant);
       });
 

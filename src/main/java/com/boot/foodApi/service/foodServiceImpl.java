@@ -201,6 +201,24 @@ public class foodServiceImpl implements foodService{
 	        map.put("description", doc.getFieldValue("description"));
 	        map.put("menu_t", doc.getFieldValue("menu_t"));
 	        
+	        // 좌표 추가 (배열이면 첫 번째 값만)
+	        Object latObj = doc.getFieldValue("latitude");
+	        Object lngObj = doc.getFieldValue("longitude");
+	        
+	        if (latObj instanceof java.util.Collection) {
+	            java.util.Collection<?> latCol = (java.util.Collection<?>) latObj;
+	            map.put("latitude", latCol.isEmpty() ? null : latCol.iterator().next());
+	        } else {
+	            map.put("latitude", latObj);
+	        }
+	        
+	        if (lngObj instanceof java.util.Collection) {
+	            java.util.Collection<?> lngCol = (java.util.Collection<?>) lngObj;
+	            map.put("longitude", lngCol.isEmpty() ? null : lngCol.iterator().next());
+	        } else {
+	            map.put("longitude", lngObj);
+	        }
+	        
 	        list.add(map);
 	    }
 
