@@ -12,6 +12,7 @@ interface KakaoMapProps {
   setSidebarInfo: (info: any) => void;
   activeCategories: string[];
   setRestaurants: (restaurants: any[]) => void;
+  setWalks: (walks: any[]) => void;
   onRestaurantClick: (restaurant: any) => void;
 }
 
@@ -103,6 +104,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setSidebarInfo, 
   activeCategories,
   setRestaurants,
+  setWalks,
   onRestaurantClick
 }) => {
   const kakaoKey = import.meta.env.VITE_KAKAOMAP_KEY;
@@ -111,6 +113,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const mapRef = useRef<any>(null);
   const myLocationMarker = useRef<any>(null);
   const restaurantMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const walkMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const currentLocation = useRef<{lat: number, lng: number} | null>(null);
   const currentInfowindow = useRef<any>(null);
 
@@ -124,19 +127,26 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   /*Solr에서 음식점 데이터 가져오기 (radiusKm 인자 추가, keyword 추가) */
   const fetchRestaurants = useCallback(async (lat: number, lng: number, radiusKm: number, keyword?: string) => {
     try {
-      const url = keyword 
-        ? `http://localhost:8484/api/food/search?keyword=${encodeURIComponent(keyword)}`
-        : "http://localhost:8484/api/food/search";
-      const response = await fetch(url);
+      // size=100으로 더 많은 데이터 요청
+      const baseUrl = keyword 
+        ? `http://localhost:8484/api/food/search?keyword=${encodeURIComponent(keyword)}&page=1&size=100`
+        : "http://localhost:8484/api/food/search?page=1&size=100";
+      
+      const response = await fetch(baseUrl);
       const data = await response.json();
 
-      if (data.length === 0) {
+      // 백엔드 응답이 {list: [], total: N} 형태
+      const resultsArray = data?.list || [];
+      console.log(">>> 백엔드에서 가져온 데이터 수:", resultsArray.length);
+      
+      if (resultsArray.length === 0) {
         setRestaurants([]);
+        displayRestaurantMarkers([]);
         return;
       }
 
       // 좌표가 있는 음식점만 필터링하고 거리 계산
-      const nearbyRestaurants = data
+      const nearbyRestaurants = resultsArray
         .filter((food: any) => {
           if (!food.latitude || !food.longitude) return false;
           
@@ -178,6 +188,84 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [setRestaurants]); // useCallback 종속성 추가
 
+  /* Solr에서 도보여행 데이터 가져오기 */
+  const fetchWalks = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    try {
+      console.log("🚶 도보여행 데이터 가져오기 시작...", { lat, lng, radiusKm });
+      const response = await fetch("http://localhost:8484/api/walk/search?page=1&size=100");
+      const data = await response.json();
+
+      const resultsArray = data?.list || [];
+      console.log(">>> 도보여행 데이터 수:", resultsArray.length);
+      console.log(">>> 첫 번째 데이터:", resultsArray[0]);
+      
+      if (resultsArray.length === 0) {
+        console.log("⚠️ 도보여행 데이터가 없습니다.");
+        setWalks([]);
+        displayWalkMarkers([]);
+        return;
+      }
+
+      // 좌표가 있는 도보여행만 필터링하고 거리 계산
+      const nearbyWalks = resultsArray
+        .filter((walk: any) => {
+          if (!walk.latitude || !walk.longitude) {
+            console.log("❌ 좌표 없음:", walk.id, walk.title);
+            return false;
+          }
+          
+          // 배열이면 첫 번째 요소 사용
+          const latValue = Array.isArray(walk.latitude) ? walk.latitude[0] : walk.latitude;
+          const lngValue = Array.isArray(walk.longitude) ? walk.longitude[0] : walk.longitude;
+          
+          const walkLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const walkLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          
+          console.log("🔍 좌표 체크:", walk.id, { walkLat, walkLng });
+          
+          if (isNaN(walkLat) || isNaN(walkLng)) {
+            console.log("❌ 좌표 변환 실패:", walk.id);
+            return false;
+          }
+
+          const distance = getDistance(lat, lng, walkLat, walkLng);
+          console.log("📏 거리:", walk.id, distance.toFixed(2) + "km");
+          return distance <= radiusKm;
+        })
+        .map((walk: any) => {
+          const latValue = Array.isArray(walk.latitude) ? walk.latitude[0] : walk.latitude;
+          const lngValue = Array.isArray(walk.longitude) ? walk.longitude[0] : walk.longitude;
+          
+          const walkLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const walkLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          
+          return {
+            id: walk.id,
+            title: walk.title,
+            subtitle: walk.subtitle,
+            latitude: walkLat,
+            longitude: walkLng,
+            image: walk.image_url,
+            tags: walk.tags,
+            type: walk.type,
+            distance: getDistance(lat, lng, walkLat, walkLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+      
+      console.log("✅ 필터링된 도보여행 수:", nearbyWalks.length);
+      console.log("✅ 필터링된 첫 번째 데이터:", nearbyWalks[0]);
+      
+      setWalks(nearbyWalks);
+      displayWalkMarkers(nearbyWalks);
+
+    } catch (error) {
+      console.error("❌ 도보여행 데이터 불러오기 실패:", error);
+      alert("도보여행 데이터를 불러오는데 실패했습니다.");
+    }
+  }, [setWalks]);
+
   //3. 슬라이더 설정 완료 핸들러 (거리 상태 업데이트 및 재검색)
   const handleDistanceUpdate = (newDistanceKm: number) => {
     // 1. 거리 상태 업데이트
@@ -187,9 +275,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     setIsSliderOpen(false); 
 
     // 3. 거리 변경 시 즉시 재검색 (현재 위치 기준으로)
+    const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
     if (activeCategories.includes('음식점')) {
-      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
       fetchRestaurants(lat, lng, newDistanceKm, searchKeyword); 
+    }
+    if (activeCategories.includes('도보여행')) {
+      fetchWalks(lat, lng, newDistanceKm);
     }
   };
 
@@ -203,17 +294,33 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       clearRestaurantMarkers();
       setRestaurants([]);
     }
-  }, [activeCategories, fetchRestaurants, setRestaurants, searchRadiusKm, searchKeyword]); 
+  }, [activeCategories, fetchRestaurants, setRestaurants, searchRadiusKm, searchKeyword]);
+
+  /* 도보여행 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('도보여행')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchWalks(lat, lng, searchRadiusKm);
+    } else {
+      clearWalkMarkers();
+      setWalks([]);
+    }
+  }, [activeCategories, fetchWalks, setWalks, searchRadiusKm]); 
   
   /* 초기 지도 로드 */
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services`;
-    script.async = true;
+    const initMap = () => {
+      if (!window.kakao || !window.kakao.maps) {
+        console.error("카카오맵 API가 로드되지 않았습니다.");
+        return;
+      }
 
-    script.onload = () => {
       window.kakao.maps.load(() => {
         const container = document.getElementById("map");
+        if (!container) {
+          console.error("지도 컨테이너를 찾을 수 없습니다.");
+          return;
+        }
 
         const map = new window.kakao.maps.Map(container, {
           center: new window.kakao.maps.LatLng(35.146, 129.1),
@@ -224,8 +331,22 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       });
     };
 
-    document.body.appendChild(script);
-  }, []);
+    // 카카오맵 API가 이미 로드되어 있으면 바로 초기화
+    if (window.kakao && window.kakao.maps) {
+      initMap();
+    } else {
+      // 로드되지 않은 경우 동적으로 스크립트 추가
+      const script = document.createElement("script");
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services`;
+      script.async = true;
+      script.onload = initMap;
+      script.onerror = () => {
+        console.error("카카오맵 API 스크립트 로드에 실패했습니다.");
+        alert("지도를 불러오는데 실패했습니다. API 키를 확인해주세요.");
+      };
+      document.body.appendChild(script);
+    }
+  }, [kakaoKey]);
 
   /* 음식점 마커 제거 */
   const clearRestaurantMarkers = () => {
@@ -235,6 +356,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       currentInfowindow.current.close();
       currentInfowindow.current = null;
     }
+  };
+
+  /* 도보여행 마커 제거 */
+  const clearWalkMarkers = () => {
+    walkMarkers.current.forEach(item => item.marker.setMap(null));
+    walkMarkers.current = [];
   };
 
   /* 음식점 마커 표시 (원래 빨간 핀 마커 사용) */
@@ -275,12 +402,61 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       // 마커 클릭 이벤트 리스너 - 상세 패널 열기
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        // 인포윈도우 대신 상세 패널 열기
         onRestaurantClick(restaurant);
       });
 
       // 마커와 정보창을 함께 저장
       restaurantMarkers.current.push({ marker, infowindow });
+    });
+  };
+
+  /* 도보여행 마커 표시 (파란색 핀 마커 사용) */
+  const displayWalkMarkers = (walks: any[]) => {
+    clearWalkMarkers();
+
+    const map = mapRef.current;
+    if (!map) return;
+
+    console.log("🎯 마커 표시 시작, 개수:", walks.length);
+
+    walks.forEach(walk => {
+      console.log("📍 마커 생성:", walk.id, walk.latitude, walk.longitude);
+      
+      const position = new window.kakao.maps.LatLng(
+        walk.latitude,
+        walk.longitude
+      );
+
+      // 기본 마커 먼저 사용 (이미지 없이)
+      const marker = new window.kakao.maps.Marker({
+        map,
+        position,
+        title: Array.isArray(walk.title) ? walk.title[0] : walk.title
+      });
+
+      console.log("✅ 마커 생성 완료:", walk.id);
+
+      // 인포윈도우 생성
+      const subtitle = Array.isArray(walk.subtitle) ? walk.subtitle[0] : walk.subtitle;
+      const title = Array.isArray(walk.title) ? walk.title[0] : walk.title;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: `
+          <div style="padding:10px; min-width:200px;">
+            <strong>${title}</strong><br/>
+            ${subtitle ? `<span style="font-size:12px; color:#666;">${subtitle}</span><br/>` : ''}
+            <span style="font-size:11px; color:#999;">${walk.distance.toFixed(2)}km</span>
+          </div>
+        `
+      });
+
+      // 마커 클릭 이벤트 리스너 - 상세 패널 열기
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        onRestaurantClick(walk);
+      });
+
+      // 마커와 정보창을 함께 저장
+      walkMarkers.current.push({ marker, infowindow });
     });
   };
 
@@ -379,6 +555,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
             if (activeCategories.includes('음식점')) {
               // 현재 searchRadiusKm 값과 검색어를 사용하여 검색
               fetchRestaurants(lat, lng, searchRadiusKm, searchKeyword); 
+            }
+            
+            // 도보여행 카테고리가 활성화되어 있으면 도보여행 데이터 가져오기
+            if (activeCategories.includes('도보여행')) {
+              fetchWalks(lat, lng, searchRadiusKm);
             }
           }
         );

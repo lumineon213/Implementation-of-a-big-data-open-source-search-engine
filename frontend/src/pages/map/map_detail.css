@@ -20,7 +20,7 @@
 .map-detail-container {
   position: relative;
   background: white;
-  height: 95%;
+  height: 100%;
   overflow-y: auto;
   box-shadow: -3px 0 8px rgba(0, 0, 0, 0.15);
   border-left: 1px solid #ddd;
@@ -79,53 +79,14 @@
   object-fit: cover;
 }
 
-.map-detail-title-wrapper {
-  padding: 20px 20px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid #eee;
-  flex-shrink: 0;
-}
-
 .map-detail-title {
+  padding: 20px 20px 16px;
   margin: 0;
   font-size: 24px;
   font-weight: 700;
   color: #222;
-  flex: 1;
-}
-
-.map-detail-favorite {
-  background: none;
-  border: 2px solid #ddd;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+  border-bottom: 1px solid #eee;
   flex-shrink: 0;
-}
-
-.map-detail-favorite:hover {
-  border-color: #ffc107;
-  background: #fff9e6;
-  transform: scale(1.1);
-}
-
-.map-detail-favorite.active {
-  border-color: #ffc107;
-  background: #fff9e6;
-  color: #ffc107;
-}
-
-.map-detail-favorite.active:hover {
-  transform: scale(1.05);
 }
 
 .map-detail-content {
@@ -181,6 +142,43 @@
   white-space: pre-wrap;
 }
 
+.map-detail-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.map-detail-btn-primary,
+.map-detail-btn-secondary {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.map-detail-btn-primary {
+  background: #4CAF50;
+  color: white;
+}
+
+.map-detail-btn-primary:hover {
+  background: #45a049;
+}
+
+.map-detail-btn-secondary {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.map-detail-btn-secondary:hover {
+  background: #e0e0e0;
+}
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
@@ -194,18 +192,9 @@
     height: 200px;
   }
 
-  .map-detail-title-wrapper {
-    padding: 16px 16px 12px;
-  }
-
   .map-detail-title {
     font-size: 20px;
-  }
-
-  .map-detail-favorite {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    padding: 16px 16px 12px;
   }
 
   .map-detail-content {

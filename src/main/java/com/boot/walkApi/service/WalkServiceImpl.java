@@ -103,8 +103,14 @@ public class WalkServiceImpl implements WalkService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", doc.get("id"));
             map.put("title", doc.get("title"));
+            map.put("subtitle", doc.get("subtitle"));
             map.put("address", doc.get("address"));
+            map.put("latitude", doc.get("latitude"));
+            map.put("longitude", doc.get("longitude"));
             map.put("image_url", doc.get("image_url"));
+            map.put("tags", doc.get("tags"));
+            map.put("type", doc.get("type"));
+            map.put("description", doc.get("description"));
             resultList.add(map);
         }
 

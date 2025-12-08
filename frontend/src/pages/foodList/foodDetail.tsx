@@ -33,36 +33,28 @@ const FoodDetail: React.FC = () => {
   });
 
   // ▼▼▼ 2. 데이터 Fetch 및 조회수 1회 증가 로직 (Strict Mode 대응) ▼▼▼
- useEffect(() => {
+  useEffect(() => {
     let didCancel = false;  
 
-    // 조회수 증가만 담당하는 Side Effect 함수 (실행 시 서버에 부하를 줌)
-    const increaseView = async () => {
+    const fetchDetail = async () => {
         try {
-            // ★ 중요: didCancel이 false일 때만 실행되어야 함 ★
+            // 1. 조회수 증가 (Side Effect - 1회 실행 보장)
             if (!didCancel) { 
                 await axios.get(`http://localhost:8484/api/food/view/${id}`);
             }
-        } catch (e) {
-            console.error("조회수 증가 실패", e);
-        }
-    }
 
-    // 상세 데이터 조회 및 설정 (조회수는 여기서 호출)
-    const fetchDetail = async () => {
-        try {
-            // [1] Side Effect 호출 (여기서 1회만 호출되도록 보장)
-            increaseView(); 
-            
-            // [2] Data Fetching
+            // 2. 상세 데이터 가져오기
             const response = await axios.get(`http://localhost:8484/api/food/${id}`);
             
-            // [3] State 설정 (didCancel은 state 설정 전에 다시 한 번 체크하는 것이 안전)
             if (!didCancel) {
                 setFood(response.data);
             }
         } catch (err) {
-            // ... (에러 처리) ...
+            console.error("상세 정보 로딩 또는 조회수 증가 실패:", err);
+            if (!didCancel) {
+                alert("데이터를 불러올 수 없습니다.");
+                navigate("/");
+            }
         } finally {
             if (!didCancel) { 
                 setLoading(false); 
@@ -74,7 +66,6 @@ const FoodDetail: React.FC = () => {
         fetchDetail();
     }
     
-    // Cleanup: 두 번째 실행 방지를 위한 플래그 설정
     return () => {
       didCancel = true;
     };
@@ -95,7 +86,7 @@ const FoodDetail: React.FC = () => {
     <div className="detail-page-container">
       <div className="nav-header">
         {/* URL 파라미터가 저장되어 있으므로 navigate(-1)이 정확히 이전 페이지로 이동시킵니다. */}
-        <button onClick={() => navigate(-1)} className="back-btn">
+        <button onClick={() => window.history.back()} className="back-btn">
           <span>←</span> 목록으로
         </button>
       </div>
@@ -159,6 +150,6 @@ const FoodDetail: React.FC = () => {
       </div>
     </div>
   );
-};      
+};
 
 export default FoodDetail;
