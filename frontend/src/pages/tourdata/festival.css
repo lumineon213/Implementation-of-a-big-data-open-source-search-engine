@@ -1,0 +1,348 @@
+.festival-container {
+  max-width: 1400px;
+  margin: 80px auto 0;
+  padding: 40px 24px;
+}
+
+/* 헤더 섹션 */
+.festival-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.festival-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.festival-header p {
+  font-size: 18px;
+  color: #666;
+}
+
+/* 검색 및 필터 섹션 */
+.festival-filters {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 14px 50px 14px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #0066ff;
+}
+
+.search-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #999;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filter-section label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  border-color: #0066ff;
+  color: #0066ff;
+}
+
+.filter-btn.active {
+  background: #0066ff;
+  border-color: #0066ff;
+  color: white;
+}
+
+/* 결과 카운트 */
+.result-count {
+  margin-bottom: 24px;
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 축제 그리드 */
+.festival-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  margin-bottom: 50px;
+}
+
+/* 축제 카드 */
+.festival-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.festival-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.festival-image {
+  position: relative;
+  height: 200px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.festival-emoji {
+  font-size: 80px;
+}
+
+.status-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.status-upcoming {
+  background: rgba(0, 102, 255, 0.9);
+  color: white;
+}
+
+.status-ongoing {
+  background: rgba(25, 134, 161, 0.9);
+  color: white;
+}
+
+.status-ended {
+  background: rgba(107, 114, 128, 0.9);
+  color: white;
+}
+
+.festival-content {
+  padding: 24px;
+}
+
+.festival-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0f4ff;
+  color: #0066ff;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.festival-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.festival-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.info-icon {
+  font-size: 16px;
+}
+
+.festival-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.detail-btn {
+  width: 100%;
+  padding: 12px;
+  background: #f8f9fa;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.detail-btn:hover {
+  background: #0066ff;
+  color: white;
+}
+
+/* 검색 결과 없음 */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.no-results-icon {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.no-results p {
+  font-size: 18px;
+  color: #666;
+}
+
+/* 안내 섹션 */
+.festival-notice {
+  background: #fff9e6;
+  border-left: 4px solid #ffc107;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-top: 50px;
+}
+
+.festival-notice h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.festival-notice ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.festival-notice li {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+  padding-left: 20px;
+  position: relative;
+}
+
+.festival-notice li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #ffc107;
+  font-weight: bold;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .festival-container {
+    margin-top: 60px;
+    padding: 24px 16px;
+  }
+
+  .festival-header h1 {
+    font-size: 32px;
+  }
+
+  .festival-header p {
+    font-size: 16px;
+  }
+
+  .festival-filters {
+    padding: 20px;
+  }
+
+  .filter-group {
+    gap: 20px;
+  }
+
+  .festival-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .festival-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .festival-image {
+    height: 180px;
+  }
+
+  .festival-emoji {
+    font-size: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-buttons {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
