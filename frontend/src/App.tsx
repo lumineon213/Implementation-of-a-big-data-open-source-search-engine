@@ -28,6 +28,9 @@ import AIPlannerPage from "pages/ai-planner/AIPlannerPage";
 import ShoppingList from "pages/shopping/ShoppingList";
 import ShoppingDetail from "pages/shopping/ShoppingDetail";
 
+import Festival from "pages/tourdata/festival";
+import FestivalDetail from 'pages/tourdata/FestivalDetail';
+
 // 타입 정의
 export interface SolrResultItem {
   id: string;
@@ -61,6 +64,9 @@ function App() {
                    <Route path="/map" element={<MapPage />} />
                   //여행 페이지
                   <Route path="/theme" element={<ThemePage />} />
+                  {/* 축제 페이지 */}
+                  <Route path="/festival" element={<Festival />} />
+                  <Route path="/festival/:id" element={<FestivalDetail />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
                   {/* 여행 코스 */}
