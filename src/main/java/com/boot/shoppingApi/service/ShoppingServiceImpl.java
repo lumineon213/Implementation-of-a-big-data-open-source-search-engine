@@ -40,29 +40,29 @@ public class ShoppingServiceImpl implements ShoppingService {
                 API_URL, apiKey, pageNo, numOfRows
             );
 
-            System.out.println("🛍️ 쇼핑 API 호출 (페이지 " + pageNo + "): " + url);
+            System.out.println(" 쇼핑 API 호출 (페이지 " + pageNo + "): " + url);
 
             try {
                 String response = restTemplate.getForObject(url, String.class);
                 
                 if (response == null) {
-                    System.out.println("❌ 응답이 null입니다.");
+                    System.out.println(" 응답이 null입니다.");
                     break;
                 }
                 
-                System.out.println("📥 응답 길이: " + response.length());
-                System.out.println("📥 응답 시작 500자: " + response.substring(0, Math.min(500, response.length())));
+                System.out.println(" 응답 길이: " + response.length());
+                System.out.println(" 응답 시작 500자: " + response.substring(0, Math.min(500, response.length())));
                 
                 // resultCode 확인
                 if (response.contains("<resultCode>")) {
                     String resultCode = extractXmlValue(response, "resultCode");
                     String resultMsg = extractXmlValue(response, "resultMsg");
-                    System.out.println("📋 resultCode: " + resultCode + ", resultMsg: " + resultMsg);
+                    System.out.println(" resultCode: " + resultCode + ", resultMsg: " + resultMsg);
                 }
                 
                 // XML 파싱 - item 태그 찾기
                 if (!response.contains("<item>")) {
-                    System.out.println("⚠️ <item> 태그를 찾을 수 없음. 페이지 " + pageNo + " 종료.");
+                    System.out.println(" <item> 태그를 찾을 수 없음. 페이지 " + pageNo + " 종료.");
                     System.out.println("전체 응답:\n" + response);
                     break;
                 }
@@ -71,7 +71,7 @@ public class ShoppingServiceImpl implements ShoppingService {
                 List<SolrInputDocument> docs = new ArrayList<>();
                 String[] items = response.split("<item>");
                 
-                System.out.println("📦 발견된 item 개수: " + (items.length - 1));
+                System.out.println(" 발견된 item 개수: " + (items.length - 1));
                 
                 for (int i = 1; i < items.length; i++) {
                     String itemXml = items[i];
@@ -107,21 +107,21 @@ public class ShoppingServiceImpl implements ShoppingService {
                     solrClient.add(CORE_NAME, docs);
                     solrClient.commit(CORE_NAME);
                     totalSaved += docs.size();
-                    System.out.println("✅ 페이지 " + pageNo + " 저장 완료: " + docs.size() + "개 (총 " + totalSaved + "개)");
+                    System.out.println(" 페이지 " + pageNo + " 저장 완료: " + docs.size() + "개 (총 " + totalSaved + "개)");
                 } else {
-                    System.out.println("⚠️ 페이지 " + pageNo + "에 저장할 데이터가 없습니다. 종료.");
+                    System.out.println(" 페이지 " + pageNo + "에 저장할 데이터가 없습니다. 종료.");
                     break;
                 }
                 
                 // 응답에서 totalCount 확인
                 String totalCount = extractXmlValue(response, "totalCount");
                 if (!totalCount.isEmpty()) {
-                    System.out.println("📊 API 전체 데이터 개수: " + totalCount);
+                    System.out.println(" API 전체 데이터 개수: " + totalCount);
                 }
 
                 // 100개씩 가져왔는데 100개보다 적으면 마지막 페이지
                 if (docs.size() < numOfRows) {
-                    System.out.println("✅ 마지막 페이지입니다. 종료.");
+                    System.out.println(" 마지막 페이지입니다. 종료.");
                     break;
                 }
 

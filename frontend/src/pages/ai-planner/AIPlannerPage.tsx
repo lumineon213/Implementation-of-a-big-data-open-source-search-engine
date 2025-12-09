@@ -168,6 +168,7 @@ const AIPlannerPage: React.FC = () => {
         )}
       </div>
 
+
       <div className="quick-questions">
         <button onClick={() => handleQuickQuestion('2박 3일 부산 여행 계획 짜줘')}>
           📅 2박 3일 여행
@@ -180,6 +181,9 @@ const AIPlannerPage: React.FC = () => {
         </button>
         <button onClick={() => handleQuickQuestion('부산 야경 명소 알려줘')}>
           🌃 야경 명소
+        </button>
+        <button onClick={() => handleQuickQuestion('쇼핑 명소 포함 부산 여행 코스 추천해줘')}>
+          🛍️ 쇼핑 명소 포함 AI 코스
         </button>
       </div>
 
