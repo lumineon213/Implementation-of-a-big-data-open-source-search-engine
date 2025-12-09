@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+// 스템프 이벤트 페이지 연결 예시
+// import { Route, Routes } from "react-router-dom";
+// import StampEvent from "../../pages/benefits/StampEvent";
 import "./header.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -160,7 +163,45 @@ const Header: React.FC = () => {
               )}
             </div>
 
-            <Link to="/benefits" className="menu-item">여행혜택</Link>
+            <div
+              className="menu-item dropdown"
+              onMouseEnter={() => setExpandedMenu("benefits")}
+              onMouseLeave={() => setExpandedMenu(null)}
+            >
+              <span>여행혜택</span>
+              {expandedMenu === "benefits" && (
+                <div className="dropdown-menu">
+                  <Link to="/benefits/event" className="dropdown-item" onClick={handleMenuClose}>
+                    <span className="dropdown-icon">🎉</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">이벤트</div>
+                      <div className="dropdown-desc">여행 관련 이벤트</div>
+                    </div>
+                  </Link>
+                  <Link to="/benefits/stamp" className="dropdown-item" onClick={handleMenuClose}>
+                    <span className="dropdown-icon">🛎️</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">스템프 이벤트</div>
+                      <div className="dropdown-desc">명소 방문 인증/스탬프 투어</div>
+                    </div>
+                  </Link>
+                  <Link to="/benefits/coupon" className="dropdown-item" onClick={handleMenuClose}>
+                    <span className="dropdown-icon">🎫</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">기프래카드</div>
+                      <div className="dropdown-desc">여행 쿠폰/카드</div>
+                    </div>
+                  </Link>
+                  <Link to="/benefits/badge" className="dropdown-item" onClick={handleMenuClose}>
+                    <span className="dropdown-icon">🏅</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">베지패드</div>
+                      <div className="dropdown-desc">스페셜 뱃지</div>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="header-right">
@@ -343,6 +384,7 @@ const Header: React.FC = () => {
             {expandedMenu === "benefits" && (
               <div className="mobile-sub-nav">
                 <Link to="/benefits/event" onClick={handleMenuClose}>이벤트</Link>
+                <Link to="/benefits/stamp" onClick={handleMenuClose}>스템프 이벤트</Link>
                 <Link to="/benefits/coupon" onClick={handleMenuClose}>기프래카드</Link>
                 <Link to="/benefits/badge" onClick={handleMenuClose}>베지패드</Link>
               </div>
@@ -369,3 +411,9 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+// 아래는 App.tsx 또는 라우터 설정 파일에 추가해야 정상 연결됩니다.
+// <Routes>
+//   ...existing code...
+//   <Route path="/benefits/stamp" element={<StampEvent />} />
+// </Routes>
