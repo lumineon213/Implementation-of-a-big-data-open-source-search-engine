@@ -27,7 +27,6 @@ public class foodServiceImpl implements foodService {
     @Value("${food.api.key}")
     private String apiKey; 
 
-
     @Autowired
     private SolrClient solrClient;
     
