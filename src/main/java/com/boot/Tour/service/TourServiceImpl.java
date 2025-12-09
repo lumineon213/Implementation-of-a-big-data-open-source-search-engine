@@ -22,14 +22,4 @@ public class TourServiceImpl implements TourService {
             return tourDAO.selectAllSpots();
         }
     }
- // 구현체 클래스 안에 추가.
-    @Override
-    public TourDTO getTourSpotById(Long id) {
-        return tourDAO.selectSpotById(id);
-    }
-
-    @Override
-    public void increaseViewCount(Long id) {
-        tourDAO.updateViewCount(id);
-    }
 }
