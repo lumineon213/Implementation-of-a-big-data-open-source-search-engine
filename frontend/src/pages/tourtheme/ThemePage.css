@@ -49,7 +49,7 @@
 }
 
 .page-btn.active {
-  background-color: #007bff; /* 선택된 페이지 색상 (파랑) */
+  background-color: #007bff; /* 선택된 페이지 색상 (파랑.) */
   color: white;
   border-color: #007bff;
 }

@@ -18,10 +18,12 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null); 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  
+  // JWT 인증 방식  checkAuth() 
+  
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
 
@@ -56,6 +58,9 @@ const Header: React.FC = () => {
     checkAuth();
   }, [location.pathname]);
 
+ 
+  // 로그아웃
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -71,22 +76,26 @@ const Header: React.FC = () => {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
     setExpandedMenu(null);
-    setIsInfoDropdownOpen(false);
   };
 
   return (
     <>
+ 
       <header className="header-container">
         <div className="header-inner">
+          
+         
           <Link to="/" className="header-logo">
             우리 <span className="header-logo-round">부산 GO?</span>
           </Link>
 
+        
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
             <Link to="/theme" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
+            <Link to="/info" className="menu-item">여행정보</Link>
             
             {/* 여행정보 드롭다운 */}
             <div className="dropdown-container">
@@ -163,7 +172,10 @@ const Header: React.FC = () => {
             <Link to="/benefits" className="menu-item">여행혜택</Link>
           </nav>
 
+         
           <div className="header-right">
+
+       
             {isSearchOpen && (
               <div className="header-search-wrapper">
                 <input
@@ -180,6 +192,7 @@ const Header: React.FC = () => {
               </div>
             )}
 
+           
             <div className="header-icons">
               <button 
                 className="icon-btn" 
@@ -192,6 +205,7 @@ const Header: React.FC = () => {
                 🗺️
               </Link>
 
+             
               {user ? (
                 <Link to="/mypage" className="icon-btn" title="마이페이지">
                   👤
@@ -207,10 +221,12 @@ const Header: React.FC = () => {
               </button>
             </div>
 
+          
             {!isLoading && user && (
               <span className="header-welcome">{user.accountName}님</span>
             )}
 
+          
             <button
               className="header-ham"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -220,11 +236,13 @@ const Header: React.FC = () => {
           </div>
         </div>
 
+     
         <div className="header-mobile-search-wrapper">
           <input className="header-mobile-search" placeholder="검색어 입력" />
           <button className="header-mobile-search-btn">🔍</button>
         </div>
 
+      
         <nav className="header-mobile-tabs">
           <Link to="/" className="mobile-tab-item">홈</Link>
           <Link to="/theme" className="mobile-tab-item">추천 명소</Link>
@@ -235,6 +253,7 @@ const Header: React.FC = () => {
         </nav>
       </header>
 
+     
       <nav className="mobile-bottom-nav">
         <Link to="/" className="bottom-nav-item">
           🏠 <span>홈</span>
@@ -247,8 +266,11 @@ const Header: React.FC = () => {
         </Link>
       </nav>
 
+      
       <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
         <div className="mobile-inner">
+
+         
           <div className="mobile-user-section">
             <div className="mobile-user-icon">👤</div>
 
@@ -275,7 +297,9 @@ const Header: React.FC = () => {
             )}
           </div>
 
+         
           <nav className="mobile-nav">
+
             <Link to="/" className="mobile-nav-item" onClick={handleMenuClose}>
               🏠 홈
             </Link>
@@ -288,6 +312,7 @@ const Header: React.FC = () => {
               🗺️ 지역
             </Link>
 
+           
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("course")}
@@ -309,6 +334,7 @@ const Header: React.FC = () => {
               </div>
             )}
 
+           
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("info")}
@@ -326,10 +352,10 @@ const Header: React.FC = () => {
                 <Link to="/festival" onClick={handleMenuClose}>축제</Link>
                 <Link to="/shopping" onClick={handleMenuClose}>쇼핑·기념품</Link>
                 <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
-                <Link to="/ai-planner" onClick={handleMenuClose}>AI 여행 계획</Link>
               </div>
             )}
 
+            
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("benefits")}
@@ -343,7 +369,7 @@ const Header: React.FC = () => {
             {expandedMenu === "benefits" && (
               <div className="mobile-sub-nav">
                 <Link to="/benefits/event" onClick={handleMenuClose}>이벤트</Link>
-                <Link to="/benefits/coupon" onClick={handleMenuClose}>기프래카드</Link>
+                <Link to="/benefits/coupon" onClick={handleMenuClose}>기플래카드</Link>
                 <Link to="/benefits/badge" onClick={handleMenuClose}>베지패드</Link>
               </div>
             )}
@@ -353,6 +379,7 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
+        
           {user ? (
             <button className="mobile-auth-btn" onClick={handleLogout}>
               로그아웃
