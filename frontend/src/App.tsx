@@ -15,6 +15,7 @@ import WalkCourseList from "pages/course/WalkCourseList";
 import ThemeCourseList from "pages/course/ThemeCourseList";
 import MarineCourseList from "pages/course/MarineCourseList";
 import UrbanCourseList from "pages/course/UrbanCourseList";
+import UrbanDetail from "pages/course/UrbanDetail";
 
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
@@ -44,6 +45,7 @@ function App() {
   
   return (
           <div className={`app-wrapper ${isMapPage ? 'map-page-mode' : ''}`}>
+
           <Header />
                 <Routes>                
                   {/* 새로운 메인 페이지 */}
@@ -56,7 +58,7 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
-                  //여행 페이지
+                  {/* 테마 페이지 */}
                   <Route path="/theme" element={<ThemePage />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
@@ -66,6 +68,7 @@ function App() {
                   <Route path="/course/theme" element={<ThemeCourseList />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />
+                  <Route path="/course/urban/:id" element={<UrbanDetail />} />
 
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />

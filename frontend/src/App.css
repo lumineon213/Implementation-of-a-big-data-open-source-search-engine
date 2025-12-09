@@ -115,3 +115,14 @@
 }
 
 
+/* PC 환경 기본 패딩: 64px */
+.app-content-padding {
+    padding-top: 64px;
+}
+
+/* 모바일 환경 (900px 이하) 패딩: 160px */
+@media (max-width: 900px) {
+    .app-content-padding {
+        padding-top: 160px !important; /* 모바일에서 확실히 덮어쓰기 위해 !important 사용 */
+    }
+}

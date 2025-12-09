@@ -42,6 +42,7 @@ public class MarineServiceImpl implements MarineService {
 
         // --- 해양에 추가된 확정 10개 ---
         "MARINE_44",     // 부산아쿠아리움
+        "MARINE_434",
         "MARINE_140",    // 요트투어
         "MARINE_336",    // 낙동강 탐방선
         "MARINE_2586",   // 브레이크아웃(해변 기반)
