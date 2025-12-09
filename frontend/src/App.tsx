@@ -24,6 +24,9 @@ import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
 
+import Festival from "pages/tourdata/festival";
+import FestivalDetail from 'pages/tourdata/FestivalDetail';
+
 // 타입 정의
 export interface SolrResultItem {
   id: string;
@@ -54,6 +57,9 @@ function App() {
                    <Route path="/map" element={<MapPage />} />
                   //여행 페이지.
                   <Route path="/theme" element={<ThemePage />} />
+                  {/* 축제 페이지 */}
+                  <Route path="/festival" element={<Festival />} />
+                  <Route path="/festival/:id" element={<FestivalDetail />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
                   <Route path="/theme/view/:id" element={<ThemeDetail />} />
