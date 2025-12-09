@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import History from "./history";
 import { api } from "../../api/axios";
+import { getWeatherRecommendations } from "./weatherRecommendation";
 
 interface RecentPlace {
   id: string;
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const checkLoginStatus = async () => {
       try {
         // search-log API로 로그인 확인 (이미 인증 체크가 있음)
-        const response = await api.get('/search-log');
+        await api.get('/search-log');
         console.log('Login check success - user is logged in');
         setIsLoggedIn(true);
       } catch (error: any) {
@@ -150,6 +151,77 @@ const Sidebar: React.FC<SidebarProps> = ({
               최고 {info.temp + 1}° | 최저 {info.temp - 1}°
             </div>
           </div>
+
+          {/* 날씨 기반 추천 */}
+          {(() => {
+            const recommendation = getWeatherRecommendations(info.sky, info.temp);
+            return (
+              <div className="weather-recommendation" style={{
+                margin: '0 0 20px 0',
+                padding: '14px 16px',
+                background: 'linear-gradient(135deg, #4A90E2 0%, #357ABD 100%)',
+                borderRadius: '12px',
+                color: 'white',
+                boxShadow: '0 2px 8px rgba(74, 144, 226, 0.2)'
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '10px',
+                  marginBottom: '8px'
+                }}>
+                  <span style={{ fontSize: '22px' }}>{recommendation.icon}</span>
+                  <span style={{ fontWeight: 'bold', fontSize: '14px' }}>오늘의 추천</span>
+                </div>
+                <div style={{ fontSize: '13px', lineHeight: '1.5', marginBottom: '10px' }}>
+                  {recommendation.reason}
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: '6px' 
+                }}>
+                  {recommendation.categories.map((cat) => (
+                    <span 
+                      key={cat}
+                      onClick={() => {
+                        const mapping: { [key: string]: string } = {
+                          '음식점': '음식점',
+                          '산책로': '도보여행',
+                          '테마관광지': '테마여행',
+                          '해양레저': '해양여행',
+                          '도심관광코스': '도시여행'
+                        };
+                        onCategoryClick(mapping[cat] || cat);
+                      }}
+                      style={{
+                        padding: '5px 12px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: '14px',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        border: '1px solid rgba(255, 255, 255, 0.35)',
+                        fontWeight: '500'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.35)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="category-grid">
             <div className="category-row">
