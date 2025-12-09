@@ -8,6 +8,7 @@ import FoodList from "pages/foodList/foodList";
 import ThemePage from "pages/tourtheme/ThemePage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+import ThemeDetail from './pages/tourtheme/ThemeDetail';
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
@@ -55,6 +56,7 @@ function App() {
                   <Route path="/theme" element={<ThemePage />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
+                  <Route path="/theme/view/:id" element={<ThemeDetail />} />
                   {/* 여행 코스 */}
                   <Route path="/course" element={<CourseHome />} />
                   <Route path="/course/walk" element={<WalkCourseList />} />

@@ -25,5 +25,14 @@
            OR address LIKE '%' || #{keyword} || '%'
         ORDER BY spot_id DESC
     </select>
+    
+    <select id="selectSpotById" parameterType="long" resultType="com.boot.Tour.dto.TourDTO">
+    SELECT * FROM TOUR_SPOTS  WHERE spot_id = #{id}
+</select>
+
+<update id="updateViewCount" parameterType="long">
+    UPDATE TOUR_SPOTS SET view_count = view_count + 1 
+    WHERE spot_id = #{id}
+</update>
 
 </mapper>

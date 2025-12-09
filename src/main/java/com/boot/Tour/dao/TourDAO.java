@@ -14,4 +14,8 @@ public interface TourDAO {
 
     // 2. 검색어로 조회
     List<TourDTO> selectSpotsByKeyword(@Param("keyword") String keyword);
+    
+ // 인터페이스에 추가
+    TourDTO selectSpotById(@Param("id") Long id);
+    void updateViewCount(@Param("id") Long id);
 }

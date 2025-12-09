@@ -13,4 +13,8 @@ public class TourDTO {
     private int viewCount;      // view_count
     private Date createdAt;     // created_at
     private int themeId;        // theme_id
+    private String latitude;  // 위도
+    private String longitude; // 경도
+    private String tel;       // 전화번호
+    private String homepage;  // 홈페이지
 }
