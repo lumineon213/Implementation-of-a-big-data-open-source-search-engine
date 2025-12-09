@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import Login from "pages/login/login";
@@ -9,6 +10,9 @@ import FoodList from "pages/foodList/foodList";
 import ThemePage from "pages/tourtheme/ThemePage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+import FindId  from "pages/login/FindId";
+import FindPassword  from "pages/login/FindPassword";
+import ResetPassword from "pages/login/ResetPassword";
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
@@ -48,6 +52,17 @@ export interface SolrResultItem {
 
 
 function App() {
+   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+
+      // URL에 남은 ?token= 제거
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
   const location = useLocation();
   const isMapPage = location.pathname === '/map';
   
@@ -75,6 +90,15 @@ function App() {
                   {/* 여행 코스 */}
                   <Route path="/course" element={<CourseHome />} />
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  // 아이디 찾기
+                  <Route path="/find-id" element={<FindId />} />
+                  //비밀번호 찾기
+                  <Route path="/find-password" element={<FindPassword />} />
+
+                  <Route path="/reset-password" element={<ResetPassword />} />
+
+
+
                   <Route path="/course/theme" element={<ThemeCourseList />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />

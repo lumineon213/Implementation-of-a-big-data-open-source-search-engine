@@ -53,6 +53,12 @@ dependencies {
 	
 	// SolrJ: Apache Solr와 통신하기 위한 클라이언트 라이브러리
     implementation 'org.apache.solr:solr-solrj:9.10.0'
+    
+    // 이메일 인증
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    
+
+    
 }
 
 tasks.named('test') {
