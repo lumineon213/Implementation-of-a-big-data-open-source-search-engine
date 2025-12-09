@@ -2,21 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
-import "./ThemeDetail.css"; 
+import "./ThemeDetail.css"; // ★ 아래 작성된 CSS 파일 연결
 
-// 명소 데이터 타입 정의
+// 명소 데이터 타입 정의 (백엔드 DTO와 변수명 일치)
 interface ThemeData {
   spotId: number;
   title: string;
   address: string;
-  imageUrl?: string; 
+  
+  imageUrl?: string;   // ★ [핵심] 백엔드 변수명(imageUrl)과 일치시킴
+  viewCount?: number;  // ★ [핵심] 백엔드 변수명(viewCount)과 일치시킴
+  
   description?: string;
   latitude?: string;
   longitude?: string;
-  
-  // ★ [수정 1] 백엔드 변수명(viewCount)과 똑같이 맞춰야 값이 나옵니다!
-  viewCount?: number;  
-  
   tel?: string;        
   homepage?: string;   
 }
@@ -30,7 +29,7 @@ const ThemeDetail: React.FC = () => {
 
   // 카카오 지도 로더
   const [loadingMap, errorMap] = useKakaoLoader({
-    // 본인의 키가 맞는지 확인
+    // ★ 본인의 JavaScript 키 입력 (933f...)
     appkey: import.meta.env.VITE_KAKAOMAP_KEY || '933f3a8d309f267a84e10a5061bc845a',
     libraries: ["services"],
   });
@@ -96,24 +95,27 @@ const ThemeDetail: React.FC = () => {
         <div className="detail-header">
             <h1 className="detail-title">{theme.title}</h1>
             
-            {/* ★ [수정 2] theme.view_count -> theme.viewCount 로 변경 */}
+            {/* ★ [수정됨] 조회수 표시 (viewCount 사용) */}
             <span className="detail-view">👀 조회수 {theme.viewCount || 0}</span>
         </div>
         
         <hr className="divider" />
 
         <div className="detail-content">
-          {/* 왼쪽: 이미지 */}
+          {/* 왼쪽: 이미지 영역 */}
           <div className="img-wrapper">
               <img 
+                  // ★ [수정됨] imageUrl 사용 & 엑박 방지용 더미 이미지
                   src={theme.imageUrl || "https://dummyimage.com/600x400/dddddd/000000.png&text=No+Image"} 
                   alt={theme.title} 
                   className="detail-img"
-                  onError={(e) => { e.currentTarget.src = "https://dummyimage.com/600x400/dddddd/000000.png&text=Busan+Theme"; }}
+                  onError={(e) => { 
+                    e.currentTarget.src = "https://dummyimage.com/600x400/dddddd/000000.png&text=Busan+Theme"; 
+                  }}
               />
           </div>
           
-          {/* 오른쪽: 텍스트 정보 */}
+          {/* 오른쪽: 정보 영역 */}
           <div className="detail-info">
             <div className="info-item">
                 <strong>📍 주소</strong>
