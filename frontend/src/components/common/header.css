@@ -35,12 +35,13 @@
   margin-left: 4px;
 }
 
-/* 데스크탑 메뉴 */
+/* 데스크톱 메뉴 */
 .header-desktop-menu {
   display: flex;
   gap: 38px;
   flex: 1;
   justify-content: center;
+  align-items: center;
 }
 
 .header-desktop-menu .menu-item {
@@ -51,12 +52,135 @@
   padding: 6px 0;
   white-space: nowrap;
   transition: all 0.2s;
+  position: relative;
+  cursor: pointer;
 }
 
 .header-desktop-menu .menu-item:hover {
   color: black;
-  border-bottom: 2px solid black;
-  padding-bottom: 4px;
+}
+
+.header-desktop-menu .menu-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: black;
+  transition: width 0.3s ease;
+}
+
+.header-desktop-menu .menu-item:hover::after {
+  width: 100%;
+}
+
+/* 드롭다운 컨테이너 */
+.dropdown-container {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 드롭다운 화살표 */
+.dropdown-arrow {
+  transition: transform 0.3s ease;
+  color: #666;
+  margin-left: 2px;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+  color: black;
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% - 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  min-width: 280px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  padding-top: 24px;
+  z-index: 1001;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 드롭다운 아이템 */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f5f8ff;
+  transform: translateX(2px);
+}
+
+.dropdown-icon {
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f4ff;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover .dropdown-icon {
+  background: #e0ebff;
+  transform: scale(1.05);
+}
+
+.dropdown-content {
+  flex: 1;
+}
+
+.dropdown-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 2px;
+}
+
+.dropdown-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.3;
+}
+
+.dropdown-item:hover .dropdown-title {
+  color: #0066ff;
 }
 
 /* 오른쪽 영역 */
@@ -67,7 +191,7 @@
   flex-shrink: 0;
 }
 
-/* 검색창 (데스크탑) */
+/* 검색창 (데스크톱) */
 .header-search-wrapper {
   position: relative;
   display: flex;
@@ -158,40 +282,10 @@
   gap: 4px;
 }
 
-.language-btn .arrow {
-  font-size: 10px;
-}
-
 .header-welcome {
   font-size: 14px;
   color: #444;
   white-space: nowrap;
-}
-
-/* 로그인/로그아웃 버튼 */
-.header-auth-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.header-auth-buttons button,
-.header-auth-buttons a {
-  border: 1px solid #aaa;
-  padding: 6px 16px;
-  border-radius: 20px;
-  text-decoration: none;
-  background: white;
-  cursor: pointer;
-  color: #333;
-  font-size: 14px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.header-auth-buttons button:hover,
-.header-auth-buttons a:hover {
-  background: #f2f2f2;
-  border-color: #888;
 }
 
 /*************** 모바일 검색창 (헤더 아래) ***************/
@@ -302,16 +396,6 @@
   color: #0066cc;
 }
 
-.nav-icon {
-  font-size: 22px;
-  margin-bottom: 2px;
-}
-
-.nav-label {
-  font-size: 11px;
-  font-weight: 500;
-}
-
 /* 모바일 메뉴 슬라이드 */
 .mobile-menu {
   position: fixed;
@@ -337,39 +421,6 @@
   height: 100%;
 }
 
-/* 모바일 헤더 */
-.mobile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.mobile-logo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #222;
-  text-decoration: none;
-}
-
-.mobile-logo-round {
-  border: 2px solid #222;
-  padding: 2px 8px;
-  border-radius: 30px;
-  margin-left: 4px;
-}
-
-.mobile-close {
-  font-size: 28px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  line-height: 1;
-  color: #333;
-}
-
 /* 사용자 정보 영역 */
 .mobile-user-section {
   display: flex;
@@ -391,10 +442,6 @@
   flex-shrink: 0;
 }
 
-.mobile-user-info {
-  flex: 1;
-}
-
 .mobile-user-link {
   text-decoration: none;
   color: inherit;
@@ -413,42 +460,6 @@
   color: #666;
   margin: 0;
   line-height: 1.4;
-}
-
-/* 배지 섹션 */
-.mobile-badge-section {
-  display: flex;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  gap: 1px;
-}
-
-.badge-btn {
-  flex: 1;
-  padding: 12px;
-  background: white;
-  border: 1px solid #ddd;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.badge-btn:first-child {
-  border-radius: 4px 0 0 4px;
-}
-
-.badge-btn:last-child {
-  border-radius: 0 4px 4px 0;
-}
-
-.badge-btn:hover {
-  background: #f5f5f5;
-}
-
-.badge-divider {
-  width: 1px;
-  background: #ddd;
 }
 
 /* 모바일 네비게이션 */
@@ -477,12 +488,6 @@
 
 .mobile-nav-item.expandable {
   justify-content: space-between;
-}
-
-.nav-item-icon {
-  font-size: 20px;
-  width: 24px;
-  text-align: center;
 }
 
 .nav-arrow {
@@ -529,44 +534,6 @@
   background: #f0f0f0;
 }
 
-/* 하단 영역 */
-.mobile-footer {
-  border-top: 1px solid #eee;
-  padding: 8px 0;
-}
-
-.mobile-footer-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  text-decoration: none;
-  color: #666;
-  font-size: 14px;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.mobile-footer-item:hover {
-  background: #f5f5f5;
-}
-
-.footer-icon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
-}
-
-.footer-arrow {
-  margin-left: auto;
-  font-size: 18px;
-  color: #999;
-}
-
 /* 로그인/로그아웃 버튼 */
 .mobile-auth-btn {
   margin: 16px 20px 24px;
@@ -605,7 +572,6 @@
 
 /* 반응형 - 모바일 */
 @media (max-width: 900px) {
-  /* 헤더 내부 요소 숨김 */
   .header-desktop-menu,
   .header-search-wrapper,
   .header-icons,
@@ -613,7 +579,6 @@
     display: none;
   }
 
-  /* 모바일 요소 표시 */
   .header-ham {
     display: block;
   }
@@ -639,7 +604,6 @@
     font-size: 20px;
   }
   
-  /* 콘텐츠 영역을 하단 네비 위로 올리기 위한 여백 */
   body {
     padding-bottom: 60px;
   }

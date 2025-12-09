@@ -1,4 +1,4 @@
-package com.boot.dto;
+package com.boot.notice.dto;
 
 import java.util.Date;
 
