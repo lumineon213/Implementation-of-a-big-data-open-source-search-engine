@@ -8,6 +8,9 @@ import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+import FindId  from "pages/login/FindId";
+import FindPassword  from "pages/login/FindPassword";
+import ResetPassword from "pages/login/ResetPassword";
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
@@ -57,6 +60,15 @@ function App() {
                   <Route path="/course" element={<CourseHome />} />
                   //도보여행
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  // 아이디 찾기
+                  <Route path="/find-id" element={<FindId />} />
+                  //비밀번호 찾기
+                  <Route path="/find-password" element={<FindPassword />} />
+
+                  <Route path="/reset-password" element={<ResetPassword />} />
+
+
+
                 </Routes>
          
           <Footer />

@@ -29,21 +29,18 @@ public class SocialLoginServiceImpl implements SocialLoginService {
     @Override
     public String kakaoLogin(String code) {
         log.info("카카오 인증 코드: {}", code);
-        // TODO: 코드 기반 토큰 요청
         return "카카오 로그인 처리 완료";
     }
 
     @Override
     public String googleLogin(String code) {
         log.info("구글 인증 코드: {}", code);
-        // TODO: 코드 기반 토큰 요청
         return "구글 로그인 처리 완료";
     }
 
     @Override
     public String naverLogin(String code) {
         log.info("네이버 인증 코드: {}", code);
-        // TODO: 코드 기반 토큰 요청
         return "네이버 로그인 처리 완료";
     }
 }

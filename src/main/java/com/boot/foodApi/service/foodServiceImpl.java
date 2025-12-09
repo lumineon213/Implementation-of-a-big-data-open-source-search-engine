@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Service
 public class foodServiceImpl implements foodService{
-	@Value("${food.api.key}") 
+	@Value("${https://apis.data.go.kr/6260000/FoodService/getFoodKr?serviceKey=ac656e6ed3812f0dba1dd7b78abd6be165318a8ce93fc6390ad279e23f3874fa&numOfRows=1000&pageNo=1&resultType=json}") 
     private String apiKey;
 
     @Autowired
