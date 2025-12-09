@@ -88,7 +88,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* 정보 영역 */
+/* 정보 영역. */
 .detail-info {
   flex: 1.2;
   display: flex;

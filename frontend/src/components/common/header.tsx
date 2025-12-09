@@ -22,7 +22,7 @@ const Header: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   
-  // JWT 인증 방식 — checkAuth() 
+  // JWT 인증 방식  checkAuth() 
   
   const checkAuth = async () => {
     const token = localStorage.getItem("token");

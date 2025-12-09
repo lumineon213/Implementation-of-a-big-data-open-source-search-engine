@@ -34,5 +34,5 @@
     UPDATE TOUR_SPOTS SET view_count = view_count + 1 
     WHERE spot_id = #{id}
 </update>
-
+//
 </mapper>

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface TourDAO {
-    // 1. 전체 목록 조회
+    // 1 전체 목록 조회
     List<TourDTO> selectAllSpots();
 
     // 2. 검색어로 조회

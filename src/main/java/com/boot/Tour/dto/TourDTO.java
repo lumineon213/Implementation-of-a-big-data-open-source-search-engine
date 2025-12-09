@@ -9,7 +9,7 @@ public class TourDTO {
     private String title;       // title
     private String address;     // address
     private String description; // description
-    private String imageUrl;    // image_url
+    private String imageUrl;    // imageurl
     private int viewCount;      // view_count
     private Date createdAt;     // created_at
     private int themeId;        // theme_id

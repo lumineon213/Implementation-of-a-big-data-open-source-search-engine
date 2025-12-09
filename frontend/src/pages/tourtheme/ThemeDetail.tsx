@@ -173,7 +173,7 @@ const ThemeDetail: React.FC = () => {
             </div>
           ) : (
             <div className="no-map" style={{ height: "300px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f0f0f0" }}>
-              위치 정보가 없어 지도를 표시할 수 없습니다.
+              위치 정보가 없어 지도를 표시할 수 없습니다..
             </div>
           )}
         </div>

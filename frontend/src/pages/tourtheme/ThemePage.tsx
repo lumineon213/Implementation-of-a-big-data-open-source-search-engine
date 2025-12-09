@@ -5,7 +5,7 @@ import "./ThemePage.css";
 
 // 데이터 타입 정의
 interface TourSpot {
-  spotId: number;   // ★ 핵심: 백엔드에서 보내주는 변수명(spotId)과 일치
+  spotId: number;   //  핵심: 백엔드에서 보내주는 변수명(spotId)과 일치
   title: string;
   address: string;
   imageUrl: string;

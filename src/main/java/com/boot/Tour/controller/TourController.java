@@ -20,7 +20,7 @@ public class TourController {
         System.out.println("요청 받은 검색어: " + keyword);
         return tourService.getTourSpotList(keyword);
     }
- // 1. 상세 정보 조회
+ // 1 상세 정보 조회
     @GetMapping("/theme/{id}")
     public TourDTO getTourDetail(@PathVariable("id") Long id) {
         System.out.println("상세 조회 요청 ID: " + id);

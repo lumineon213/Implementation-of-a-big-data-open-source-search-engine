@@ -52,7 +52,7 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
-                  //여행 페이지
+                  //여행 페이지.
                   <Route path="/theme" element={<ThemePage />} />
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
