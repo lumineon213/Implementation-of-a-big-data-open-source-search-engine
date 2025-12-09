@@ -45,11 +45,39 @@ const DistanceSlider: React.FC<DistanceSliderProps> = ({
   const activeTrackWidth = (currentMeters / MAX_VALUE) * 100;
   const thumbPosition = `${activeTrackWidth}%`;
 
+  // 프리셋 버튼 클릭 핸들러
+  const handlePresetClick = (meters: number) => {
+    setCurrentMeters(meters);
+    const distanceKm = meters / 1000;
+    onDistanceChange(distanceKm);
+  };
+
+  const presetButtons = [
+    { meters: 500, label: '500m' },
+    { meters: 1000, label: '1km' },
+    { meters: 3000, label: '3km' },
+    { meters: 5000, label: '5km' },
+    { meters: 8000, label: '8km' },
+  ];
+
   return (
     // isOpen 상태에 따라 is-open 클래스를 토글하여 CSS로 표시/숨김을 제어합니다.
     <div className={`distance-slider-popup ${isOpen ? 'is-open' : ''}`}>
       <h3>조회 거리</h3>
       
+      {/* 프리셋 버튼 */}
+      <div className="distance-preset-buttons">
+        {presetButtons.map((preset) => (
+          <button
+            key={preset.meters}
+            className={`preset-button ${currentMeters === preset.meters ? 'active' : ''}`}
+            onClick={() => handlePresetClick(preset.meters)}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+
       <div className="slider-area">
         
         {/* 트랙 배경 */}

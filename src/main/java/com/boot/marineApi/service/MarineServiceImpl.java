@@ -139,7 +139,11 @@ public class MarineServiceImpl implements MarineService {
             m.put("title", doc.get("title"));
             m.put("subtitle", doc.getOrDefault("subtitle", ""));
             m.put("address", doc.get("address"));
+            m.put("latitude", doc.get("latitude"));
+            m.put("longitude", doc.get("longitude"));
             m.put("image_url", doc.get("image_url"));
+            m.put("description", doc.getOrDefault("description", ""));
+            m.put("type", doc.getOrDefault("type", "MARINE"));
             out.add(m);
         }
 
