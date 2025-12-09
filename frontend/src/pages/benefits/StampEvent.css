@@ -1,0 +1,141 @@
+.stamp-reward-small {
+  font-size: 0.95rem;
+  color: #2d6cdf;
+  margin-top: 4px;
+  text-align: center;
+  opacity: 0.8;
+}
+.stamp-check-msg {
+  margin: 12px 0 0 0;
+  color: #e67e22;
+  font-size: 1.05rem;
+  text-align: center;
+}
+.stamp-event-container {
+  max-width: 900px;
+  margin: 80px auto 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+.stamp-reset-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  margin-bottom: 12px;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+.stamp-reset-btn:hover {
+  background: #c0392b;
+}
+.stamp-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2d6cdf;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.stamp-desc {
+  font-size: 1.1rem;
+  color: #444;
+  text-align: center;
+  margin-bottom: 32px;
+}
+.stamp-list {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.stamp-card {
+  background: #f7faff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(45,108,223,0.08);
+  padding: 18px 16px;
+  width: 150px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+.stamp-card.collected {
+  background: #e6f7d9;
+  box-shadow: 0 2px 12px rgba(45,223,108,0.12);
+}
+.stamp-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  border: 2px solid #2d6cdf;
+  background: #fff;
+}
+.stamp-card.collected .stamp-img {
+  border-color: #2ddf6c;
+}
+.stamp-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2d6cdf;
+}
+.stamp-checkin-btn {
+  background: #2d6cdf;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s;
+}
+.stamp-checkin-btn:disabled {
+  background: #aaa;
+  cursor: default;
+}
+.stamp-status {
+  background: #f2f6fa;
+  border-radius: 10px;
+  padding: 18px 14px;
+  margin-top: 18px;
+}
+.stamp-status-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.stamp-status-item {
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.98rem;
+  color: #2d6cdf;
+  box-shadow: 0 1px 4px rgba(45,108,223,0.07);
+}
+.stamp-status-item.done {
+  background: #2ddf6c;
+  color: #fff;
+  font-weight: 700;
+}
+.stamp-progress {
+  font-size: 1rem;
+  color: #444;
+  margin-top: 8px;
+  text-align: center;
+}
+.stamp-reward {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #2ddf6c;
+  font-weight: 700;
+}

@@ -21,12 +21,15 @@ import Terms from "pages/footer_details/Terms";
 import FAQpage from "pages/footer_details/FAQpage";
 import Inquiry from "pages/footer_details/inquiry";
 import Event from "pages/footer_details/Event";
+import StampEvent from "pages/benefits/StampEvent";
 import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
 import AIPlannerPage from "pages/ai-planner/AIPlannerPage";
 import ShoppingList from "pages/shopping/ShoppingList";
 import ShoppingDetail from "pages/shopping/ShoppingDetail";
+import BadgePad from "pages/benefits/BadgePad";
+import GiftCard from "pages/benefits/GiftCard";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -91,6 +94,9 @@ function App() {
                   <Route path="/footer_details/inquiry" element={<Inquiry />} />
                   {/* 이벤트 */}
                   <Route path="/footer_details/event" element={<Event />} />
+                  <Route path="/benefits/stamp" element={<StampEvent />} />
+                  <Route path="/benefits/badge" element={<BadgePad />} />
+                  <Route path="/benefits/coupon" element={<GiftCard />} />
                 </Routes>
          
           {!isMapPage && <Footer />}
