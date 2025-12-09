@@ -25,6 +25,8 @@ import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
 import AIPlannerPage from "pages/ai-planner/AIPlannerPage";
+import ShoppingList from "pages/shopping/ShoppingList";
+import ShoppingDetail from "pages/shopping/ShoppingDetail";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -70,6 +72,10 @@ function App() {
 
                   {/* AI 여행 계획 */}
                   <Route path="/ai-planner" element={<AIPlannerPage />} />
+
+                  {/* 쇼핑·기념품 */}
+                  <Route path="/shopping" element={<ShoppingList />} />
+                  <Route path="/shopping/:id" element={<ShoppingDetail />} />
 
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />

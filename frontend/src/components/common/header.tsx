@@ -135,6 +135,13 @@ const Header: React.FC = () => {
                       <div className="dropdown-desc">다양한 축제 정보</div>
                     </div>
                   </Link>
+                  <Link to="/shopping" className="dropdown-item">
+                    <span className="dropdown-icon">🛍️</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">쇼핑·기념품</div>
+                      <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
+                    </div>
+                  </Link>
                   <Link to="/info/accommodation" className="dropdown-item">
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
@@ -317,6 +324,7 @@ const Header: React.FC = () => {
                 <Link to="/info/regions" onClick={handleMenuClose}>여행지역</Link>
                 <Link to="/info/articles" onClick={handleMenuClose}>여행기사</Link>
                 <Link to="/info/festival" onClick={handleMenuClose}>축제</Link>
+                <Link to="/shopping" onClick={handleMenuClose}>쇼핑·기념품</Link>
                 <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
                 <Link to="/ai-planner" onClick={handleMenuClose}>AI 여행 계획</Link>
               </div>
