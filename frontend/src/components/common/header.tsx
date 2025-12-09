@@ -128,7 +128,7 @@ const Header: React.FC = () => {
                       <div className="dropdown-desc">최신 여행 소식</div>
                     </div>
                   </Link>
-                  <Link to="/info/festival" className="dropdown-item">
+                  <Link to="/festival" className="dropdown-item">
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">축제</div>
@@ -316,7 +316,7 @@ const Header: React.FC = () => {
               <div className="mobile-sub-nav">
                 <Link to="/info/regions" onClick={handleMenuClose}>여행지역</Link>
                 <Link to="/info/articles" onClick={handleMenuClose}>여행기사</Link>
-                <Link to="/info/festival" onClick={handleMenuClose}>축제</Link>
+                <Link to="/festival" onClick={handleMenuClose}>축제</Link>
                 <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
                 <Link to="/ai-planner" onClick={handleMenuClose}>AI 여행 계획</Link>
               </div>
