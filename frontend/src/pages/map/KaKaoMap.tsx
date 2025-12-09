@@ -24,6 +24,7 @@ interface KakaoMapProps {
   setUrbans: (urbans: any[]) => void;
   setCurrentLocation: (location: { lat: number; lng: number } | null) => void;
   onRestaurantClick: (restaurant: any) => void;
+  externalLocation?: { lat: number; lng: number; title: string } | null;
 }
 
 
@@ -36,13 +37,16 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setMarines,
   setUrbans,
   setCurrentLocation,
-  onRestaurantClick
+  onRestaurantClick,
+  externalLocation
 }) => {
   const kakaoKey = import.meta.env.VITE_KAKAOMAP_KEY;
   const weatherKey = import.meta.env.VITE_WEATHER_API_KEY;
 
   const mapRef = useRef<any>(null);
   const myLocationMarker = useRef<any>(null);
+  const externalMarker = useRef<any>(null);
+  const externalInfowindow = useRef<any>(null);
   const restaurantMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const walkMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const themeMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
@@ -56,7 +60,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   //2. 슬라이더 팝업 토글 상태 추가
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   // 3. 검색어 상태
-  const [searchKeyword, setSearchKeyword] = useState(""); 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  // 4. 지도 준비 상태
+  const [isMapReady, setIsMapReady] = useState(false); 
 
   /* 음식점 데이터 가져오기 (keyword 지원) */
   const fetchRestaurants = useCallback(async (lat: number, lng: number, radiusKm: number, keyword?: string) => {
@@ -533,6 +539,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
             map.relayout();
             map.setCenter(new window.kakao.maps.LatLng(35.146, 129.1));
           }
+          // 지도 준비 완료
+          setIsMapReady(true);
+          console.log("🗺️ Map is ready");
         }, 100);
       });
     };
@@ -572,6 +581,68 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  /* 외부에서 전달된 위치 처리 (쇼핑 등에서 지도 보기) */
+  useEffect(() => {
+    // 지도가 준비되고, externalLocation이 있을 때만 실행
+    if (!isMapReady || !externalLocation || !mapRef.current || !window.kakao) {
+      return;
+    }
+
+    console.log("🛍️ External location detected:", externalLocation);
+    
+    const { lat, lng, title } = externalLocation;
+    
+    // 현재 위치로 설정
+    currentLocation.current = { lat, lng };
+    setCurrentLocation({ lat, lng });
+
+    const kakao = window.kakao;
+    const position = new kakao.maps.LatLng(lat, lng);
+    
+    // 지도 중심 이동
+    mapRef.current.panTo(position);
+    mapRef.current.setLevel(3);
+    
+    // 기존 external 마커 제거
+    if (externalMarker.current) {
+      externalMarker.current.setMap(null);
+    }
+    if (externalInfowindow.current) {
+      externalInfowindow.current.close();
+    }
+    
+    // 약간의 지연 후 마커 생성 (지도 이동 완료 대기)
+    setTimeout(() => {
+      // External 마커 생성 (별도 관리)
+      externalMarker.current = new kakao.maps.Marker({
+        position: position,
+        map: mapRef.current,
+        zIndex: 9999
+      });
+      
+      // 인포윈도우 생성
+      externalInfowindow.current = new kakao.maps.InfoWindow({
+        content: `<div style="padding:10px 15px;font-size:14px;font-weight:600;color:#333;white-space:nowrap;min-width:120px;text-align:center;background:white;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">${title}</div>`,
+        removable: false
+      });
+      
+      externalInfowindow.current.open(mapRef.current, externalMarker.current);
+      
+      console.log("✅ External marker created and displayed");
+    }, 300);
+  }, [externalLocation, isMapReady, setCurrentLocation]);
+
+  /* 지도나 카테고리가 변경되어도 external 마커 유지 */
+  useEffect(() => {
+    if (externalMarker.current && mapRef.current && isMapReady) {
+      console.log("🔄 Re-applying external marker to map");
+      externalMarker.current.setMap(mapRef.current);
+      if (externalInfowindow.current) {
+        externalInfowindow.current.open(mapRef.current, externalMarker.current);
+      }
+    }
+  }, [activeCategories, searchRadiusKm, isMapReady]);
 
   /* 음식점 마커 제거 */
   const clearRestaurantMarkers = () => {

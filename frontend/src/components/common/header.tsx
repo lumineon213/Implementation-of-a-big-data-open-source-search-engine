@@ -135,6 +135,13 @@ const Header: React.FC = () => {
                       <div className="dropdown-desc">다양한 축제 정보</div>
                     </div>
                   </Link>
+                  <Link to="/shopping" className="dropdown-item">
+                    <span className="dropdown-icon">🛍️</span>
+                    <div className="dropdown-content">
+                      <div className="dropdown-title">쇼핑·기념품</div>
+                      <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
+                    </div>
+                  </Link>
                   <Link to="/info/accommodation" className="dropdown-item">
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
