@@ -7,7 +7,7 @@
     <!-- 검색 기록 저장 -->
     <insert id="insertSearchLog" parameterType="com.boot.search_histroy.dto.SearchLogDTO">
         <selectKey keyProperty="logId" resultType="long" order="BEFORE">
-            SELECT search_seq.NEXTVAL FROM DUAL
+            SELECT NVL(MAX(log_id), 0) + 1 FROM search_log_tbl
         </selectKey>
         INSERT INTO search_log_tbl (log_id, account_id, keyword, search_date)
         VALUES (#{logId}, #{accountId}, #{keyword}, SYSDATE)

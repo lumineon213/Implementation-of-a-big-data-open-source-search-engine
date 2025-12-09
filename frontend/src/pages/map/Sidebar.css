@@ -27,6 +27,31 @@ footer {
   font-weight: bold;
   margin-bottom: 20px;
   color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-toggle-button {
+  background: white;
+  border: 2px solid #e0e0e0;
+  color: #333;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-toggle-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #bdbdbd;
 }
 
 /* 날씨 박스 */

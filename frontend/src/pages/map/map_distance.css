@@ -24,8 +24,50 @@
 
 /* 제목 스타일 */
 .distance-slider-popup h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 15px 0;
     font-size: 16px;
+    font-weight: 600;
+}
+
+/* 프리셋 버튼 컨테이너 */
+.distance-preset-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* 프리셋 버튼 */
+.preset-button {
+    flex: 1;
+    min-width: 50px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    color: #666;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.preset-button:hover {
+    border-color: #2196F3;
+    color: #2196F3;
+    background: #f5f9ff;
+}
+
+.preset-button.active {
+    border-color: #2196F3;
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.preset-button.active:hover {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    box-shadow: 0 3px 10px rgba(33, 150, 243, 0.4);
 }
 
 /* 슬라이더 영역 (relative 기준으로 사용) */

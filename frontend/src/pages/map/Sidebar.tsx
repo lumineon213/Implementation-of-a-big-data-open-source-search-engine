@@ -1,5 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
+import History from "./history";
+import { api } from "../../api/axios";
+
+interface RecentPlace {
+  id: string;
+  title: string;
+  distance?: number;
+  timestamp: number;
+}
 
 interface SidebarProps {
   open: boolean;
@@ -14,6 +23,8 @@ interface SidebarProps {
   onThemeClick: (theme: any) => void;
   marines: any[];
   onMarineClick: (marine: any) => void;
+  urbans: any[];
+  onUrbanClick: (urban: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -28,18 +39,110 @@ const Sidebar: React.FC<SidebarProps> = ({
   themes,
   onThemeClick,
   marines,
-  onMarineClick
+  onMarineClick,
+  urbans,
+  onUrbanClick
 }) => {
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // 로그인 상태 확인
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        // search-log API로 로그인 확인 (이미 인증 체크가 있음)
+        const response = await api.get('/search-log');
+        console.log('Login check success - user is logged in');
+        setIsLoggedIn(true);
+      } catch (error: any) {
+        console.log('Login check - not logged in or error:', error?.response?.status);
+        // 401이면 로그인 안 됨, 그 외는 로그인됨
+        if (error?.response?.status === 401) {
+          setIsLoggedIn(false);
+        } else {
+          // 다른 에러는 로그인된 상태로 간주
+          setIsLoggedIn(true);
+        }
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  // 최근 본 장소 저장
+  const saveRecentPlace = async (place: any) => {
+    const title = Array.isArray(place.title) ? place.title[0] : place.title;
+    
+    console.log('Saving recent place:', title, 'isLoggedIn:', isLoggedIn);
+    
+    // DB에 저장 (로그인한 경우)
+    if (isLoggedIn) {
+      try {
+        console.log('Attempting to save to database...');
+        const response = await api.post('/search-log', {
+          keyword: title
+        });
+        console.log('Save to database success:', response);
+      } catch (error: any) {
+        console.error('Failed to save to database:', error);
+        console.error('Error status:', error?.response?.status);
+        console.error('Error data:', error?.response?.data);
+      }
+    } else {
+      console.log('Not logged in, skipping database save');
+    }
+
+    // localStorage에도 저장 (백업용)
+    const newPlace: RecentPlace = {
+      id: place.id,
+      title: title,
+      distance: place.distance,
+      timestamp: Date.now()
+    };
+
+    const stored = localStorage.getItem('recentPlaces');
+    const existing = stored ? JSON.parse(stored) : [];
+    const updated = [newPlace, ...existing.filter((p: RecentPlace) => p.id !== place.id)].slice(0, 5);
+    localStorage.setItem('recentPlaces', JSON.stringify(updated));
+    console.log('Saved to localStorage:', updated);
+  };
+
+  // 원래 클릭 핸들러를 감싸서 최근 본 장소에 저장
+  const handlePlaceClick = (place: any, originalHandler: (place: any) => void) => {
+    saveRecentPlace(place);
+    originalHandler(place);
+  };
+
+  const handleHistoryPlaceClick = (placeId: string) => {
+    const allPlaces = [...restaurants, ...walks, ...themes, ...marines, ...urbans];
+    const foundPlace = allPlaces.find(p => p.id === placeId);
+    if (foundPlace) {
+      if (restaurants.some(r => r.id === placeId)) onRestaurantClick(foundPlace);
+      else if (walks.some(w => w.id === placeId)) onWalkClick(foundPlace);
+      else if (themes.some(t => t.id === placeId)) onThemeClick(foundPlace);
+      else if (marines.some(m => m.id === placeId)) onMarineClick(foundPlace);
+      else if (urbans.some(u => u.id === placeId)) onUrbanClick(foundPlace);
+    }
+  };
 
   return (
-    <div className={`sidebar ${open ? "open" : ""}`}>
-      {!info ? (
-        <p>현재 위치를 눌러보세요.</p>
-      ) : (
-        <>
-          <div className="location-title">{info.address}</div>
-
-          <div className="weather-box">
+    <>
+      <div className={`sidebar ${open ? "open" : ""}`}>
+        {!info ? (
+          <p>현재 위치를 눌러보세요.</p>
+        ) : (
+          <>
+            <div className="location-title">
+              {info.address}
+              {isLoggedIn && (
+                <button 
+                  className="history-toggle-button"
+                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                  title="최근 본 장소"
+                >
+                  🕐
+                </button>
+              )}
+            </div>          <div className="weather-box">
             <div className="weather-label">현재 날씨</div>
             <div className="weather-temp">{info.temp}°</div>
             <div className="weather-sky">{info.sky}</div>
@@ -161,16 +264,16 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="category-label">여행코스<br/>해양여행</div>
               </div>
               <div 
-                className={`category-item ${activeCategories.includes('나의여행') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('나의여행')}
+                className={`category-item ${activeCategories.includes('도시여행') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('도시여행')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('나의여행') ? '#b80b0bff' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('도시여행') ? '#b80b0bff' : '#9E9E9E'}}
                 >
-                  💼
+                  🏙️
                 </div>
-                <div className="category-label">나의여행</div>
+                <div className="category-label">여행코스<br/>도시여행</div>
               </div>
             </div>
           </div>
@@ -194,7 +297,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div 
                     key={restaurant.id} 
                     className="restaurant-card"
-                    onClick={() => onRestaurantClick(restaurant)}
+                    onClick={() => handlePlaceClick(restaurant, onRestaurantClick)}
                     style={{ 
                       cursor: 'pointer',
                       marginBottom: '10px',
@@ -287,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div 
                     key={walk.id} 
                     className="restaurant-card"
-                    onClick={() => onWalkClick(walk)}
+                    onClick={() => handlePlaceClick(walk, onWalkClick)}
                     style={{ 
                       cursor: 'pointer',
                       marginBottom: '10px',
@@ -384,7 +487,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div 
                     key={theme.id} 
                     className="restaurant-card"
-                    onClick={() => onThemeClick(theme)}
+                    onClick={() => handlePlaceClick(theme, onThemeClick)}
                     style={{ 
                       cursor: 'pointer',
                       marginBottom: '10px',
@@ -481,7 +584,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div 
                     key={marine.id} 
                     className="restaurant-card"
-                    onClick={() => onMarineClick(marine)}
+                    onClick={() => handlePlaceClick(marine, onMarineClick)}
                     style={{ 
                       cursor: 'pointer',
                       marginBottom: '10px',
@@ -558,9 +661,113 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           )}
+
+          {/*도시여행 목록 표시 */}
+          {activeCategories.includes('도시여행') && urbans.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #b80b0bff 0%, #8a0808 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🏙️ 도시여행 코스 ({urbans.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {urbans.map((urban) => (
+                  <div 
+                    key={urban.id} 
+                    className="restaurant-card"
+                    onClick={() => handlePlaceClick(urban, onUrbanClick)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={urban.image || urban.image_url || "https://via.placeholder.com/80?text=Urban"} 
+                        alt={urban.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Urban";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(urban.title) ? urban.title[0] : urban.title}
+                      </div>
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {urban.distance.toFixed(2)}km
+                      </div>
+                      {urban.subtitle && (
+                        <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#FFE0E0',
+                            color: '#B80B0B',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(urban.subtitle) ? urban.subtitle[0] : urban.subtitle}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
+    
+    <History 
+      isOpen={isHistoryOpen}
+      onClose={() => setIsHistoryOpen(false)}
+      onPlaceClick={handleHistoryPlaceClick}
+    />
+    </>
   );
 };
 

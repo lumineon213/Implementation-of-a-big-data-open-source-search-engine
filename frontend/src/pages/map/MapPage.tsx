@@ -12,7 +12,9 @@ const MapPage: React.FC = () => {
   const [walks, setWalks] = useState<any[]>([]);
   const [themes, setThemes] = useState<any[]>([]);
   const [marines, setMarines] = useState<any[]>([]);
+  const [urbans, setUrbans] = useState<any[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState<any | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // 컴포넌트 마운트 시 푸터 숨기기
   useEffect(() => {
@@ -65,6 +67,8 @@ const MapPage: React.FC = () => {
         onThemeClick={(theme) => setSelectedRestaurant(theme)}
         marines={marines}
         onMarineClick={(marine) => setSelectedRestaurant(marine)}
+        urbans={urbans}
+        onUrbanClick={(urban) => setSelectedRestaurant(urban)}
       />
 
       <KakaoMap 
@@ -74,6 +78,8 @@ const MapPage: React.FC = () => {
         setWalks={setWalks}
         setThemes={setThemes}
         setMarines={setMarines}
+        setUrbans={setUrbans}
+        setCurrentLocation={setCurrentLocation}
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
       />
      
@@ -86,6 +92,7 @@ const MapPage: React.FC = () => {
 
       <MapDetail 
         restaurant={selectedRestaurant}
+        currentLocation={currentLocation}
         onClose={() => setSelectedRestaurant(null)}
       />
     </div>

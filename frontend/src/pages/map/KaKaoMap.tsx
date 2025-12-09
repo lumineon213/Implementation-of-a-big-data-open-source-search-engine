@@ -21,6 +21,8 @@ interface KakaoMapProps {
   setWalks: (walks: any[]) => void;
   setThemes: (themes: any[]) => void;
   setMarines: (marines: any[]) => void;
+  setUrbans: (urbans: any[]) => void;
+  setCurrentLocation: (location: { lat: number; lng: number } | null) => void;
   onRestaurantClick: (restaurant: any) => void;
 }
 
@@ -32,6 +34,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setWalks,
   setThemes,
   setMarines,
+  setUrbans,
+  setCurrentLocation,
   onRestaurantClick
 }) => {
   const kakaoKey = import.meta.env.VITE_KAKAOMAP_KEY;
@@ -43,6 +47,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const walkMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const themeMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const marineMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const urbanMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const currentLocation = useRef<{lat: number, lng: number} | null>(null);
   const currentInfowindow = useRef<any>(null);
 
@@ -339,6 +344,84 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [setMarines]);
 
+  /* Solr에서 도시여행 데이터 가져오기 */
+  const fetchUrbans = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    try {
+      console.log("🏙️ 도시여행 데이터 가져오기 시작...", { lat, lng, radiusKm });
+      const response = await fetch("http://localhost:8484/api/urban/search?page=1&size=100");
+      const data = await response.json();
+
+      const resultsArray = data?.list || [];
+      console.log(">>> 도시여행 데이터 수:", resultsArray.length);
+      console.log(">>> 첫 번째 데이터:", resultsArray[0]);
+      
+      if (resultsArray.length === 0) {
+        console.log("⚠️ 도시여행 데이터가 없습니다.");
+        setUrbans([]);
+        displayUrbanMarkers([]);
+        return;
+      }
+
+      // 좌표가 있는 도시여행만 필터링하고 거리 계산
+      const nearbyUrbans = resultsArray
+        .filter((urban: any) => {
+          if (!urban.latitude || !urban.longitude) {
+            console.log("❌ 좌표 없음:", urban.id, urban.title);
+            return false;
+          }
+          
+          // 배열이면 첫 번째 요소 사용
+          const latValue = Array.isArray(urban.latitude) ? urban.latitude[0] : urban.latitude;
+          const lngValue = Array.isArray(urban.longitude) ? urban.longitude[0] : urban.longitude;
+          
+          const urbanLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const urbanLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          
+          console.log("🔍 좌표 체크:", urban.id, { urbanLat, urbanLng });
+          
+          if (isNaN(urbanLat) || isNaN(urbanLng)) {
+            console.log("❌ 좌표 변환 실패:", urban.id);
+            return false;
+          }
+
+          const distance = getDistance(lat, lng, urbanLat, urbanLng);
+          console.log("📏 거리:", urban.id, distance.toFixed(2) + "km");
+          return distance <= radiusKm;
+        })
+        .map((urban: any) => {
+          const latValue = Array.isArray(urban.latitude) ? urban.latitude[0] : urban.latitude;
+          const lngValue = Array.isArray(urban.longitude) ? urban.longitude[0] : urban.longitude;
+          
+          const urbanLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const urbanLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          
+          return {
+            id: urban.id,
+            title: urban.title,
+            subtitle: urban.subtitle,
+            latitude: urbanLat,
+            longitude: urbanLng,
+            image: urban.image_url,
+            address: urban.address,
+            type: urban.type,
+            distance: getDistance(lat, lng, urbanLat, urbanLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+      
+      console.log("✅ 필터링된 도시여행 수:", nearbyUrbans.length);
+      console.log("✅ 필터링된 첫 번째 데이터:", nearbyUrbans[0]);
+      
+      setUrbans(nearbyUrbans);
+      displayUrbanMarkers(nearbyUrbans);
+
+    } catch (error) {
+      console.error("❌ 도시여행 데이터 불러오기 실패:", error);
+      alert("도시여행 데이터를 불러오는데 실패했습니다.");
+    }
+  }, [setUrbans]);
+
   //3. 슬라이더 설정 완료 핸들러 (거리 상태 업데이트 및 재검색)
   const handleDistanceUpdate = (newDistanceKm: number) => {
     // 1. 거리 상태 업데이트
@@ -360,6 +443,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
     if (activeCategories.includes('해양여행')) {
       fetchMarines(lat, lng, newDistanceKm);
+    }
+    if (activeCategories.includes('도시여행')) {
+      fetchUrbans(lat, lng, newDistanceKm);
     }
   };
 
@@ -406,7 +492,18 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       clearMarineMarkers();
       setMarines([]);
     }
-  }, [activeCategories, fetchMarines, setMarines, searchRadiusKm]); 
+  }, [activeCategories, fetchMarines, setMarines, searchRadiusKm]);
+
+  /* 도시여행 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('도시여행')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchUrbans(lat, lng, searchRadiusKm);
+    } else {
+      clearUrbanMarkers();
+      setUrbans([]);
+    }
+  }, [activeCategories, setUrbans, searchRadiusKm]); 
   
   /* 초기 지도 로드 */
   useEffect(() => {
@@ -502,6 +599,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const clearMarineMarkers = () => {
     marineMarkers.current.forEach(item => item.marker.setMap(null));
     marineMarkers.current = [];
+  };
+
+  /* 도시여행 마커 제거 */
+  const clearUrbanMarkers = () => {
+    urbanMarkers.current.forEach(item => item.marker.setMap(null));
+    urbanMarkers.current = [];
   };
 
   /* 음식점 마커 표시 (주황색 핀 마커 사용) */
@@ -625,6 +728,37 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     });
   };
 
+  /* 도시여행 마커 표시 (빨간색 핀 마커 사용) */
+  const displayUrbanMarkers = (urbans: any[]) => {
+    clearUrbanMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    urbans.forEach(urban => {
+      const position = new window.kakao.maps.LatLng(urban.latitude, urban.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.URBAN);
+      
+      content.onclick = () => onRestaurantClick(urban);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+      
+      const title = Array.isArray(urban.title) ? urban.title[0] : urban.title;
+      const subtitle = Array.isArray(urban.subtitle) ? urban.subtitle[0] : urban.subtitle;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, urban.distance)
+      });
+
+      urbanMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
   /* 현재 위치 버튼 */
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) {
@@ -639,6 +773,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         // 현재 위치 저장
         currentLocation.current = { lat, lng };
+        setCurrentLocation({ lat, lng }); // MapPage로 전달
 
         const map = mapRef.current;
         const position = new window.kakao.maps.LatLng(lat, lng);
@@ -742,9 +877,14 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
               fetchThemes(lat, lng, searchRadiusKm);
             }
 
-            // 해양여행 카테곣0리가 활성화되어 있으면 해양여행 데이터 가져오기
+            // 해양여행 카테고리가 활성화되어 있으면 해양여행 데이터 가져오기
             if (activeCategories.includes('해양여행')) {
               fetchMarines(lat, lng, searchRadiusKm);
+            }
+
+            // 도시여행 카테고리가 활성화되어 있으면 도시여행 데이터 가져오기
+            if (activeCategories.includes('도시여행')) {
+              fetchUrbans(lat, lng, searchRadiusKm);
             }
           }
         );
