@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.Tour.dao.TourDAO">
+
+    <resultMap id="tourSpotResultMap" type="com.boot.Tour.dto.TourDTO">
+        <id property="spotId" column="spot_id" />
+        <result property="title" column="title" />
+        <result property="address" column="address" />
+        <result property="description" column="description" jdbcType="CLOB" javaType="java.lang.String"/>
+        <result property="imageUrl" column="image_url" />
+        <result property="viewCount" column="view_count" />
+        <result property="createdAt" column="created_at" />
+        <result property="themeId" column="theme_id" />
+    </resultMap>
+
+    <select id="selectAllSpots" resultMap="tourSpotResultMap">
+        SELECT * FROM TOUR_SPOTS 
+        ORDER BY spot_id DESC
+    </select>
+
+    <select id="selectSpotsByKeyword" resultMap="tourSpotResultMap">
+        SELECT * FROM TOUR_SPOTS 
+        WHERE title LIKE '%' || #{keyword} || '%' 
+           OR address LIKE '%' || #{keyword} || '%'
+        ORDER BY spot_id DESC
+    </select>
+
+</mapper>

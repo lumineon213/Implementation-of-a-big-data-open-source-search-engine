@@ -24,10 +24,9 @@ public class foodController {
     private foodService foodService;
 	
 	@GetMapping("/save-data")
-    @ResponseBody // 화면(JSP) 없이 글자만 띄울 때 사용
+    @ResponseBody
     public String saveDataToSolr() {
         try {
-            // 서비스에 만들어둔 저장 기능 실행!
             foodService.syncFoodData(); 
             return "Solr 데이터 저장 성공!";
         } catch (Exception e) {
@@ -40,11 +39,15 @@ public class foodController {
 	@GetMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "page", defaultValue = "1") int page,  // 기본 1페이지
-            @RequestParam(value = "size", defaultValue = "10") int size  // 기본 10개씩
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            // ▼▼▼ 정렬, 위도, 경도 파라미터 추가 및 기본값 설정 ▼▼▼
+            @RequestParam(value = "sort", defaultValue = "name") String sort, 
+            @RequestParam(value = "userLat", defaultValue = "0.0") double userLat, 
+            @RequestParam(value = "userLng", defaultValue = "0.0") double userLng 
     ) {
         try {
-            // 수정된 서비스 호출
+            // ✅ Service 호출 시 모든 파라미터 전달
             Map<String, Object> result = foodService.searchFood(keyword, page, size);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
@@ -52,7 +55,7 @@ public class foodController {
             return ResponseEntity.internalServerError().body("검색 실패: " + e.getMessage());
         }
     }
-	// [3] 상세 조회 API
+    
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getFoodDetail(@PathVariable("id") String id) {
 	    try {
@@ -69,12 +72,10 @@ public class foodController {
 	@GetMapping("/view/{id}")
     public ResponseEntity<?> increaseView(@PathVariable("id") String id) {
         try {
-            // Service의 increaseViewCount(id) 호출
             foodService.increaseViewCount(id); 
             return ResponseEntity.ok("조회수 증가 성공");
         } catch (Exception e) {
             e.printStackTrace();
-            // Service단에서 Solr 문제가 발생했을 수 있음
             return ResponseEntity.internalServerError().body("조회수 증가 실패: " + e.getMessage());
         }
     }

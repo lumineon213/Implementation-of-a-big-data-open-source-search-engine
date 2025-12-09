@@ -1,0 +1,79 @@
+.giftcard-container {
+  max-width: 700px;
+  margin: 80px auto 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+.giftcard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #e67e22;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.giftcard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+.giftcard-item {
+  display: flex;
+  align-items: center;
+  background: #f7faff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(45,108,223,0.08);
+  padding: 18px 16px;
+  gap: 18px;
+}
+.giftcard-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #eee;
+}
+.giftcard-info {
+  flex: 1;
+}
+.giftcard-title2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d6cdf;
+  margin-bottom: 4px;
+}
+.giftcard-desc {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 4px;
+}
+.giftcard-valid {
+  font-size: 0.95rem;
+  color: #888;
+}
+.giftcard-btn {
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.98rem;
+  margin-left: 12px;
+  opacity: 0.9;
+  transition: background 0.2s, opacity 0.2s, cursor 0.2s;
+  cursor: pointer;
+}
+.giftcard-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.giftcard-tip {
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 10px;
+  text-align: center;
+}

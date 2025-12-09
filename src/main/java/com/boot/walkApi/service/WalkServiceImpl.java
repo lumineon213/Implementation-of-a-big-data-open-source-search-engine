@@ -35,22 +35,19 @@ public class WalkServiceImpl implements WalkService {
     public String syncWalkData() throws Exception {
     	System.out.println(">>> [Service] 맛집 데이터 동기화 시작...");
     	
-        String apiUrl = "http://apis.data.go.kr/6260000/WalkingService/getWalkingKr";
-        String serviceKey = URLEncoder.encode(apiKey, "UTF-8");
+    	String apiUrl = "http://apis.data.go.kr/6260000/WalkingService/getWalkingKr";
 
-        String requestUrl =
-                apiUrl
-                + "?serviceKey=" + serviceKey
-                + "&pageNo=1"
-                + "&numOfRows=999"
-                + "&resultType=JSON";
+        String requestUrl = apiUrl
+    	        + "?ServiceKey=" + apiKey   // ← ServiceKey (대문자!) + 인코딩 금지
+    	        + "&pageNo=1"
+    	        + "&numOfRows=999"
+    	        + "&resultType=json";
+
+
+    	RestTemplate rest = new RestTemplate();
+    	String response = rest.getForObject(requestUrl, String.class);
 
         System.out.println(">>> 요청 URL: " + requestUrl);
-
-        RestTemplate restTemplate = new RestTemplate();
-        URI uri = new URI(requestUrl);
-        String response = restTemplate.getForObject(uri, String.class);
-
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(response);
@@ -106,8 +103,14 @@ public class WalkServiceImpl implements WalkService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", doc.get("id"));
             map.put("title", doc.get("title"));
+            map.put("subtitle", doc.get("subtitle"));
             map.put("address", doc.get("address"));
+            map.put("latitude", doc.get("latitude"));
+            map.put("longitude", doc.get("longitude"));
             map.put("image_url", doc.get("image_url"));
+            map.put("tags", doc.get("tags"));
+            map.put("type", doc.get("type"));
+            map.put("description", doc.get("description"));
             resultList.add(map);
         }
 

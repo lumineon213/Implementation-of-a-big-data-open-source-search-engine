@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.boot.dto.loginDTO;
 import com.boot.search_histroy.dto.SearchLogDTO;
 import com.boot.search_histroy.service.SearchLogService;
+import com.boot.security.JwtUtil;
 
-import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
-@RequestMapping("/api/search-log")
+@RequestMapping("/api")
 @CrossOrigin(
     origins = "http://localhost:5173",
     allowCredentials = "true"
@@ -31,30 +31,78 @@ public class SearchLogController {
     @Autowired
     private SearchLogService searchLogService;
     
-    // 검색 기록 저장
-    @PostMapping
-    public ResponseEntity<?> saveSearch(@RequestBody SearchLogDTO dto, HttpSession session) {
-        com.boot.dto.loginDTO user = (loginDTO) session.getAttribute("loginUser");
-        if (user != null) {
-            dto.setAccountId(user.getAccountId());
-            searchLogService.saveSearchKeyword(dto);
-            return ResponseEntity.ok().build();
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    // JWT 토큰에서 사용자 ID 추출
+    private String getUserIdFromToken(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                if (jwtUtil.validate(token)) {
+                    return jwtUtil.getAccountId(token);
+                }
+            } catch (Exception e) {
+                System.err.println("JWT 토큰 검증 실패: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
+        return null;
+    }
+    
+    // 로그인 상태 확인
+    @GetMapping("/user/status")
+    public ResponseEntity<?> getUserStatus(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+        String accountId = getUserIdFromToken(authHeader);
+        if (accountId != null) {
+            return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+                put("isLoggedIn", true);
+                put("accountId", accountId);
+            }});
+        }
+        return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+            put("isLoggedIn", false);
+        }});
+    }
+    
+    // 검색 기록 저장
+    @PostMapping("/search-log")
+    public ResponseEntity<?> saveSearch(@RequestBody SearchLogDTO dto, @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        System.out.println("=== 검색 기록 저장 시작 ===");
+        System.out.println("받은 keyword: " + (dto != null ? dto.getKeyword() : "null"));
+        System.out.println("Authorization 헤더: " + authHeader);
+        
+        String accountId = getUserIdFromToken(authHeader);
+        System.out.println("JWT accountId: " + accountId);
+        
+        if (accountId != null) {
+            dto.setAccountId(accountId);
+            System.out.println("저장할 데이터 - accountId: " + dto.getAccountId() + ", keyword: " + dto.getKeyword());
+            try {
+                searchLogService.saveSearchKeyword(dto);
+                System.out.println("검색 기록 저장 성공");
+                return ResponseEntity.ok().build();
+            } catch (Exception e) {
+                System.err.println("검색 기록 저장 실패: " + e.getMessage());
+                e.printStackTrace();
+                return ResponseEntity.status(500).body("저장 실패: " + e.getMessage());
+            }
+        }
+        System.out.println("검색 기록 저장 실패 - JWT 인증 실패");
         return ResponseEntity.status(401).build();
     }
     
     // 최근 검색어 조회
-    @GetMapping
-    public List<SearchLogDTO> getRecentSearches(HttpSession session) {
-        loginDTO user = (loginDTO) session.getAttribute("loginUser");
+    @GetMapping("/search-log")
+    public List<SearchLogDTO> getRecentSearches(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+        String accountId = getUserIdFromToken(authHeader);
         System.out.println("=== 검색 기록 조회 시작 ===");
-        System.out.println("세션 ID: " + session.getId());
-        System.out.println("세션의 loginUser: " + user);
+        System.out.println("JWT accountId: " + accountId);
         
-        if (user != null) {
-            System.out.println("검색 기록 조회 요청 - 사용자: " + user.getAccountId());
+        if (accountId != null) {
+            System.out.println("검색 기록 조회 요청 - 사용자: " + accountId);
             try {
-                List<SearchLogDTO> result = searchLogService.getRecentSearches(user.getAccountId(), 10);
+                List<SearchLogDTO> result = searchLogService.getRecentSearches(accountId, 10);
                 System.out.println("검색 기록 조회 결과 개수: " + (result != null ? result.size() : 0));
                 if (result != null && !result.isEmpty()) {
                     for (SearchLogDTO log : result) {
@@ -75,18 +123,17 @@ public class SearchLogController {
     }
     
     // 검색 기록 삭제
-    @DeleteMapping("/{logId}")
-    public ResponseEntity<?> deleteSearch(@PathVariable("logId") Long logId, HttpSession session) {
+    @DeleteMapping("/search-log/{logId}")
+    public ResponseEntity<?> deleteSearch(@PathVariable("logId") Long logId, @RequestHeader(name = "Authorization", required = false) String authHeader) {
         System.out.println("=== 검색 기록 삭제 시작 ===");
         System.out.println("삭제할 logId: " + logId);
-        System.out.println("logId 타입: " + logId.getClass().getName());
         
-        loginDTO user = (loginDTO) session.getAttribute("loginUser");
-        System.out.println("세션의 loginUser: " + user);
+        String accountId = getUserIdFromToken(authHeader);
+        System.out.println("JWT accountId: " + accountId);
         
-        if (user != null) {
+        if (accountId != null) {
             try {
-                System.out.println("삭제 시도 - 사용자: " + user.getAccountId() + ", logId: " + logId);
+                System.out.println("삭제 시도 - 사용자: " + accountId + ", logId: " + logId);
                 searchLogService.removeSearchLog(logId);
                 System.out.println("삭제 성공");
                 return ResponseEntity.ok().build();
@@ -101,11 +148,11 @@ public class SearchLogController {
     }
     
     // 검색 기록 전체 삭제
-    @DeleteMapping("/all")
-    public ResponseEntity<?> deleteAllSearches(HttpSession session) {
-        loginDTO user = (loginDTO) session.getAttribute("loginUser");
-        if (user != null) {
-            searchLogService.clearAllSearchLogs(user.getAccountId());
+    @DeleteMapping("/search-log/all")
+    public ResponseEntity<?> deleteAllSearches(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+        String accountId = getUserIdFromToken(authHeader);
+        if (accountId != null) {
+            searchLogService.clearAllSearchLogs(accountId);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(401).build();

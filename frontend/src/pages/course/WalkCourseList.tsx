@@ -22,7 +22,7 @@ const WalkCourseList: React.FC = () => {
   const [searchInput, setSearchInput] = useState("");
   const [inputPage, setInputPage] = useState("");
 
-  const size = 10; // 한 페이지 개수
+  const size = 12; // 한 페이지 개수
   const pageGroupSize = 10;
 
   // API 호출 (page, keyword 바뀔 때마다 실행)
