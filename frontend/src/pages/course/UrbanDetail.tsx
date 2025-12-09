@@ -27,23 +27,23 @@ interface UrbanData {
   type?: string;
 }
 
-const location = useLocation();
-const query = new URLSearchParams(location.search);
-
-const historyPage = query.get("page") || 1;
-const historyKeyword = query.get("keyword") || "";
-
 const UrbanDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [data, setData] = useState<UrbanData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const query = new URLSearchParams(location.search);
+  const historyPage = query.get("page") || 1;
+  const historyKeyword = query.get("keyword") || "";
 
-  const [loadingMap, errorMap] = useKakaoLoader({
-    appkey: import.meta.env.VITE_KAKAOMAP_KEY,
-    libraries: ["services"],
-  });
+  const [data, setData] = useState<UrbanData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [loadingMap, errorMap] = useKakaoLoader({
+    appkey: import.meta.env.VITE_KAKAOMAP_KEY,
+    libraries: ["services"],
+  });
+
 
   const extract = (v: any) => (Array.isArray(v) ? v[0] : v);
 
