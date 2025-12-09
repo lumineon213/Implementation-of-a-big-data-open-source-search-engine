@@ -7,6 +7,7 @@ import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
 import ThemePage from "pages/tourtheme/ThemePage";
+import ThemeDetail from "pages/tourtheme/ThemeDetail";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
 
@@ -32,7 +33,7 @@ import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
 
 import Festival from "pages/tourdata/festival";
-import FestivalDetail from 'pages/tourdata/FestivalDetail';
+import FestivalDetail from 'pages/tourdata/festivalDetail';
 
 // 타입 정의
 export interface SolrResultItem {
@@ -67,6 +68,7 @@ function App() {
                    <Route path="/map" element={<MapPage />} />
                   //여행 페이지
                   <Route path="/theme" element={<ThemePage />} />
+                  <Route path="/theme/:id" element={<ThemeDetail />} />
                   {/* 축제 페이지 */}
                   <Route path="/festival" element={<Festival />} />
                   <Route path="/festival/:id" element={<FestivalDetail />} />
