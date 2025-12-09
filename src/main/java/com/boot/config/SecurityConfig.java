@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsUtils; // 이 임포트가 필수입니다!
+import org.springframework.web.cors.CorsUtils; 
 
 import java.util.List;
 
@@ -31,20 +31,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // 1. 기본 보안 설정 해제 (API 서버 설정)
+                // 1. 기본 보안 설정 해제
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 
-                // 2. CORS 설정 적용 (아래 corsConfig 메서드 연결)
+                // 2. CORS 설정 적용
                 .cors(cors -> cors.configurationSource(corsConfig())) 
                 
-                // 3. 세션 관리 상태 없음으로 설정 (JWT 사용 시 필수)
+                // 3. 세션 관리 상태 없음 (JWT 필수)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 
-                // 4. 요청별 권한 설정 (순서 중요: 위에서 아래로 체크함)
+                // 4. 요청별 권한 설정 (순서 중요: 가장 구체적인 것부터 위로)
                 .authorizeHttpRequests(auth -> auth
                         // (1) ★ 중요: Preflight(OPTIONS) 요청은 무조건 허용 (CORS 해결의 핵심)
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -52,17 +52,20 @@ public class SecurityConfig {
                         // (2) 로그인, 회원가입은 누구나 접근 가능
                         .requestMatchers("/api/login/**", "/api/join/**").permitAll()
 
-                        // (3) ★ 핵심: 검색 기능 (GET 방식) 누구나 접근 가능하도록 명시적 허용
+                        // (3) ★ 검색 기능 허용 (GET /api/search)
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
-                        // 만약 검색이 POST 방식이라면 아래 주석을 풀어서 사용하세요
-                        // .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
+                        
+                        // (4) 축제/테마 관련 API는 누구나 접근 가능하도록 허용 (GET 요청에 대해서)
+                        // 참고: /api/festival이나 /api/food처럼 /api/search 외의 모든 GET 요청을 허용합니다.
+                        // /api/search 외의 일반적인 GET API는 모두 허용 (URL 패턴은 프로젝트에 따라 수정 필요)
+                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 
-                        // (4) 마이페이지 등 회원 전용 기능은 인증(토큰) 필요
+                        // (5) ★ 마이페이지 등 회원 전용 기능은 인증(토큰) 필요
                         .requestMatchers("/api/mypage/**").authenticated() 
-
-                        // (5) 그 외 나머지 모든 요청은 허용 (개발 중 편의를 위해)
-                        // 배포 시에는 .authenticated()로 변경하는 것을 권장
-                        .anyRequest().permitAll()
+                        
+                        // (6) [핵심 수정] 그 외 나머지 모든 요청은 인증 필요 (로그인해야 접근 가능)
+                        // 개발 편의를 위한 .anyRequest().permitAll() 대신 보안을 위해 authenticated()를 사용합니다.
+                        .anyRequest().authenticated()
                 )
                 
                 // 5. JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
@@ -77,6 +80,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // setAllowedOriginPatterns를 사용하여 패턴 매칭으로 허용 (Credentials true일 때 에러 방지)
+        // 두 코드 모두 5173을 사용하고 있었으므로 5173을 최종 사용합니다.
         config.setAllowedOriginPatterns(List.of("http://localhost:5173")); 
 
         // 허용할 HTTP 메서드
