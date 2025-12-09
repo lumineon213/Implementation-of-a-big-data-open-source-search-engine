@@ -24,6 +24,7 @@ import Event from "pages/footer_details/Event";
 import NoticeList from "pages/notice/NoticeList";
 import NoticeDetail from "pages/notice/NoticeDetail";
 import NoticeWrite from "pages/notice/NoticeWrite";
+import AIPlannerPage from "pages/ai-planner/AIPlannerPage";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -66,6 +67,9 @@ function App() {
                   <Route path="/course/theme" element={<ThemeCourseList />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />
+
+                  {/* AI 여행 계획 */}
+                  <Route path="/ai-planner" element={<AIPlannerPage />} />
 
                   {/* 공지사항 */}
                   <Route path="/notice" element={<NoticeList />} />
