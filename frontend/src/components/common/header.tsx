@@ -18,10 +18,12 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null); 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  
+  // JWT 인증 방식  checkAuth() 
+  
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
 
@@ -56,6 +58,9 @@ const Header: React.FC = () => {
     checkAuth();
   }, [location.pathname]);
 
+ 
+  // 로그아웃
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -71,99 +76,33 @@ const Header: React.FC = () => {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
     setExpandedMenu(null);
-    setIsInfoDropdownOpen(false);
   };
 
   return (
     <>
+ 
       <header className="header-container">
         <div className="header-inner">
+          
+         
           <Link to="/" className="header-logo">
             우리 <span className="header-logo-round">부산 GO?</span>
           </Link>
 
+        
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
             <Link to="/theme" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
-            
-            {/* 여행정보 드롭다운 */}
-            <div className="dropdown-container">
-              <span 
-                className="menu-item dropdown-trigger"
-                onMouseEnter={() => setIsInfoDropdownOpen(true)}
-                onMouseLeave={() => setIsInfoDropdownOpen(false)}
-              >
-                여행정보
-                <svg 
-                  className={`dropdown-arrow ${isInfoDropdownOpen ? 'open' : ''}`}
-                  width="10" 
-                  height="6" 
-                  viewBox="0 0 10 6"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </span>
-
-              {isInfoDropdownOpen && (
-                <div 
-                  className="dropdown-menu"
-                  onMouseEnter={() => setIsInfoDropdownOpen(true)}
-                  onMouseLeave={() => setIsInfoDropdownOpen(false)}
-                >
-                  <Link to="/info/regions" className="dropdown-item">
-                    <span className="dropdown-icon">🗺️</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">여행지역</div>
-                      <div className="dropdown-desc">부산의 주요 지역 탐색</div>
-                    </div>
-                  </Link>
-                  <Link to="/info/articles" className="dropdown-item">
-                    <span className="dropdown-icon">📰</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">여행기사</div>
-                      <div className="dropdown-desc">최신 여행 소식</div>
-                    </div>
-                  </Link>
-                  <Link to="/info/festival" className="dropdown-item">
-                    <span className="dropdown-icon">🎉</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">축제</div>
-                      <div className="dropdown-desc">다양한 축제 정보</div>
-                    </div>
-                  </Link>
-                  <Link to="/shopping" className="dropdown-item">
-                    <span className="dropdown-icon">🛍️</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">쇼핑·기념품</div>
-                      <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
-                    </div>
-                  </Link>
-                  <Link to="/info/accommodation" className="dropdown-item">
-                    <span className="dropdown-icon">🏨</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">숙박/맛집</div>
-                      <div className="dropdown-desc">추천 숙소와 음식점</div>
-                    </div>
-                  </Link>
-                  <Link to="/ai-planner" className="dropdown-item">
-                    <span className="dropdown-icon">🤖</span>
-                    <div className="dropdown-content">
-                      <div className="dropdown-title">AI 여행 계획</div>
-                      <div className="dropdown-desc">AI가 추천하는 맞춤 여행</div>
-                    </div>
-                  </Link>
-                </div>
-              )}
-            </div>
-
+            <Link to="/info" className="menu-item">여행정보</Link>
             <Link to="/benefits" className="menu-item">여행혜택</Link>
           </nav>
 
+         
           <div className="header-right">
+
+       
             {isSearchOpen && (
               <div className="header-search-wrapper">
                 <input
@@ -180,6 +119,7 @@ const Header: React.FC = () => {
               </div>
             )}
 
+           
             <div className="header-icons">
               <button 
                 className="icon-btn" 
@@ -192,6 +132,7 @@ const Header: React.FC = () => {
                 🗺️
               </Link>
 
+             
               {user ? (
                 <Link to="/mypage" className="icon-btn" title="마이페이지">
                   👤
@@ -207,10 +148,12 @@ const Header: React.FC = () => {
               </button>
             </div>
 
+          
             {!isLoading && user && (
               <span className="header-welcome">{user.accountName}님</span>
             )}
 
+          
             <button
               className="header-ham"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -220,11 +163,13 @@ const Header: React.FC = () => {
           </div>
         </div>
 
+     
         <div className="header-mobile-search-wrapper">
           <input className="header-mobile-search" placeholder="검색어 입력" />
           <button className="header-mobile-search-btn">🔍</button>
         </div>
 
+      
         <nav className="header-mobile-tabs">
           <Link to="/" className="mobile-tab-item">홈</Link>
           <Link to="/theme" className="mobile-tab-item">추천 명소</Link>
@@ -235,6 +180,7 @@ const Header: React.FC = () => {
         </nav>
       </header>
 
+     
       <nav className="mobile-bottom-nav">
         <Link to="/" className="bottom-nav-item">
           🏠 <span>홈</span>
@@ -247,8 +193,11 @@ const Header: React.FC = () => {
         </Link>
       </nav>
 
+      
       <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
         <div className="mobile-inner">
+
+         
           <div className="mobile-user-section">
             <div className="mobile-user-icon">👤</div>
 
@@ -275,7 +224,9 @@ const Header: React.FC = () => {
             )}
           </div>
 
+         
           <nav className="mobile-nav">
+
             <Link to="/" className="mobile-nav-item" onClick={handleMenuClose}>
               🏠 홈
             </Link>
@@ -288,6 +239,7 @@ const Header: React.FC = () => {
               🗺️ 지역
             </Link>
 
+           
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("course")}
@@ -309,6 +261,7 @@ const Header: React.FC = () => {
               </div>
             )}
 
+           
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("info")}
@@ -321,15 +274,14 @@ const Header: React.FC = () => {
 
             {expandedMenu === "info" && (
               <div className="mobile-sub-nav">
-                <Link to="/info/regions" onClick={handleMenuClose}>여행지역</Link>
-                <Link to="/info/articles" onClick={handleMenuClose}>여행기사</Link>
+                <Link to="/info/magazine" onClick={handleMenuClose}>여행지역</Link>
+                <Link to="/info/history" onClick={handleMenuClose}>여행기사</Link>
                 <Link to="/info/festival" onClick={handleMenuClose}>축제</Link>
-                <Link to="/shopping" onClick={handleMenuClose}>쇼핑·기념품</Link>
                 <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
-                <Link to="/ai-planner" onClick={handleMenuClose}>AI 여행 계획</Link>
               </div>
             )}
 
+            
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("benefits")}
@@ -343,7 +295,7 @@ const Header: React.FC = () => {
             {expandedMenu === "benefits" && (
               <div className="mobile-sub-nav">
                 <Link to="/benefits/event" onClick={handleMenuClose}>이벤트</Link>
-                <Link to="/benefits/coupon" onClick={handleMenuClose}>기프래카드</Link>
+                <Link to="/benefits/coupon" onClick={handleMenuClose}>기플래카드</Link>
                 <Link to="/benefits/badge" onClick={handleMenuClose}>베지패드</Link>
               </div>
             )}
@@ -353,6 +305,7 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
+        
           {user ? (
             <button className="mobile-auth-btn" onClick={handleLogout}>
               로그아웃
