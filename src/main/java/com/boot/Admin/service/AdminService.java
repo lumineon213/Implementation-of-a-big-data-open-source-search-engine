@@ -37,10 +37,13 @@ public interface AdminService {
     AdminInquiryDTO getInquiryById(Long inquiryId);
     void answerInquiry(Long inquiryId, String answerContent, String answererId);
     int countInquiries(String status);
+    void createInquiry(String writerId, String title, String content);
     
     // ============== 로그 관리 ==============
     List<AdminLogDTO> getAllLogs(int page, int size, String accountId, String actionType);
     void insertLog(AdminLogDTO log);
     int countLogs(String accountId, String actionType);
 }
+
+
 

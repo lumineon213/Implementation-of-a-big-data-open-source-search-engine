@@ -186,6 +186,12 @@ public class AdminServiceImpl implements AdminService {
         return adminDAO.countInquiries(status);
     }
 
+    @Override
+    @Transactional
+    public void createInquiry(String writerId, String title, String content) {
+        adminDAO.insertInquiry(writerId, title, content);
+    }
+
     // ============== 로그 관리 ==============
     @Override
     @Transactional(readOnly = true)

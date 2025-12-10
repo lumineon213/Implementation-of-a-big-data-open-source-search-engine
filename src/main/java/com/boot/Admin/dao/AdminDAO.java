@@ -42,6 +42,9 @@ public interface AdminDAO {
     int updateInquiryAnswer(@Param("inquiryId") Long inquiryId, @Param("answerContent") String answerContent, 
                            @Param("answererId") String answererId);
     int countInquiries(@Param("status") String status);
+    int insertInquiry(@Param("writerId") String writerId,
+                      @Param("title") String title,
+                      @Param("content") String content);
     
     // ============== 로그 관리 ==============
     List<AdminLogDTO> selectAllLogs(@Param("page") int page, @Param("size") int size, 
@@ -49,4 +52,6 @@ public interface AdminDAO {
     int insertLog(AdminLogDTO log);
     int countLogs(@Param("accountId") String accountId, @Param("actionType") String actionType);
 }
+
+
 

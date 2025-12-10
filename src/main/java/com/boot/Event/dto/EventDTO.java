@@ -37,3 +37,5 @@ public class EventDTO {
     private Integer requiredCount; // 필요 개수 (예: 기프트 교환에 필요한 스템프 수)
 }
 
+
+

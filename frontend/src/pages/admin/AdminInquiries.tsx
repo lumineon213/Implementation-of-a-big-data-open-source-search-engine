@@ -214,3 +214,5 @@ const AdminInquiries: React.FC = () => {
 
 export default AdminInquiries;
 
+
+
