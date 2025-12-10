@@ -13,7 +13,7 @@ interface FestivalFromAPI {
   mainImgNormal?: string;
   itemCntnts?: string;
   
-  // ⭐ 백엔드에서 계산된 필드
+  // 백엔드에서 계산된 필드
   status: 'upcoming' | 'ongoing' | 'ended';
   period: string; // YYYY.MM.DD ~ YYYY.MM.DD 형태로 기대
 }
@@ -24,7 +24,7 @@ interface Festival {
   period: string;
   location: string;
   description: string;
-  image: string;          // 이모지 or 실제 이미지 URL
+  image: string;          
   category: string;
   status: 'upcoming' | 'ongoing' | 'ended';
 }
@@ -38,16 +38,15 @@ const Festival: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // ⭐ 검색 트리거 상태 추가: 버튼 클릭 시만 변경
+  const [searchTrigger, setSearchTrigger] = useState<number>(0); 
+
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const size = 12;
+  const size = 12; // 페이지당 항목 수
 
-  // ⭐ 날짜 기반 상태 계산 함수 제거 (백엔드 로직 사용)
-  // const getStatusFromPeriod = ... (제거됨)
-
-  // 카테고리 매핑 (수정된 FestivalFromAPI에는 gugunNm이 포함되므로 타입을 맞춰줌)
+  // 카테고리 매핑
 const getCategory = (title: string | null | undefined, gugun: string | null | undefined): string => {
-  // title이 없거나 null이면 빈 문자열로 처리
   const str = title ? String(title).trim() : '';
   const lower = str.toLowerCase();
 
@@ -75,7 +74,6 @@ const getCategory = (title: string | null | undefined, gugun: string | null | un
       if (!res.ok) throw new Error('데이터를 불러오지 못했습니다.');
 
       const data = await res.json();
-      // data.list는 이제 status와 period 필드를 포함합니다.
       const list: FestivalFromAPI[] = data.list || []; 
       setTotal(data.total || 0);
 
@@ -87,13 +85,13 @@ const getCategory = (title: string | null | undefined, gugun: string | null | un
         return {
           id: item.ucSeq,
           title,
-          // ⭐ 백엔드에서 받은 period를 그대로 사용
+          // 백엔드에서 받은 period를 그대로 사용
           period: item.period, 
           location,
           description: item.itemCntnts?.slice(0, 100) + '...' || '부산의 멋진 축제입니다.',
           image: item.mainImgNormal ? item.mainImgNormal : '축제', 
           category: getCategory(title, item.gugunNm || ''),
-          // ⭐ 백엔드에서 받은 status를 그대로 사용
+          // 백엔드에서 받은 status를 그대로 사용
           status: item.status, 
         };
       });
@@ -107,16 +105,25 @@ const getCategory = (title: string | null | undefined, gugun: string | null | un
     }
   };
 
+  // ⭐ 검색 실행 핸들러 함수 ⭐
+  const handleSearchClick = () => {
+      setPage(1); // 검색 시 페이지 1로 초기화
+      setSearchTrigger(prev => prev + 1); // 트리거 상태를 변경하여 useEffect 호출
+  };
+
+
+  // 검색어/필터 변경 시 페이지 1로 초기화 후 데이터 호출
   useEffect(() => {
     setPage(1);
     fetchFestivals();
-  }, [searchTerm, selectedCategory, selectedStatus]);
+  }, [searchTrigger, selectedCategory, selectedStatus]); // ⭐ searchTrigger에 의존
 
+  // 페이지 번호 변경 시 데이터 호출
   useEffect(() => {
     fetchFestivals();
   }, [page]);
 
-  // 필터링은 프론트엔드에서 계속 유지 (백엔드에서 전체 데이터를 가져오므로)
+  // 프론트엔드에서 필터링 (현재 페이지에서 불러온 데이터 내에서)
   const filteredFestivals = festivals.filter(festival => {
     const matchesCategory = selectedCategory === 'all' || festival.category === selectedCategory;
     const matchesStatus = selectedStatus === 'all' || festival.status === selectedStatus;
@@ -141,9 +148,29 @@ const getCategory = (title: string | null | undefined, gugun: string | null | un
   };
 
 const handleDetailClick = (id: string) => {
-  // 페이지 이동
+  // 상세 페이지 이동
   window.location.href = `/festival/${id}`;
 };
+
+
+// ------------------------------------------
+// 페이지네이션 로직
+// ------------------------------------------
+const totalPages = Math.ceil(total / size);
+const maxPageButtons = 5; // 화면에 표시할 최대 페이지 버튼 개수
+
+const handlePageClick = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        setPage(pageNumber);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// 현재 페이지를 중심으로 표시할 페이지 범위 계산
+const currentPageChunk = Math.ceil(page / maxPageButtons);
+const startPage = (currentPageChunk - 1) * maxPageButtons + 1;
+const endPage = Math.min(totalPages, currentPageChunk * maxPageButtons);
+
 
   return (
     <div className="festival-container">
@@ -153,19 +180,27 @@ const handleDetailClick = (id: string) => {
         <p>부산에서 열리는 다양한 축제를 만나보세요</p>
       </div>
 
-      {/* 검색 & 필터 */}
-      <div className="festival-filters">
-        <div className="search-box">
+      {/* 검색 & 필터 영역 */}
+      <div className="search-filter-wrapper"> 
+        {/* ⭐ 검색창 + 버튼 디자인 적용 ⭐ */}
+        <div className="search-box-combined">
           <input
             type="text"
             placeholder="축제명 또는 장소로 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => { 
+              if (e.key === 'Enter') {
+                handleSearchClick();
+              }
+            }}
           />
-          
-          <FiSearch className="search-icon" onClick={fetchFestivals} /> 
+          <button className="search-btn-orange" onClick={handleSearchClick}>
+                검색
+            </button>
         </div>
 
+        {/* 필터 그룹 섹션 */}
         <div className="filter-group">
           <div className="filter-section">
             <label>카테고리</label>
@@ -180,7 +215,7 @@ const handleDetailClick = (id: string) => {
                 </button>
               ))}
             </div>
-              </div>
+          </div>
 
           <div className="filter-section">
             <label>진행상태</label>
@@ -268,13 +303,56 @@ const handleDetailClick = (id: string) => {
         </div>
       )}
 
-      {/* 페이징 */}
-      {total > size && (
-        <div style={{ textAlign: 'center', margin: '40px 0' }}>
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>이전</button>
-          <span style={{ margin: '0 20px' }}>페이지 {page}</span>
-          <button disabled={page * size >= total} onClick={() => setPage(p => p + 1)}>다음</button>
-        </div>
+      {/* ⭐ 페이지네이션 ⭐ */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+            
+            {/* 첫 페이지 / 이전 묶음 버튼 (<<, <) */}
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(1)} 
+                disabled={page === 1}
+            >
+                &lt;&lt;
+            </button>
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(page - 1)} 
+                disabled={page === 1}
+            >
+                &lt;
+            </button>
+
+            {/* 숫자 버튼 */}
+            {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                const pageNumber = startPage + i;
+                return (
+                    <button
+                        key={pageNumber}
+                        className={`page-btn ${page === pageNumber ? 'active' : ''}`}
+                        onClick={() => handlePageClick(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                );
+            })}
+            
+            {/* 다음 묶음 / 끝 페이지 버튼 (>, >>) */}
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(page + 1)} 
+                disabled={page === totalPages}
+            >
+                &gt;
+            </button>
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(totalPages)} 
+                disabled={page === totalPages}
+            >
+                &gt;&gt;
+            </button>
+        </div>
       )}
 
       {/* 안내사항 */}
