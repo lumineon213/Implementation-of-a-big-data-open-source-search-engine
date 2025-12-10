@@ -87,6 +87,36 @@ const Header: React.FC = () => {
 
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
+            <div className="dropdown-container" style={{display: 'inline-block', position: 'relative'}}>
+              <span
+                className="menu-item dropdown-trigger"
+                onMouseEnter={() => setExpandedMenu('sns')}
+                onMouseLeave={() => setExpandedMenu(null)}
+              >
+                SNS
+                <svg
+                  className={`dropdown-arrow ${expandedMenu === 'sns' ? 'open' : ''}`}
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              {expandedMenu === 'sns' && (
+                <div
+                  className="dropdown-menu"
+                  style={{position: 'absolute', left: 0, top: '100%', zIndex: 10}}
+                  onMouseEnter={() => setExpandedMenu('sns')}
+                  onMouseLeave={() => setExpandedMenu(null)}
+                >
+                  <Link to="/blog" className="dropdown-item">블로그</Link>
+                  <Link to="/cafe" className="dropdown-item">카페</Link>
+                </div>
+              )}
+            </div>
             <Link to="/theme" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
@@ -145,11 +175,11 @@ const Header: React.FC = () => {
                       <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
                     </div>
                   </Link>
-                  <Link to="/info/accommodation" className="dropdown-item">
+                  <Link to="/info/stay" className="dropdown-item">
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">숙박/맛집</div>
-                      <div className="dropdown-desc">추천 숙소와 음식점</div>
+                      <div className="dropdown-title">숙박</div>
+                      <div className="dropdown-desc">추천 숙소</div>
                     </div>
                   </Link>
                   <Link to="/ai-planner" className="dropdown-item">

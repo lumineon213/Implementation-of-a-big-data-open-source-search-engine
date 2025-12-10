@@ -41,7 +41,8 @@ public class UrbanServiceImpl implements UrbanService {
         "MARINE_2134", "MARINE_2135", "MARINE_2132", "MARINE_2410",
         "MARINE_2293",
 
-        // --- 해양에 추가된 확정 10개 ---
+        // --- 해양에 추가된 확정 11개 ---
+        "MARINE_434",     // 부산캠핑장
         "MARINE_44",     // 부산아쿠아리움
         "MARINE_140",    // 요트투어
         "MARINE_336",    // 낙동강 탐방선
@@ -59,7 +60,6 @@ public class UrbanServiceImpl implements UrbanService {
     @Override
     public String syncUrbanData() throws Exception {
 
-        // urban_core 싹 초기화
         solrClient.deleteByQuery(CORE_NAME, "*:*");
         solrClient.commit(CORE_NAME);
 
@@ -82,20 +82,37 @@ public class UrbanServiceImpl implements UrbanService {
 
             String id = "MARINE_" + item.path("UC_SEQ").asText();
 
-            // 🔥 Marine에 포함된 애들은 Urban에서 제외한다
-            if (MARINE_ALLOWED_IDS.contains(id)) {
-                continue;
-            }
+            if (MARINE_ALLOWED_IDS.contains(id)) continue;
 
             SolrInputDocument doc = new SolrInputDocument();
+
             doc.addField("id", id);
-            doc.addField("title", item.path("MAIN_TITLE").asText());
+            doc.addField("main_title", item.path("MAIN_TITLE").asText());
+            doc.addField("title", item.path("TITLE").asText());
             doc.addField("subtitle", item.path("SUBTITLE").asText());
-            doc.addField("description", item.path("CNTNTS").asText());
+
             doc.addField("address", item.path("ADDR1").asText());
+            doc.addField("address2", item.path("ADDR2").asText());
+
+            doc.addField("tel", item.path("CNTCT_TEL").asText());
+            doc.addField("homepage", item.path("HOMEPAGE_URL").asText());
+            doc.addField("traffic_info", item.path("TRFC_INFO").asText());
+
+            doc.addField("usage_day", item.path("USAGE_DAY").asText());
+            doc.addField("holiday", item.path("HLDY_INFO").asText());
+            doc.addField("usage_time", item.path("USAGE_DAY_WEEK_AND_TIME").asText());
+            doc.addField("usage_amount", item.path("USAGE_AMOUNT").asText());
+            doc.addField("facilities", item.path("MIDDLE_SIZE_RM1").asText());
+
+            doc.addField("description", item.path("CNTNTS").asText());   // 요약 설명
+            doc.addField("contents", item.path("ITEMCNTNTS").asText());  // 상세 본문
+
             doc.addField("latitude", item.path("LAT").asDouble());
             doc.addField("longitude", item.path("LNG").asDouble());
+
             doc.addField("image_url", item.path("MAIN_IMG_NORMAL").asText());
+            doc.addField("thumbnail", item.path("MAIN_IMG_THUMB").asText());
+
             doc.addField("type", "URBAN_TOURISM");
 
             docs.add(doc);
@@ -104,8 +121,9 @@ public class UrbanServiceImpl implements UrbanService {
         solrClient.add(CORE_NAME, docs);
         solrClient.commit(CORE_NAME);
 
-        return "Urban 관광 데이터 저장 완료: " + docs.size() + "건";
+        return "Urban 관광 FULL 데이터 저장 완료: " + docs.size() + "건";
     }
+
 
     @Override
     public Map<String, Object> searchUrban(String keyword, int page, int size) throws Exception {
@@ -146,4 +164,60 @@ public class UrbanServiceImpl implements UrbanService {
 
         return result;
     }
+    
+    @Override
+    public Map<String, Object> getById(String id) throws Exception {
+
+        SolrQuery query = new SolrQuery("id:" + id);
+        query.setRows(1);
+
+        QueryResponse res = solrClient.query(CORE_NAME, query);
+        SolrDocumentList list = res.getResults();
+
+        if (list.isEmpty()) return null;
+
+        SolrDocument doc = list.get(0);
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("id", doc.get("id"));
+        result.put("main_title", doc.get("main_title"));
+        result.put("title", doc.get("title"));
+        result.put("subtitle", doc.get("subtitle"));
+
+        result.put("address", doc.get("address"));
+        result.put("address2", doc.get("address2"));
+
+        result.put("tel", doc.get("tel"));
+        result.put("homepage", doc.get("homepage"));
+        result.put("traffic_info", doc.get("traffic_info"));
+
+        result.put("usage_day", doc.get("usage_day"));
+        result.put("holiday", doc.get("holiday"));
+        result.put("usage_time", doc.get("usage_time"));
+        result.put("usage_amount", doc.get("usage_amount"));
+        result.put("facilities", doc.get("facilities"));
+
+        result.put("description", doc.get("description"));
+        result.put("contents", doc.get("contents"));
+
+        result.put("latitude", extractSingle(doc.get("latitude")));
+        result.put("longitude", extractSingle(doc.get("longitude")));
+
+        result.put("image_url", doc.get("image_url"));
+        result.put("thumbnail", doc.get("thumbnail"));
+
+        result.put("type", doc.get("type"));
+
+        return result;
+    }
+
+
+    private Object extractSingle(Object value) {
+        if (value instanceof Collection<?> col) {
+            return col.isEmpty() ? null : col.iterator().next();
+        }
+        return value;
+    }
+
 }

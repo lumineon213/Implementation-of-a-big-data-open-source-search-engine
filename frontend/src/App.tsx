@@ -10,12 +10,16 @@ import FoodList from "pages/foodList/foodList";
 import ThemePage from "pages/tourtheme/ThemePage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+import StayList from "pages/stayList/stayList";
+import StayDetail from "pages/stayList/stayDetail";
+
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
 import ThemeCourseList from "pages/course/ThemeCourseList";
 import MarineCourseList from "pages/course/MarineCourseList";
 import UrbanCourseList from "pages/course/UrbanCourseList";
+import UrbanDetail from "pages/course/UrbanDetail";
 
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
@@ -31,10 +35,11 @@ import ShoppingList from "pages/shopping/ShoppingList";
 import ShoppingDetail from "pages/shopping/ShoppingDetail";
 import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
+import BlogPage from "pages/blog";
+import CafePage from "pages/cafe";
 
 import Festival from "pages/tourdata/festival";
 import FestivalDetail from 'pages/tourdata/festivalDetail';
-
 
 import FindId  from "pages/login/FindId";
 import FindPassword  from "pages/login/FindPassword";
@@ -70,6 +75,7 @@ function App() {
   
   return (
           <div className={`app-wrapper ${isMapPage ? 'map-page-mode' : ''}`}>
+
           <Header />
                 <Routes>                
                   {/* 새로운 메인 페이지 */}
@@ -90,7 +96,7 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
-                  //여행 페이지
+                  {/* 테마 페이지 */}
                   <Route path="/theme" element={<ThemePage />} />
                   {/* 축제 페이지 */}
                   <Route path="/festival" element={<Festival />} />
@@ -103,6 +109,7 @@ function App() {
                   <Route path="/course/theme" element={<ThemeCourseList />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />
+                  <Route path="/course/urban/:id" element={<UrbanDetail />} />
 
                   {/* AI 여행 계획 */}
                   <Route path="/ai-planner" element={<AIPlannerPage />} />
@@ -125,9 +132,16 @@ function App() {
                   <Route path="/footer_details/inquiry" element={<Inquiry />} />
                   {/* 이벤트 */}
                   <Route path="/footer_details/event" element={<Event />} />
+
                   <Route path="/benefits/stamp" element={<StampEvent />} />
                   <Route path="/benefits/badge" element={<BadgePad />} />
                   <Route path="/benefits/coupon" element={<GiftCard />} />
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/cafe" element={<CafePage />} />
+                  {/* 숙소 */}
+                  <Route path="/info/stay" element={<StayList />} />
+                  {/* 숙소 상세보기  */}
+                  <Route path="/info/stay/:id" element={<StayDetail />} />
                 </Routes>
          
           {!isMapPage && <Footer />}
