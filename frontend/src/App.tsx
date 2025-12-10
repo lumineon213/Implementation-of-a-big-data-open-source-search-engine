@@ -30,9 +30,11 @@ import ShoppingList from "pages/shopping/ShoppingList";
 import ShoppingDetail from "pages/shopping/ShoppingDetail";
 import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
+import BlogPage from "pages/blog";
+import CafePage from "pages/cafe";
 
 import Festival from "pages/tourdata/festival";
-import FestivalDetail from 'pages/tourdata/FestivalDetail';
+import FestivalDetail from 'pages/tourdata/festivalDetail';
 
 // 타입 정의
 export interface SolrResultItem {
@@ -103,6 +105,8 @@ function App() {
                   <Route path="/benefits/stamp" element={<StampEvent />} />
                   <Route path="/benefits/badge" element={<BadgePad />} />
                   <Route path="/benefits/coupon" element={<GiftCard />} />
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/cafe" element={<CafePage />} />
                 </Routes>
          
           {!isMapPage && <Footer />}
