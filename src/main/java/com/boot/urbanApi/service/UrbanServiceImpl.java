@@ -80,9 +80,19 @@ public class UrbanServiceImpl implements UrbanService {
 
         for (JsonNode item : items) {
 
-            String id = "MARINE_" + item.path("UC_SEQ").asText();
+        	String rawId = item.path("UC_SEQ").asText();  // ← UC_SEQ를 rawId로 추출
 
-            if (MARINE_ALLOWED_IDS.contains(id)) continue;
+        	// Marine 판별용 id
+        	String marineId = "MARINE_" + rawId;
+
+        	// Marine에 속하는 애들은 Urban에 넣지 않음
+        	if (MARINE_ALLOWED_IDS.contains(marineId)) {
+        	    continue;
+        	}
+
+        	// Urban 저장용 id는 따로 만든다
+        	String id = "URBAN_" + rawId;
+
 
             SolrInputDocument doc = new SolrInputDocument();
 
@@ -150,11 +160,7 @@ public class UrbanServiceImpl implements UrbanService {
             m.put("title", doc.get("title"));
             m.put("subtitle", doc.getOrDefault("subtitle", ""));
             m.put("address", doc.get("address"));
-            m.put("latitude", doc.get("latitude"));
-            m.put("longitude", doc.get("longitude"));
             m.put("image_url", doc.get("image_url"));
-            m.put("description", doc.getOrDefault("description", ""));
-            m.put("type", doc.getOrDefault("type", "URBAN"));
             out.add(m);
         }
 
