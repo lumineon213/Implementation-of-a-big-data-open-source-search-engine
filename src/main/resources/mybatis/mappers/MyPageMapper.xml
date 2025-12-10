@@ -14,7 +14,8 @@
             email,
             phone_number AS phoneNumber,
             account_role AS accountRole,
-            reg_date AS regDate
+            reg_date AS regDate,
+            profile_image AS profileImage
         FROM account_tbl
         WHERE account_id = #{accountId}
     </select>
@@ -26,6 +27,9 @@
             account_name = #{accountName},
             email = #{email},
             phone_number = #{phoneNumber}
+            <if test="profileImage != null and profileImage != ''">
+                , profile_image = #{profileImage}
+            </if>
         WHERE account_id = #{accountId}
     </update>
 

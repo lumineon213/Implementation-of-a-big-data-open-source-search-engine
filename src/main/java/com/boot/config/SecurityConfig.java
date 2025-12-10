@@ -45,7 +45,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 
-                // ✅ 4. 인증 실패 시 처리 (401 에러 시 JSON 응답, 로그인 창 방지)
+                //  4. 인증 실패 시 처리 (401 에러 시 JSON 응답, 로그인 창 방지)
                 .exceptionHandling(exception -> exception
                     .authenticationEntryPoint((request, response, authException) -> {
                         // WWW-Authenticate 헤더를 제거하여 브라우저 기본 인증 다이얼로그 방지
@@ -77,26 +77,29 @@ public class SecurityConfig {
                         // (2) 로그인, 회원가입은 누구나 접근 가능
                         .requestMatchers("/api/login/**", "/api/join/**").permitAll()
                         
+                        // (2-1) 업로드된 파일 접근은 인증 없이 허용
+                        .requestMatchers("/uploads/**").permitAll()
+                        
                         // (3) 검색 기능 (GET, POST 모두 허용)
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
                         
-                        // ✅ (4) 검색 로그 저장 (인증 없이 허용)
+                        //  (4) 검색 로그 저장 (인증 없이 허용)
                         .requestMatchers("/api/search-log/**").permitAll()
                         
-                        // ✅ (5) 리뷰 조회는 인증 없이 가능
+                        //  (5) 리뷰 조회는 인증 없이 가능
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         
-                        // ✅ (6) 리뷰 작성/수정/삭제는 인증 필요
+                        //  (6) 리뷰 작성/수정/삭제는 인증 필요
                         .requestMatchers(HttpMethod.POST, "/api/reviews/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated()
                         
-                        // ✅ (7) 음식점, 여행 데이터 조회 API 허용
+                        //  (7) 음식점, 여행 데이터 조회 API 허용
                         .requestMatchers("/api/food/**", "/api/walk/**", "/api/theme/**", 
                                        "/api/marine/**", "/api/urban/**").permitAll()
                         
-                        // ✅ (8) 이벤트 API는 인증 필요
+                        //  (8) 이벤트 API는 인증 필요
                         .requestMatchers("/api/events/**").authenticated()
                         
                         // (9) 마이페이지 등 회원 전용 기능은 인증(토큰) 필요

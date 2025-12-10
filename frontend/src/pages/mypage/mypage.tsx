@@ -58,6 +58,15 @@ const MyPage: React.FC = () => {
 
   // ============== 데이터 로딩 ==============
   const loadMyPage = async () => {
+    // 토큰 여부 확인 (JWT가 없으면 로그인 페이지로 이동)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log("토큰이 없어서 로그인 페이지로 이동합니다.");
+      navigate('/login');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await api.get("/mypage");
 
@@ -88,6 +97,7 @@ const MyPage: React.FC = () => {
     } catch (e) {
       console.error("마이페이지 로딩 실패:", e);
       alert("마이페이지 정보를 불러올 수 없습니다.");
+      navigate('/login');
     } finally {
       setLoading(false);
     }
@@ -221,29 +231,115 @@ const MyPage: React.FC = () => {
     setEditData((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  // ============== 프로필 이미지 업로드 ==============
-  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ============== 프로필 이미지 업로드 (FormData 방식) ==============
+  const handleProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 미리보기 설정 (즉시 UI 업데이트)
     const reader = new FileReader();
     reader.onload = () => {
       setProfilePreview(reader.result as string);
-      setEditData((prev) => (prev ? { ...prev, profileImage: reader.result as string } : prev));
     };
     reader.readAsDataURL(file);
+
+    // 서버에 즉시 업로드
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append('accountName', editData?.accountName || user?.accountName || '');
+      formData.append('email', editData?.email || user?.email || '');
+      formData.append('phoneNumber', editData?.phoneNumber || user?.phoneNumber || '');
+      formData.append('profileImage', file);
+
+      console.log('📤 FormData에 포함된 파일:', file.name, 'Size:', file.size);
+
+      const response = await api.put('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('📸 이미지 업로드 응답:', response.data);
+
+      if (response.data.success) {
+        // 업로드된 이미지 URL로 상태 업데이트
+        const uploadedImageUrl = response.data.data?.profileImage;
+        console.log('✅ 업로드된 이미지 URL:', uploadedImageUrl);
+        console.log('✅ response.data.data 전체:', response.data.data);
+        
+        if (uploadedImageUrl) {
+          // ✅ 캐시 무효화를 위해 쿼리 파라미터 추가
+          const urlWithTimestamp = `${uploadedImageUrl}?t=${Date.now()}`;
+          
+          console.log('🔄 상태 업데이트 시작');
+          setUser((prev) => {
+            const updated = prev ? { ...prev, profileImage: urlWithTimestamp } : prev;
+            console.log('✅ setUser 실행:', updated);
+            return updated;
+          });
+          
+          setEditData((prev) => {
+            const updated = prev ? { ...prev, profileImage: urlWithTimestamp } : prev;
+            console.log('✅ setEditData 실행:', updated);
+            return updated;
+          });
+          
+          setProfilePreview(null);
+          
+          // ✅ 파일 input 초기화 (매우 중요!)
+          const fileInput = document.getElementById("profileUpload") as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          
+          console.log('✅ 모든 상태 업데이트 완료, 최종 URL:', urlWithTimestamp);
+          alert('프로필 이미지가 성공적으로 변경되었습니다.');
+        } else {
+          console.warn('⚠️ 응답에 profileImage URL이 없습니다');
+          console.warn('⚠️ response.data.data:', response.data.data);
+          alert('이미지 URL을 받지 못했습니다. 서버 응답을 확인하세요.');
+        }
+      } else {
+        console.error('❌ success가 false:', response.data.message);
+        alert('이미지 업로드에 실패했습니다: ' + response.data.message);
+        setProfilePreview(null);
+      }
+    } catch (error: any) {
+      console.error('❌ 이미지 업로드 실패:', error);
+      console.error('응답 상태:', error.response?.status);
+      console.error('응답 데이터:', error.response?.data);
+      alert('이미지 업로드 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
+      setProfilePreview(null);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // ============== 저장 ==============
+  // ============== 저장 (FormData 방식) ==============
   const handleSave = async () => {
     if (!editData) return;
     setIsSaving(true);
 
     try {
-      await api.put("/mypage", editData);
-      setUser(editData);
-      setMode("view");
-      alert("정보가 수정되었습니다.");
+      const formData = new FormData();
+      formData.append('accountName', editData.accountName);
+      formData.append('email', editData.email);
+      formData.append('phoneNumber', editData.phoneNumber);
+
+      const response = await api.put('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        setUser(editData);
+        setMode("view");
+        alert("정보가 수정되었습니다.");
+      } else {
+        alert("정보 수정에 실패했습니다: " + response.data.message);
+      }
     } catch (error: any) {
       console.error("저장 실패:", error);
       alert("정보 수정에 실패했습니다.");
@@ -285,9 +381,22 @@ const MyPage: React.FC = () => {
           <div className="profile-card">
             {/* 프로필 이미지 */}
             <img
+              key={profilePreview || user.profileImage}
               src={profilePreview || user.profileImage || "/default-profile.png"}
               className="profile-image"
               alt="프로필"
+              crossOrigin="anonymous"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                console.error('❌ 이미지 로딩 실패:', img.src);
+                // 만약 상대 경로였다면 절대 경로로 변경 시도
+                if (!img.src.includes('://')) {
+                  img.src = `http://localhost:8484${img.src}`;
+                }
+              }}
+              onLoad={(e) => {
+                console.log('✅ 이미지 로딩 성공:', (e.target as HTMLImageElement).src);
+              }}
             />
 
             {/* 숨겨진 파일 입력 */}
