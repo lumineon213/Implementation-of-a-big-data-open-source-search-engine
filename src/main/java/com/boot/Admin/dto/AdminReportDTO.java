@@ -28,3 +28,5 @@ public class AdminReportDTO {
     private String processNote; // 처리 메모
 }
 
+
+

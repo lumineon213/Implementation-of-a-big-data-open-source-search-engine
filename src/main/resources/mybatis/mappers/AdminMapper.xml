@@ -300,6 +300,24 @@
         </where>
     </select>
 
+    <insert id="insertInquiry">
+        INSERT INTO INQUIRIES (
+            INQUIRY_ID,
+            WRITER_ID,
+            TITLE,
+            CONTENT,
+            STATUS,
+            CREATED_DATE
+        ) VALUES (
+            SEQ_INQUIRY_ID.NEXTVAL,
+            #{writerId},
+            #{title},
+            #{content},
+            'PENDING',
+            SYSDATE
+        )
+    </insert>
+
     <!-- ============== 로그 관리 ============== -->
     <!-- 로그 테이블이 없으면 나중에 추가 -->
 

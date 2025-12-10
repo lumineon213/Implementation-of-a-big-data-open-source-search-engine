@@ -26,3 +26,5 @@ public class AdminStatisticsDTO {
     private Map<String, Long> eventsByType; // 이벤트 타입별 수
 }
 
+
+

@@ -24,6 +24,7 @@ const MapPage: React.FC = () => {
   const [themes, setThemes] = useState<any[]>([]);
   const [marines, setMarines] = useState<any[]>([]);
   const [urbans, setUrbans] = useState<any[]>([]);
+  const [stays, setStays] = useState<any[]>([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState<any | null>(null);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(
     stateData ? { lat: stateData.lat!, lng: stateData.lng! } : null
@@ -130,6 +131,8 @@ const MapPage: React.FC = () => {
         onMarineClick={(marine) => setSelectedRestaurant(marine)}
         urbans={urbans}
         onUrbanClick={(urban) => setSelectedRestaurant(urban)}
+        stays={stays}
+        onStayClick={(stay) => setSelectedRestaurant(stay)}
       />
 
       <KakaoMap 
@@ -140,6 +143,7 @@ const MapPage: React.FC = () => {
         setThemes={setThemes}
         setMarines={setMarines}
         setUrbans={setUrbans}
+        setStays={setStays}
         setCurrentLocation={setCurrentLocation}
         onRestaurantClick={(restaurant) => setSelectedRestaurant(restaurant)}
         externalLocation={externalLocation}

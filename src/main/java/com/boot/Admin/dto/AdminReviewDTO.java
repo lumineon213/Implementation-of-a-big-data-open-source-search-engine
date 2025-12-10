@@ -30,3 +30,5 @@ public class AdminReviewDTO {
     private Integer reportCount; // 신고 횟수
 }
 
+
+

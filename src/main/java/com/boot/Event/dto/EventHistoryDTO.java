@@ -29,3 +29,5 @@ public class EventHistoryDTO {
     private Integer count; // 획득 개수
 }
 
+
+
