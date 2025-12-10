@@ -20,7 +20,7 @@ public class stayController {
     private stayService stayService;
 
     // 1. 목록 동기화 (Python 스크립트 역할)
-    @GetMapping("/sync-tour-data")
+    @GetMapping("/save-data")
     public ResponseEntity<String> syncTourData() {
         try {
             String result = stayService.syncStayData();
