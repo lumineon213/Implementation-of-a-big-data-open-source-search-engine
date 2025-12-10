@@ -2,8 +2,13 @@ package com.boot.mypage.controller;
 
 import com.boot.Event.dto.EventDTO;
 import com.boot.Event.service.EventService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.boot.mypage.dto.MyPageDTO;
 import com.boot.mypage.service.MyPageService;
@@ -13,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/mypage")
 public class MyPageController {
@@ -30,10 +36,16 @@ public class MyPageController {
      * 마이페이지 정보 조회 (이벤트 정보 포함)
      */
     @GetMapping
-    public Map<String, Object> getMyPage(@RequestHeader("Authorization") String authHeader) {
+    public Map<String, Object> getMyPage(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        log.info("마이페이지 조회 시작 - Authorization: {}", authHeader);
+        
+        if (authHeader == null || authHeader.isEmpty()) {
+            throw new RuntimeException("인증 토큰이 필요합니다.");
+        }
 
         String token = authHeader.replace("Bearer ", "");
         String accountId = jwtUtil.getAccountId(token);
+        log.info("accountId: {}", accountId);
 
         MyPageDTO myInfo = service.getMyInfo(accountId);
         
@@ -59,17 +71,56 @@ public class MyPageController {
         return response;
     }
 
-    @PutMapping
-    public int updateMyPage(
+    /**
+     * 마이페이지 정보 수정 (프로필 이미지 포함)
+     */
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> updateMyPage(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody MyPageDTO dto) {
+            @RequestParam("accountName") String accountName,
+            @RequestParam("email") String email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
 
-        String token = authHeader.replace("Bearer ", "");
-        String accountId = jwtUtil.getAccountId(token); 
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String accountId = jwtUtil.getAccountId(token);
 
-        dto.setAccountId(accountId);
+            // MyPageDTO 생성
+            MyPageDTO dto = new MyPageDTO();
+            dto.setAccountId(accountId);
+            dto.setAccountName(accountName);
+            dto.setEmail(email);
+            dto.setPhoneNumber(phoneNumber);
 
-        return service.updateMyInfo(dto);
+            // 서비스 호출
+            int result = service.updateMyInfo(dto, profileImage);
+
+            // 응답 생성
+            Map<String, Object> response = new HashMap<>();
+            if (result > 0) {
+                // 업데이트된 정보 조회
+                MyPageDTO updatedInfo = service.getMyInfo(accountId);
+                log.info("📋 최종 조회한 유저 정보 - accountId: {}, profileImage: {}", accountId, updatedInfo.getProfileImage());
+                
+                response.put("success", true);
+                response.put("message", "회원정보가 성공적으로 수정되었습니다.");
+                response.put("data", updatedInfo);
+                
+                log.info("✅ 최종 응답: {}", response);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "회원정보 수정에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            log.error("회원정보 수정 중 오류 발생", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "회원정보 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 }

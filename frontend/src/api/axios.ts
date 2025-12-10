@@ -3,12 +3,14 @@ import axios from "axios";
 export const api = axios.create({
   baseURL: "http://localhost:8484/api",
   withCredentials: true,
+  timeout: 10000,
 });
 
 // JWT 토큰을 자동으로 헤더에 추가하는 인터셉터
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('🔐 요청 토큰:', token ? '있음' : '없음', 'URL:', config.url);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,6 +27,8 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log('❌ 응답 에러:', error.response?.status, error.config?.url);
+    
     // 401 Unauthorized 에러 처리
     if (error.response?.status === 401) {
       const token = localStorage.getItem('token');
