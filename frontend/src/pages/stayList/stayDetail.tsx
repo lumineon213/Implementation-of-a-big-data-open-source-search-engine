@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+// 📌 useSearchParams를 추가하여 URL 쿼리 파라미터를 읽습니다.
+import { useParams, useNavigate, useSearchParams } from "react-router-dom"; 
 import axios from "axios";
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
 import "./stayDetail.css"; 
 
-// 📌 StayData 인터페이스를 DTO 필드명과 일치시킵니다.
+// DTO 필드명과 일치
 interface StayData {
-  content_id: string; // DTO 필드명
+  content_id: string; 
   title: string;
   address: string;
-  firstimage?: string | null; // DTO 필드명
+  firstimage?: string | null; 
   overview?: string;
   latitude?: number | string; 
   longitude?: number | string; 
@@ -19,17 +20,29 @@ interface StayData {
 const StayDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  // 📌 현재 URL의 파라미터(page, keyword 등)를 읽어옵니다.
+  const [searchParams] = useSearchParams(); 
 
   const [stay, setStay] = useState<StayData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>(false); // 404 상태 관리
 
+  // 카카오 맵 로더 (App Key는 .env 파일에서 불러온다고 가정)
   const [loadingMap, errorMap] = useKakaoLoader({
     appkey: import.meta.env.VITE_KAKAOMAP_KEY as string,
     libraries: ["services"],
   });
 
+  // 📌 [핵심 수정] 목록으로 돌아가기 핸들러: 쿼리 파라미터 유지
+  const handleBackToList = () => {
+      // 현재 URL의 쿼리 파라미터(page, keyword)를 그대로 가져와서
+      const queryString = searchParams.toString();
+      // 실제 목록 경로인 /info/stay 뒤에 붙여서 이동합니다.
+      navigate(`/info/stay?${queryString}`); 
+  };
+
+
   useEffect(() => {
-    // ... (fetchDetail 로직 유지) ...
     let didCancel = false;
 
     const fetchDetail = async () => {
@@ -37,14 +50,19 @@ const StayDetail: React.FC = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/api/stay/view/${id}`
         );
-        if (!didCancel) setStay(response.data);
+        if (!didCancel) {
+          setStay(response.data);
+          setNotFound(false);
+        }
       } catch (err) {
         console.error("상세 데이터 로딩 실패:", err);
-        if (!didCancel) {
-          if (axios.isAxiosError(err) && err.response && err.response.status !== 404) {
-             alert("서버 오류로 인해 정보를 불러올 수 없습니다.");
-          }
-          // 404가 아닌 다른 에러 시에는 리스트 페이지로 이동하지 않습니다. (에러만 표시)
+        if (!didCancel && axios.isAxiosError(err) && err.response) {
+           // 백엔드 (Controller)에서 404 응답을 보냈을 때 처리
+           if (err.response.status === 404) {
+               setNotFound(true);
+           } else {
+               alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+           }
         }
       } finally {
         if (!didCancel) setLoading(false);
@@ -56,26 +74,57 @@ const StayDetail: React.FC = () => {
     return () => {
       didCancel = true;
     };
-  }, [id, navigate]);
+  }, [id]); 
 
 
-  // 📌 [핵심] 안전한 숫자 변환 및 지도 활성화 체크
+  // 안전한 숫자 변환 및 지도 활성화 체크
   const lat = Number(stay?.latitude) || 0;
   const lng = Number(stay?.longitude) || 0;
   const isValidLocation = lat !== 0 && lng !== 0;
 
+
   if (loading || loadingMap) return <div className="loading-state">데이터를 불러오는 중입니다...</div>;
   if (errorMap) return <div className="error-state">지도 로딩 실패</div>;
-  if (!stay) return <div className="error-state">요청하신 숙소 정보를 찾을 수 없습니다.</div>;
+  
+  // 📌 [핵심 렌더링] 데이터가 없거나 404 상태일 때 에러 화면 표시
+  if (notFound || !stay) {
+    return (
+      <div className="detail-page-container not-found">
+        <div className="nav-header">
+           {/* 404 화면에도 목록으로 돌아가기 버튼을 추가 */}
+           <button onClick={handleBackToList} className="back-btn">
+             <span>←</span> 목록으로 돌아가기
+           </button>
+        </div>
+        <div className="error-card" style={{padding: '50px', textAlign: 'center', border: '1px solid #ddd', borderRadius: '8px', marginTop: '20px'}}>
+            <h2>❌ 정보를 찾을 수 없습니다. (ID: {id})</h2>
+            <p style={{ marginTop: '10px' }}>
+                요청하신 숙소 정보가 데이터베이스에 존재하지 않습니다.
+            </p>
+            <p>상세 정보 제공이 어려우니, 다른 숙소를 검색하거나 문의 부탁드립니다.</p>
+            <button onClick={handleBackToList} style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                목록으로 이동
+            </button>
+        </div>
+      </div>
+    );
+  }
 
-  // 📌 이미지 URL 유효성 체크 및 안전한 대체 경로 설정
+
+  // 이미지 URL 유효성 체크 및 안전한 대체 경로 설정
   const finalImageUrl = stay.firstimage && stay.firstimage.startsWith('http') 
                         ? stay.firstimage 
-                        : 'https://via.placeholder.com/400?text=No+Image'; // 안전한 외부 URL 사용
+                        : 'https://via.placeholder.com/400?text=No+Image'; 
 
   return (
     <div className="detail-page-container">
-      {/* ... (네비게이션 및 헤더 영역 유지) ... */}
+      {/* 📌 목록으로 돌아가기 버튼 */}
+      <div className="nav-header">
+        <button onClick={handleBackToList} className="back-btn">
+          <span>←</span> 목록으로 돌아가기
+        </button>
+      </div>
+
       <div className="detail-card">
         <div className="detail-header">
           <h1 className="detail-title">{stay.title}</h1>
@@ -87,12 +136,12 @@ const StayDetail: React.FC = () => {
         <div className="detail-content" style={{ display: "flex", gap: "30px" }}>
           <div className="img-wrapper" style={{ flex: 1, maxWidth: "400px" }}>
             <img
-              src={finalImageUrl} // 📌 finalImageUrl 사용
+              src={finalImageUrl}
               alt={stay.title}
               className="detail-img"
               style={{ width: "100%", height: "auto", borderRadius: "8px" }}
               onError={(e) => {
-                // 📌 [핵심] 무한 재시도 및 ERR_NAME_NOT_RESOLVED 방지
+                // 이미지 로드 실패 시 대체 텍스트 표시 로직
                 e.currentTarget.style.display = 'none'; 
                 const wrapper = e.currentTarget.parentElement;
                 if(wrapper) {
@@ -125,11 +174,9 @@ const StayDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* ... (지도 영역 유지) ... */}
         <div className="detail-section map-section" style={{ marginTop: "40px" }}>
             <h3 className="section-title">🗺️ 위치 확인</h3>
             {isValidLocation ? (
-                // ... (Map 컴포넌트 유지) ...
                 <div className="map-wrapper" style={{ border: "1px solid #ddd", borderRadius: "8px" }}>
                     <Map
                       center={{ lat, lng }}
@@ -145,7 +192,6 @@ const StayDetail: React.FC = () => {
                 </div>
             )}
         </div>
-        
       </div>
     </div>
   );
