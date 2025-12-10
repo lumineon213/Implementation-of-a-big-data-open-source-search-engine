@@ -10,10 +10,11 @@
     </settings>
     	<mappers>
     	
-		<mapper resource="mybatis/mappers/loginMapper.xml"/>
+		<mapper resource="mybatis/mappers/LoginMapper.xml"/>
 		<mapper resource="mybatis/mappers/SearchLogMapper.xml"/>
 		<mapper resource="mybatis/mappers/MyPageMapper.xml"/>
 		<mapper resource="mybatis/mappers/NoticeMapper.xml"/>
+		<mapper resource="mybatis/mappers/StayMapper.xml"/>
 
 	</mappers>
 </configuration>

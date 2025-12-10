@@ -9,6 +9,9 @@ import FoodList from "pages/foodList/foodList";
 import ThemePage from "pages/tourtheme/ThemePage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+import StayList from "pages/stayList/stayList";
+import StayDetail from "pages/stayList/stayDetail";
+
 
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
@@ -32,7 +35,9 @@ import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
 
 import Festival from "pages/tourdata/festival";
-import FestivalDetail from 'pages/tourdata/FestivalDetail';
+import FestivalDetail from 'pages/tourdata/festivalDetail';
+
+
 
 // 타입 정의
 export interface SolrResultItem {
@@ -100,9 +105,14 @@ function App() {
                   <Route path="/footer_details/inquiry" element={<Inquiry />} />
                   {/* 이벤트 */}
                   <Route path="/footer_details/event" element={<Event />} />
+
                   <Route path="/benefits/stamp" element={<StampEvent />} />
                   <Route path="/benefits/badge" element={<BadgePad />} />
                   <Route path="/benefits/coupon" element={<GiftCard />} />
+                  {/* 숙소 */}
+                  <Route path="/info/stay" element={<StayList />} />
+                  {/* 숙소 상세보기  */}
+                  <Route path="/info/stay/:id" element={<StayDetail />} />
                 </Routes>
          
           {!isMapPage && <Footer />}

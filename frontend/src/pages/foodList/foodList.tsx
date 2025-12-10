@@ -201,44 +201,76 @@ const FoodList: React.FC = () => {
       </div>
 
       {/* 4. 하단 페이징 영역 (숫자 + 점프) */}
-      <div className="pagination-wrapper">
-        
-        {/* 숫자 페이징 */}
-        <div className="pagination-numbers">
-          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="page-btn prev-next">
-            &lt;
-          </button>
-
-          {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNum) => (
-            <button
-              key={pageNum}
-              onClick={() => handlePageChange(pageNum)}
-              className={`page-btn ${currentPage === pageNum ? "active" : ""}`}
+      {total > 0 && (
+        <div className="pagination-wrapper">
+          
+          {/* 숫자 페이징 */}
+          <div className="pagination-numbers">
+            
+            {/* 📌 이전 그룹 버튼 (<<) */}
+            <button 
+                onClick={() => handlePageChange(startPage - pageGroupSize)} 
+                disabled={startPage === 1} 
+                className="page-btn prev-next group-prev"
             >
-              {pageNum}
+                &lt;&lt; 
             </button>
-          ))}
 
-          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="page-btn prev-next">
-            &gt;
-          </button>
+            {/* 📌 개별 이전 페이지 버튼 (<) */}
+            <button 
+                onClick={() => handlePageChange(currentPage - 1)} 
+                disabled={currentPage === 1} 
+                className="page-btn prev-next single-prev"
+            >
+                &lt;
+            </button>
+
+            {/* 개별 페이지 버튼 (1, 2, 3...) */}
+            {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`page-btn ${currentPage === pageNum ? "active" : ""}`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            {/* 📌 개별 다음 페이지 버튼 (>) */}
+            <button 
+                onClick={() => handlePageChange(currentPage + 1)} 
+                disabled={currentPage === totalPages} 
+                className="page-btn prev-next single-next"
+            >
+                &gt;
+            </button>
+
+            {/* 📌 다음 그룹 버튼 (>>) */}
+            <button 
+                onClick={() => handlePageChange(endPage + 1)} 
+                disabled={endPage === totalPages} 
+                className="page-btn prev-next group-next"
+            >
+                &gt;&gt;
+            </button>
+          </div>
+
+          {/* 페이지 점프 입력창 */}
+          <div className="pagination-jump">
+            <input 
+              type="number" 
+              value={inputPage}
+              onChange={(e) => setInputPage(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e, 'jump')}
+              placeholder="Go"
+              className="jump-input"
+            />
+            <button onClick={handleJumpToPage} className="jump-btn">이동</button>
+          </div>
+
         </div>
 
-        {/* 페이지 점프 입력창 */}
-        <div className="pagination-jump">
-          <input 
-            type="number" 
-            value={inputPage}
-            onChange={(e) => setInputPage(e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e, 'jump')}
-            placeholder="Go"
-            className="jump-input"
-          />
-          <button onClick={handleJumpToPage} className="jump-btn">이동</button>
-        </div>
-
-      </div>
-    </div>
+      )}  </div>
   );
 };
 
