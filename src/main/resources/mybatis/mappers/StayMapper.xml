@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.stay.dao.stayDAO">
+
+<select id="selectStayDetailById" parameterType="string" resultType="map">
+        SELECT
+            CONTENT_ID AS id,
+            TITLE AS title,
+            ADDR1 AS address,
+            FIRSTIMAGE AS image_url,
+            MAPX AS longitude,
+            MAPY AS latitude,
+            OVERVIEW AS description,
+            VIEW_COUNT AS view_count
+        FROM
+            STAY_DETAIL
+        WHERE
+            CONTENT_ID = #{id}
+</select>
+    
+<update id="increaseDbViewCount" parameterType="string">
+        UPDATE STAY_DETAIL
+        SET VIEW_COUNT = NVL(VIEW_COUNT, 0) + 1
+        WHERE CONTENT_ID = #{id}
+</update>
+    
+</mapper>
