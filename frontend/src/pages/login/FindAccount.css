@@ -1,0 +1,157 @@
+/* root 동일화 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 동일 배경 */
+.find-container {
+  min-height: 100vh;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-mode .find-container {
+  background: #0a1929;
+}
+
+/* 로그인 동일 애니메이션 원 */
+.background-gradient {
+  position: absolute;
+  inset: 0;
+}
+
+.gradient-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.gradient-circle-1 {
+  top: -50%;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  background: #bbdefb;
+}
+
+body.dark-mode .gradient-circle-1 {
+  background: #0d47a1;
+}
+
+.gradient-circle-2 {
+  bottom: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: #e3f2fd;
+  animation-delay: 1s;
+}
+
+body.dark-mode .gradient-circle-2 {
+  background: #1565c0;
+}
+
+/* ===== 카드 동일 ===== */
+.find-card {
+  width: 100%;
+  max-width: 28rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(40px);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(25,118,210,0.15);
+  padding: 2.5rem;
+  border: 1px solid rgba(227,242,253,1);
+}
+
+body.dark-mode .find-card {
+  background: rgba(13, 27, 42, 0.9);
+  border-color: rgba(21, 101, 192, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+/* 제목 동일 계열 */
+.find-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #111827;
+}
+
+body.dark-mode .find-title {
+  color: #e0e0e0;
+}
+
+/* 입력 영역 */
+.input-wrap {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.find-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #37474f;
+  margin-bottom: 0.5rem;
+}
+
+body.dark-mode .find-label {
+  color: #b3e5fc;
+}
+
+.find-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: #f0f9ff;
+  border: 1px solid #b3e5fc;
+  border-radius: 0.75rem;
+  transition: 0.2s all ease;
+}
+
+.find-input:focus {
+  outline: none;
+  border-color: #42a5f5;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66,165,245,0.2);
+}
+
+body.dark-mode .find-input {
+  background: rgba(21,101,192,0.1);
+  border-color: rgba(100,181,246,0.3);
+  color: #e0e0e0;
+}
+
+/* === 버튼 동일 === */
+.find-btn {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+  box-shadow: 0 4px 12px rgba(30,136,229,0.3);
+  transition: all 0.2s;
+}
+
+.find-btn:hover {
+  background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30,136,229,0.45);
+}
