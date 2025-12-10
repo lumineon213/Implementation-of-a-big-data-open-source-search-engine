@@ -6,17 +6,19 @@ import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
-import ThemePage from "pages/tourtheme/ThemePage";
+import TourPage from "pages/tourtheme/TourPage";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
 import StayList from "pages/stayList/stayList";
 import StayDetail from "pages/stayList/stayDetail";
 
-
 import CourseHome from "pages/course/CourseHome";
 import WalkCourseList from "pages/course/WalkCourseList";
+import WalkDetail from "pages/course/WalkDetail";
 import ThemeCourseList from "pages/course/ThemeCourseList";
+import ThemeDetail from "pages/course/ThemeDetail";
 import MarineCourseList from "pages/course/MarineCourseList";
+import MarineDetail from "pages/course/MarineDetail";
 import UrbanCourseList from "pages/course/UrbanCourseList";
 import UrbanDetail from "pages/course/UrbanDetail";
 
@@ -72,8 +74,8 @@ function App() {
                   <Route path="/food" element={<FoodList />} />
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
-                  {/* 테마 페이지 */}
-                  <Route path="/theme" element={<ThemePage />} />
+                  {/* 명소 페이지 */}
+                  <Route path="/tour" element={<TourPage />} />
                   {/* 축제 페이지 */}
                   <Route path="/festival" element={<Festival />} />
                   <Route path="/festival/:id" element={<FestivalDetail />} />
@@ -82,8 +84,12 @@ function App() {
                   {/* 여행 코스 */}
                   <Route path="/course" element={<CourseHome />} />
                   <Route path="/course/walk" element={<WalkCourseList />} />
+                  <Route path="/course/walk/:id" element={<WalkDetail />} />
+                  <Route path="/walk/:id" element={<WalkDetail />} />
                   <Route path="/course/theme" element={<ThemeCourseList />} />
+                  <Route path="/course/theme/:id" element={<ThemeDetail />} />
                   <Route path="/course/marine" element={<MarineCourseList />} />
+                  <Route path="/course/marine/:id" element={<MarineDetail />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />
                   <Route path="/course/urban/:id" element={<UrbanDetail />} />
 
