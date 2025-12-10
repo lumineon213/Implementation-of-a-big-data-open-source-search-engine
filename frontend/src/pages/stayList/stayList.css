@@ -1,0 +1,209 @@
+/* StayList.css */
+
+.stay-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- 1. 검색 및 필터 영역 --- */
+
+.search-filter-container {
+    margin-top: 80px; 
+    background-color: #f8f8f8;
+    padding: 30px 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.search-title {
+    color: #007bff;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.search-box-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.main-search-input {
+    padding: 10px 15px;
+    width: 60%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.main-search-btn {
+    padding: 10px 20px;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.main-search-btn:hover {
+    background-color: #e68900;
+}
+
+/* --- 2. 리스트 정보 바 --- */
+
+.list-info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.total-count b {
+    color: #007bff;
+}
+
+/* --- 3. 숙소 리스트 및 카드 --- */
+
+.stay-list-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 반응형 300px 단위 */
+    gap: 20px;
+    justify-content: center; /* 중앙 정렬 */
+}
+
+.stay-card {
+    /* 📌 카드 높이 고정 (가장 중요) */
+    width: 100%; 
+    height: 480px; /* 고정된 높이 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.stay-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stay-card-image {
+    /* 📌 이미지 높이와 채우기 방식 고정 */
+    width: 100%;
+    height: 220px; /* 이미지 높이 고정 */
+    object-fit: cover; /* 비율 유지하며 영역을 꽉 채움 */
+    border-bottom: 1px solid #eee;
+}
+
+.stay-info-box {
+    padding: 15px;
+    flex-grow: 1; /* 남은 공간을 채우도록 함 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stay-title {
+    font-size: 1.2em;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 텍스트 줄 제한 스타일 */
+.stay-address, .stay-desc {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+
+.stay-address {
+    -webkit-line-clamp: 1; /* 주소는 1줄 */
+}
+
+.stay-desc {
+    -webkit-line-clamp: 3; /* 설명은 3줄 */
+    margin-bottom: 10px;
+    flex-grow: 1; /* 설명이 충분한 공간을 차지하도록 */
+}
+
+.stay-views {
+    font-size: 0.85em;
+    color: #007bff;
+    align-self: flex-end; /* 하단 정렬 */
+}
+
+
+/* --- 4. 페이징 영역 --- */
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+.page-btn {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.page-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.page-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-jump {
+    display: flex;
+    gap: 5px;
+}
+
+.jump-input {
+    width: 50px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.jump-btn {
+    padding: 8px 12px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}

@@ -1,0 +1,137 @@
+/* StayDetail.css */
+
+.stay-detail-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.detail-loading, .detail-error-fatal {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #666;
+}
+
+/* --- 상단 버튼 및 제목 --- */
+
+.back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1em;
+    margin-bottom: 20px;
+    cursor: pointer;
+    padding: 5px 0;
+    transition: color 0.2s;
+}
+
+.back-button:hover {
+    color: #0056b3;
+}
+
+.detail-title {
+    font-size: 2em;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* --- 이미지 및 기본 정보 --- */
+
+.detail-main-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.detail-info-text {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.detail-info-text strong {
+    color: #333;
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.detail-separator {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 30px 0;
+}
+
+/* --- 지도 영역 --- */
+
+.kakao-map-container {
+    width: 100%;
+    height: 400px; /* 지도 높이 고정 */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.map-error-bg {
+    background-color: #ffeaea;
+    border-color: #ff0000;
+}
+
+.map-error-text {
+    color: #d9534f;
+    font-size: 1.1em;
+    padding: 20px;
+    text-align: center;
+}
+
+/* --- 상세 설명 영역 --- */
+
+.detail-description {
+    margin-top: 30px;
+}
+
+.desc-title {
+    font-size: 1.5em;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.desc-text {
+    font-size: 1em;
+    color: #333;
+    line-height: 1.8;
+    
+    /* 📌 Tour API의 줄바꿈 문자를 인식하도록 설정하여 가독성을 높입니다. */
+    white-space: pre-wrap; 
+}
+
+/* --- 예약 버튼 --- */
+
+.book-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745;
+    color: white;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    transition: background-color 0.3s;
+}
+
+.book-button:hover {
+    background-color: #218838;
+}
