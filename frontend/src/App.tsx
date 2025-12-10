@@ -44,6 +44,12 @@ import FestivalDetail from 'pages/tourdata/festivalDetail';
 import FindId  from "pages/login/FindId";
 import FindPassword  from "pages/login/FindPassword";
 import ResetPassword from "pages/login/ResetPassword";
+import AdminDashboard from "pages/admin/AdminDashboard";
+import AdminUsers from "pages/admin/AdminUsers";
+import AdminReviews from "pages/admin/AdminReviews";
+import AdminInquiries from "pages/admin/AdminInquiries";
+import AdminNotices from "pages/admin/AdminNotices";
+import AdminEvents from "pages/admin/AdminEvents";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -142,6 +148,14 @@ function App() {
                   <Route path="/info/stay" element={<StayList />} />
                   {/* 숙소 상세보기  */}
                   <Route path="/info/stay/:id" element={<StayDetail />} />
+                  
+                  {/* 관리자 페이지 */}
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/reviews" element={<AdminReviews />} />
+                  <Route path="/admin/inquiries" element={<AdminInquiries />} />
+                  <Route path="/admin/notices" element={<AdminNotices />} />
+                  <Route path="/admin/events" element={<AdminEvents />} />
                 </Routes>
          
           {!isMapPage && <Footer />}

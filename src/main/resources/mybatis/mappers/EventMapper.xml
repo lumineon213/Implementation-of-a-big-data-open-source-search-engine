@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.Event.dao.EventDAO">
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="eventResultMap" type="com.boot.Event.dto.EventDTO">
+        <id property="eventId" column="event_id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventName" column="event_name"/>
+        <result property="count" column="count"/>
+        <result property="actionType" column="action_type"/>
+        <result property="description" column="description"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="eventHistoryResultMap" type="com.boot.Event.dto.EventHistoryDTO">
+        <id property="historyId" column="history_id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventName" column="event_name"/>
+        <result property="actionType" column="action_type"/>
+        <result property="description" column="description"/>
+        <result property="count" column="count"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- 회원별 이벤트 보유 현황 조회 -->
+    <select id="selectEventsByAccountId" parameterType="String" resultMap="eventResultMap">
+        SELECT 
+            EVENT_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            COUNT,
+            ACTION_TYPE,
+            DESCRIPTION,
+            IMAGE_URL,
+            IS_ACTIVE,
+            CREATED_AT,
+            UPDATED_AT
+        FROM USER_EVENTS
+        WHERE ACCOUNT_ID = #{accountId}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 특정 타입의 이벤트 조회 -->
+    <select id="selectEventsByType" resultMap="eventResultMap">
+        SELECT 
+            EVENT_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            COUNT,
+            ACTION_TYPE,
+            DESCRIPTION,
+            IMAGE_URL,
+            IS_ACTIVE,
+            CREATED_AT,
+            UPDATED_AT
+        FROM USER_EVENTS
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 특정 이벤트 조회 -->
+    <select id="selectEvent" resultMap="eventResultMap">
+        SELECT 
+            EVENT_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            COUNT,
+            ACTION_TYPE,
+            DESCRIPTION,
+            IMAGE_URL,
+            IS_ACTIVE,
+            CREATED_AT,
+            UPDATED_AT
+        FROM USER_EVENTS
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+          AND EVENT_NAME = #{eventName}
+    </select>
+
+    <!-- 이벤트 추가 또는 업데이트 (MERGE) -->
+    <insert id="upsertEvent" parameterType="com.boot.Event.dto.EventDTO">
+        MERGE INTO USER_EVENTS ue
+        USING (
+            SELECT 
+                #{accountId} AS ACCOUNT_ID,
+                #{eventType} AS EVENT_TYPE,
+                #{eventName} AS EVENT_NAME
+            FROM DUAL
+        ) src
+        ON (ue.ACCOUNT_ID = src.ACCOUNT_ID 
+            AND ue.EVENT_TYPE = src.EVENT_TYPE 
+            AND ue.EVENT_NAME = src.EVENT_NAME)
+        WHEN MATCHED THEN
+            UPDATE SET
+                COUNT = NVL(#{count}, COUNT),
+                ACTION_TYPE = NVL(#{actionType,jdbcType=VARCHAR}, ACTION_TYPE),
+                DESCRIPTION = NVL(#{description,jdbcType=VARCHAR}, DESCRIPTION),
+                IMAGE_URL = NVL(#{imageUrl,jdbcType=VARCHAR}, IMAGE_URL),
+                IS_ACTIVE = NVL(#{isActive}, IS_ACTIVE),
+                UPDATED_AT = SYSDATE
+        WHEN NOT MATCHED THEN
+            INSERT (
+                EVENT_ID,
+                ACCOUNT_ID,
+                EVENT_TYPE,
+                EVENT_NAME,
+                COUNT,
+                ACTION_TYPE,
+                DESCRIPTION,
+                IMAGE_URL,
+                IS_ACTIVE,
+                CREATED_AT,
+                UPDATED_AT
+            ) VALUES (
+                SEQ_EVENT_ID.NEXTVAL,
+                #{accountId},
+                #{eventType},
+                #{eventName},
+                NVL(#{count}, 1),
+                #{actionType,jdbcType=VARCHAR},
+                #{description,jdbcType=VARCHAR},
+                #{imageUrl,jdbcType=VARCHAR},
+                NVL(#{isActive}, 1),
+                SYSDATE,
+                SYSDATE
+            )
+    </insert>
+
+    <!-- 이벤트 개수 증가 -->
+    <update id="incrementEventCount">
+        UPDATE USER_EVENTS
+        SET COUNT = COUNT + #{count},
+            UPDATED_AT = SYSDATE
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+          AND EVENT_NAME = #{eventName}
+    </update>
+
+    <!-- 이벤트 개수 감소 -->
+    <update id="decrementEventCount">
+        UPDATE USER_EVENTS
+        SET COUNT = GREATEST(COUNT - #{count}, 0),
+            UPDATED_AT = SYSDATE
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+          AND EVENT_NAME = #{eventName}
+    </update>
+
+    <!-- 이벤트 삭제 -->
+    <delete id="deleteEvent" parameterType="Long">
+        DELETE FROM USER_EVENTS
+        WHERE EVENT_ID = #{eventId}
+    </delete>
+
+    <!-- 이벤트 이력 추가 -->
+    <insert id="insertEventHistory" parameterType="com.boot.Event.dto.EventHistoryDTO">
+        <selectKey keyProperty="historyId" resultType="Long" order="BEFORE">
+            SELECT SEQ_EVENT_HISTORY_ID.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO EVENT_HISTORY (
+            HISTORY_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            ACTION_TYPE,
+            DESCRIPTION,
+            COUNT,
+            CREATED_AT
+        ) VALUES (
+            #{historyId},
+            #{accountId},
+            #{eventType},
+            #{eventName},
+            #{actionType},
+            #{description},
+            NVL(#{count}, 1),
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 회원별 이벤트 이력 조회 -->
+    <select id="selectEventHistoryByAccountId" parameterType="String" resultMap="eventHistoryResultMap">
+        SELECT 
+            HISTORY_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            ACTION_TYPE,
+            DESCRIPTION,
+            COUNT,
+            CREATED_AT
+        FROM EVENT_HISTORY
+        WHERE ACCOUNT_ID = #{accountId}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 특정 타입의 이벤트 이력 조회 -->
+    <select id="selectEventHistoryByType" resultMap="eventHistoryResultMap">
+        SELECT 
+            HISTORY_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            ACTION_TYPE,
+            DESCRIPTION,
+            COUNT,
+            CREATED_AT
+        FROM EVENT_HISTORY
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 특정 액션의 이벤트 이력 조회 -->
+    <select id="selectEventHistoryByAction" resultMap="eventHistoryResultMap">
+        SELECT 
+            HISTORY_ID,
+            ACCOUNT_ID,
+            EVENT_TYPE,
+            EVENT_NAME,
+            ACTION_TYPE,
+            DESCRIPTION,
+            COUNT,
+            CREATED_AT
+        FROM EVENT_HISTORY
+        WHERE ACCOUNT_ID = #{accountId}
+          AND ACTION_TYPE = #{actionType}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 회원별 이벤트 총 개수 조회 -->
+    <select id="countEventsByAccountId" parameterType="String" resultType="Integer">
+        SELECT COUNT(*)
+        FROM USER_EVENTS
+        WHERE ACCOUNT_ID = #{accountId}
+    </select>
+
+    <!-- 회원별 특정 타입 이벤트 총 개수 조회 -->
+    <select id="countEventsByType" resultType="Integer">
+        SELECT NVL(SUM(COUNT), 0)
+        FROM USER_EVENTS
+        WHERE ACCOUNT_ID = #{accountId}
+          AND EVENT_TYPE = #{eventType}
+    </select>
+
+</mapper>
+

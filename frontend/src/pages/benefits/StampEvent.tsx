@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StampEvent.css';
+import { api } from '../../api/axios';
 
 const STAMP_LIST = [
   { id: 'jagalchi'  , name: '자갈치시장', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdJGWn_7R2v6d5V2Vm47nKPl4tWjEYdud6tw&s', lat: 35.0973, lng: 129.0307 },
@@ -10,18 +11,48 @@ const STAMP_LIST = [
   { id: 'songdo', name: '송도해수욕장', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_On3L6TAiIxJEURqJuf9H9z4Q-7tJkyprJA&s', lat: 35.0853, lng: 129.0217 },
 ];
 
+interface EventDTO {
+  eventId: number;
+  eventType: string;
+  eventName: string;
+  count: number;
+}
+
 const StampEvent: React.FC = () => {
   const navigate = useNavigate();
+  const [myStamps, setMyStamps] = useState<string[]>([]);
+  const [checkingId, setCheckingId] = useState<string | null>(null);
+  const [checkMsg, setCheckMsg] = useState<string>("");
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       alert('로그인 후 이용 가능합니다.');
       navigate('/login');
+      return;
     }
+    loadMyStamps();
   }, [navigate]);
-  const [myStamps, setMyStamps] = useState<string[]>([]);
-  const [checkingId, setCheckingId] = useState<string | null>(null);
-  const [checkMsg, setCheckMsg] = useState<string>("");
+
+  // 내가 보유한 스탬프 조회
+  const loadMyStamps = async () => {
+    try {
+      const response = await api.get('/events/type/STAMP');
+      if (response.data.success && response.data.events) {
+        const stampIds: string[] = [];
+        response.data.events.forEach((stamp: EventDTO) => {
+          // 스탬프 이름으로 매칭
+          const stampItem = STAMP_LIST.find(s => s.name === stamp.eventName);
+          if (stampItem && stamp.count > 0) {
+            stampIds.push(stampItem.id);
+          }
+        });
+        setMyStamps(stampIds);
+      }
+    } catch (error) {
+      console.error('스탬프 조회 실패:', error);
+    }
+  };
 
   // 두 좌표 거리(m) 계산 함수
   function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
@@ -37,34 +68,78 @@ const StampEvent: React.FC = () => {
   }
 
   // GPS 인증
-  const handleCheckIn = (id: string) => {
+  const handleCheckIn = async (id: string) => {
     if (myStamps.includes(id)) return;
+    
     setCheckingId(id);
     setCheckMsg('위치 확인 중...');
+    
     if (!navigator.geolocation) {
       setCheckMsg('이 브라우저는 위치 정보를 지원하지 않습니다.');
       setCheckingId(null);
       return;
     }
+    
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const { latitude, longitude } = pos.coords;
         const stamp = STAMP_LIST.find(s => s.id === id);
+        
         if (!stamp) {
           setCheckMsg('명소 정보를 찾을 수 없습니다.');
           setCheckingId(null);
           return;
         }
+        
         const dist = getDistance(latitude, longitude, stamp.lat, stamp.lng);
+        
         if (dist <= 100) {
-          setMyStamps([...myStamps, id]);
-          setCheckMsg('인증 성공!');
+          // 백엔드에 스탬프 저장
+          try {
+            const response = await api.post('/events/stamp', {
+              eventName: stamp.name,
+              actionType: 'VISIT',
+              description: `${stamp.name} 방문 인증`
+            });
+            
+            if (response.data.success) {
+              setMyStamps([...myStamps, id]);
+              setCheckMsg('인증 성공! 스탬프가 발급되었습니다.');
+              
+              // 모든 스탬프를 모았는지 확인
+              if (myStamps.length + 1 === STAMP_LIST.length) {
+                // 배지 발급
+                try {
+                  await api.post('/events/badge', {
+                    eventName: '스탬프 투어 완주',
+                    actionType: 'STAMP_COMPLETE',
+                    description: '모든 명소 스탬프를 모았습니다!'
+                  });
+                  setTimeout(() => {
+                    alert('🎉 축하합니다! 모든 스탬프를 모으셨습니다. 배지가 발급되었습니다!');
+                  }, 500);
+                } catch (error) {
+                  console.error('배지 발급 실패:', error);
+                }
+              }
+            } else {
+              setCheckMsg(response.data.msg || '스탬프 발급에 실패했습니다.');
+            }
+          } catch (error: any) {
+            console.error('스탬프 발급 실패:', error);
+            if (error.response?.data?.msg) {
+              setCheckMsg(error.response.data.msg);
+            } else {
+              setCheckMsg('스탬프 발급에 실패했습니다. 다시 시도해주세요.');
+            }
+          }
         } else {
           setCheckMsg(`현재 위치와 명소가 ${Math.round(dist)}m 떨어져 있습니다. 100m 이내에서 인증 가능합니다.`);
         }
+        
         setCheckingId(null);
       },
-      (err) => {
+      () => {
         setCheckMsg('위치 정보 확인에 실패했습니다. 권한을 허용해 주세요.');
         setCheckingId(null);
       }
@@ -95,9 +170,6 @@ const StampEvent: React.FC = () => {
         <div className="stamp-check-msg">{checkMsg}</div>
       )}
       <div className="stamp-status">
-        <button className="stamp-reset-btn" onClick={() => setMyStamps([])}>
-          스탬프 초기화
-        </button>
         <h2>내 스탬프 현황</h2>
         <div className="stamp-status-list">
           {STAMP_LIST.map(stamp => (
