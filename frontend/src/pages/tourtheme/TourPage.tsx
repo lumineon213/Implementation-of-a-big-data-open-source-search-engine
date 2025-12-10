@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
-import "./ThemePage.css"; // ★ 중요: 파일명과 똑같이 맞춰야 합니다!
+import "./TourPage.css"; // ★ 중요: 파일명과 똑같이 맞춰야 합니다!
 
 // 데이터 타입 정의
 interface TourSpot {
@@ -12,7 +12,7 @@ interface TourSpot {
   themeId: number;
 }
 
-const Theme: React.FC = () => {
+const TourPage: React.FC = () => {
   const [spots, setSpots] = useState<TourSpot[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
@@ -140,4 +140,4 @@ const getThemeName = (id: number) => {
   }
 };
 
-export default Theme;
+export default TourPage;
