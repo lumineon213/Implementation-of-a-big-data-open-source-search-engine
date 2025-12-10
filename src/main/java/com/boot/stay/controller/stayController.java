@@ -8,14 +8,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.boot.stay.service.StayService;
+
+import com.boot.stay.dto.stayDTO;
+import com.boot.stay.service.stayService;
 
 @RestController
 @RequestMapping("/api/stay")
-public class StayController {
+public class stayController {
 
     @Autowired
-    private StayService stayService;
+    private stayService stayService;
 
     // 1. 목록 동기화 (Python 스크립트 역할)
     @GetMapping("/sync-tour-data")
@@ -44,25 +46,23 @@ public class StayController {
         }
     }
 
-    // 3. 상세 정보 조회 (DB + Solr에서 조회)
     @GetMapping("/view/{id}")
-    public ResponseEntity<Map<String, Object>> getStayDetail(@PathVariable String id) {
+    public ResponseEntity<stayDTO> getStayDetail(
+        @PathVariable(name = "id") String id
+    ) {
+        // 📌 로그 확인 (Security 문제 해결되었으므로 이제 찍힐 것임)
+        System.out.println(">>> [Controller 수신] 상세 보기 요청 ID: " + id); 
+        
         try {
-            // 1. 조회수 증가 (Solr에 반영)
-            stayService.increaseViewCount(id);
-
-            // 2. 상세 데이터 가져오기 (DB에서 상세정보, Solr에서 조회수)
-            Map<String, Object> stay = stayService.getStayDetail(id);
+        	stayDTO stay = stayService.getStayDetail(id);
 
             if (stay != null) {
-                return ResponseEntity.ok(stay);
+                return ResponseEntity.ok(stay); 
             } else {
-                // 데이터가 없을 경우 404 NOT FOUND 반환
                 return ResponseEntity.status(404).body(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // 서버 내부 에러 발생 시 500 INTERNAL SERVER ERROR 반환
             return ResponseEntity.internalServerError().body(null);
         }
     }

@@ -55,7 +55,8 @@ public class SecurityConfig {
                         // (3) ★ 핵심: 검색 기능 (GET 방식) 누구나 접근 가능하도록 명시적 허용
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
                         // 만약 검색이 POST 방식이라면 아래 주석을 풀어서 사용하세요
-                        // .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/stay/search","/api/stay/view/**").permitAll()
 
                         // (4) 마이페이지 등 회원 전용 기능은 인증(토큰) 필요
                         .requestMatchers("/api/mypage/**").authenticated() 
