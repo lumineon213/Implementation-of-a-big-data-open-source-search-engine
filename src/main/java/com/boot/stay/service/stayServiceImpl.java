@@ -162,7 +162,6 @@ public class stayServiceImpl implements stayService {
         }
     }
     
-    // 4. 동기화 (Python 스크립트가 담당)
     @Override
     public String syncStayData() throws Exception {
         
@@ -201,8 +200,8 @@ public class stayServiceImpl implements stayService {
         }
         
         // 3. Solr에 데이터 추가 및 커밋 로직 (생략된 부분)
-        // solrClient.add(CORE_NAME, solrDocuments);
-        // solrClient.commit(CORE_NAME);
+         solrClient.add(CORE_NAME, solrDocuments);
+         solrClient.commit(CORE_NAME);
 
         return "Solr 숙소 데이터 저장 성공! 총 " + stayList.size() + "개 항목 인덱싱 완료.";
     }
