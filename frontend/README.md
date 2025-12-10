@@ -305,6 +305,8 @@ theme.api.key="본인 키
 https://www.data.go.kr/data/15063487/openapi.do - 쇼핑정보 API
 shopping.api.key ="본인 키"
 
+https://www.data.go.kr/data/15063500/openapi.do - 축제정보 API
+festival.api.key ="본인 키"
 
 * **API키 위치** **
 스프링 부트에서 src/main/resources 바로 아래
@@ -322,6 +324,7 @@ walk_core
 urban_core
 theme_core
 shopping_core
+festival_core
 
 2. 스프링 부트 실행 후 
 http://localhost:8484/api/food/save-data 
