@@ -37,4 +37,19 @@ public class UrbanController {
             return ResponseEntity.internalServerError().body("검색 실패: " + e.getMessage());
         }
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUrbanDetail(@PathVariable("id") String id) {
+        try {
+            Map<String, Object> result = urbanService.getById(id);
+            if (result == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("조회 실패: " + e.getMessage());
+        }
+    }
+
 }

@@ -9,4 +9,7 @@ public interface UrbanService {
 
     // Urban 관광 검색
     Map<String, Object> searchUrban(String keyword, int page, int size) throws Exception;
+    
+    Map<String, Object> getById(String id) throws Exception;
+
 }
