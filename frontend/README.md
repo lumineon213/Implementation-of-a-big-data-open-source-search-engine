@@ -276,7 +276,7 @@ Vercel, Netlify 등 프론트 전용 배포 서비스 활용
 
 ---
 
-### 🔗 KOKAO MAP API 발급
+### 🔗 KAKAO MAP API 발급
 
 * **사이트:** **[Google AI Studio](https://apis.map.kakao.com/)**
 * **발급 방법:**
