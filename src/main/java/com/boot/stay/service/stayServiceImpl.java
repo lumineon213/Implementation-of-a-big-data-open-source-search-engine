@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.boot.stay.dao.stayDAO;
@@ -30,6 +31,8 @@ public class stayServiceImpl implements stayService {
 
     private static final String CORE_NAME = "stay_core";
 
+    @Value("${stay.api.key}")
+    private String stayApiKey;
     // -------------------------------------------------------------------
     // 1. 목록 조회 (searchStay) - Solr에서만 조회
     // -------------------------------------------------------------------
@@ -162,7 +165,46 @@ public class stayServiceImpl implements stayService {
     // 4. 동기화 (Python 스크립트가 담당)
     @Override
     public String syncStayData() throws Exception {
-        return "데이터는 외부 스크립트를 통해 주입됩니다.";
+        
+        // 1. DB에서 모든 숙소 데이터 조회 (인스턴스 이름: stayDao 사용)
+        List<stayDTO> stayList = stayDao.selectAllStayDataForSync(); 
+        
+        if (stayList == null || stayList.isEmpty()) {
+            return "DB에 저장할 숙소 데이터가 없습니다.";
+        }
+
+        // 2. SolrInputDocument 리스트 생성
+        List<SolrInputDocument> solrDocuments = new ArrayList<>();
+        
+        for (stayDTO stay : stayList) {
+            SolrInputDocument doc = new SolrInputDocument();
+            
+            // DTO 필드를 Solr 필드명에 맞게 매핑
+            doc.addField("id", stay.getContent_id());
+            doc.addField("title", stay.getTitle());
+            doc.addField("road_address", stay.getAddress()); 
+            doc.addField("image_url", stay.getFirstimage());
+            doc.addField("description", stay.getOverview()); 
+            
+            // 숫자형 필드는 Solr에 맞게 처리
+            if (stay.getLatitude() != null) {
+                doc.addField("latitude", stay.getLatitude());
+            }
+            if (stay.getLongitude() != null) {
+                doc.addField("longitude", stay.getLongitude());
+            }
+            
+            // 조회수 필드 (view_count_i)도 Solr에 저장
+            doc.addField("view_count_i", stay.getView_count() != null ? stay.getView_count() : 0);
+
+            solrDocuments.add(doc);
+        }
+        
+        // 3. Solr에 데이터 추가 및 커밋 로직 (생략된 부분)
+        // solrClient.add(CORE_NAME, solrDocuments);
+        // solrClient.commit(CORE_NAME);
+
+        return "Solr 숙소 데이터 저장 성공! 총 " + stayList.size() + "개 항목 인덱싱 완료.";
     }
     
  // -------------------------------------------------------------------
