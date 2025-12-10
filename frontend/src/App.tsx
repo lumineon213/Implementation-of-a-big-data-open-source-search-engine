@@ -32,7 +32,7 @@ import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
 
 import Festival from "pages/tourdata/festival";
-import FestivalDetail from 'pages/tourdata/FestivalDetail';
+import FestivalDetail from 'pages/tourdata/festivalDetail';
 
 // 타입 정의
 export interface SolrResultItem {

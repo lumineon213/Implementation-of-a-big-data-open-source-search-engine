@@ -148,8 +148,8 @@ const Header: React.FC = () => {
                   <Link to="/info/accommodation" className="dropdown-item">
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">숙박/맛집</div>
-                      <div className="dropdown-desc">추천 숙소와 음식점</div>
+                      <div className="dropdown-title">숙박</div>
+                      <div className="dropdown-desc">추천 숙소</div>
                     </div>
                   </Link>
                   <Link to="/ai-planner" className="dropdown-item">
