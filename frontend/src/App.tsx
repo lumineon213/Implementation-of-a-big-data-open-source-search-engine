@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import Login from "pages/login/login";
@@ -32,7 +33,12 @@ import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
 
 import Festival from "pages/tourdata/festival";
-import FestivalDetail from 'pages/tourdata/FestivalDetail';
+import FestivalDetail from 'pages/tourdata/festivalDetail';
+
+
+import FindId  from "pages/login/FindId";
+import FindPassword  from "pages/login/FindPassword";
+import ResetPassword from "pages/login/ResetPassword";
 
 // 타입 정의
 export interface SolrResultItem {
@@ -48,6 +54,17 @@ export interface SolrResultItem {
 
 
 function App() {
+     useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+
+      // URL에 남은 ?token= 제거
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
   const location = useLocation();
   const isMapPage = location.pathname === '/map';
   
@@ -59,6 +76,14 @@ function App() {
                   <Route path="/" element={<MainPage/>} />                   
                   {/* 로그인 */}
                   <Route path="/login" element={<Login />} />
+
+                   {/* 아이디 찾기 */}
+                  <Route path="/find-id" element={<FindId />} />
+                  {/* 비밀번호 찾기 */}
+                  <Route path="/find-password" element={<FindPassword />} />
+
+                  <Route path="/reset-password" element={<ResetPassword />} />
+
                   {/* 마이페이지 */}
                    <Route path="/mypage" element={<MyPage />} />
                   {/* 맛집 리스트 */}

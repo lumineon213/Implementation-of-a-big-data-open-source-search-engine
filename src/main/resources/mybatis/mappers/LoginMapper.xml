@@ -4,52 +4,197 @@
 
 <mapper namespace="com.boot.dao.loginDAO">
 
+    <!-- DTO 매핑 -->
     <resultMap id="loginResultMap" type="com.boot.dto.loginDTO">
-        <id property="accountId" column="ACCOUNT_ID"/>
-        <result property="accountPw" column="ACCOUNT_PW"/>
-        <result property="accountName" column="ACCOUNT_NAME"/>
-        <result property="email" column="EMAIL"/>
-        <result property="phoneNumber" column="PHONE_NUMBER"/>
-        <result property="accountRole" column="ACCOUNT_ROLE"/>
-        <result property="regDate" column="REG_DATE"/>
+        <id property="accountId" column="account_id"/>
+        <result property="accountPw" column="account_pw"/>
+        <result property="accountName" column="account_name"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="accountRole" column="account_role"/>
+        <result property="regDate" column="reg_date"/>
+        <result property="resetToken" column="reset_token"/>
+        <result property="resetTokenExpire" column="reset_token_expire"/>
     </resultMap>
 
+
     <!-- 회원가입 -->
-    <insert id="signup" parameterType="com.boot.dto.loginDTO">
+    <insert id="signup">
         INSERT INTO account_tbl (
-            account_id, account_pw, account_name, 
-            email, phone_number, account_role, reg_date
+            account_id,
+            account_pw,
+            account_name,
+            email,
+            phone_number,
+            account_role,
+            reg_date
         ) VALUES (
-            #{accountId}, #{accountPw}, #{accountName},
-            #{email}, #{phoneNumber}, 'USER', SYSDATE
+            #{accountId},
+            #{accountPw},
+            #{accountName},
+            #{email},
+            #{phoneNumber},
+            'USER',
+            SYSDATE
         )
     </insert>
 
+
     <!-- 이메일 중복 체크 -->
-    <select id="emailCheck" parameterType="string" resultType="int">
-        SELECT COUNT(*) 
+    <select id="emailCheck" resultType="int">
+        SELECT COUNT(*)
         FROM account_tbl
         WHERE email = #{email}
     </select>
 
+
     <!-- 전화번호 중복 체크 -->
-    <select id="phoneCheck" parameterType="string" resultType="int">
+    <select id="phoneCheck" resultType="int">
         SELECT COUNT(*)
         FROM account_tbl
         WHERE phone_number = #{phoneNumber}
     </select>
 
-    <!-- 로그인 -->
-    <select id="login" resultMap="loginResultMap">
-        SELECT * FROM account_tbl
+
+    <!-- 아이디 중복 체크 (신규 추가) -->
+    <select id="accountIdCheck" resultType="int">
+        SELECT COUNT(*)
+        FROM account_tbl
         WHERE account_id = #{accountId}
-        AND account_pw = #{accountPw}
     </select>
-    
- <select id="findById" resultMap="loginResultMap">
-    SELECT *
-    FROM account_tbl
-    WHERE account_id = #{accountId}
-</select>
+
+
+    <!-- 로그인 아이디 조회 -->
+    <select id="findById" resultMap="loginResultMap">
+        SELECT *
+        FROM account_tbl
+        WHERE account_id = #{accountId}
+    </select>
+
+
+    <!-- 소셜 계정 조회 -->
+    <select id="findSocialUser" resultMap="loginResultMap">
+        SELECT *
+        FROM account_tbl
+        WHERE social_type = #{socialType}
+        AND social_id = #{socialId}
+    </select>
+
+
+    <!-- 소셜 신규 삽입 -->
+    <insert id="insertSocial">
+        INSERT INTO account_tbl (
+            account_id,
+            account_name,
+            email,
+            social_type,
+            social_id,
+            account_role,
+            reg_date
+        )
+        VALUES (
+            #{accountId},
+            #{accountName},
+            #{email},
+            #{socialType},
+            #{socialId},
+            'USER',
+            SYSDATE
+        )
+    </insert>
+
+
+    <!-- 아이디 찾기 -->
+    <select id="findAccountId" resultType="string">
+        SELECT account_id
+        FROM account_tbl
+        WHERE email = #{email}
+        AND phone_number = #{phoneNumber}
+    </select>
+
+
+    <!-- 계정 존재 여부(비밀번호 찾기용) -->
+    <select id="existUser" resultType="int">
+        SELECT COUNT(*)
+        FROM account_tbl
+        WHERE account_id = #{accountId}
+        AND email = #{email}
+    </select>
+
+
+    <!-- 비밀번호 변경 -->
+    <update id="updatePassword">
+        UPDATE account_tbl
+        SET account_pw = #{password}
+        WHERE account_id = #{accountId}
+    </update>
+
+
+    <!-- Reset Token 저장 -->
+    <update id="saveResetToken">
+        UPDATE account_tbl
+        SET reset_token = #{token},
+            reset_token_expire = #{expireTime}
+        WHERE account_id = #{accountId}
+    </update>
+
+
+    <!-- Reset Token으로 조회 -->
+    <select id="findUserByToken" resultMap="loginResultMap">
+        SELECT *
+        FROM account_tbl
+        WHERE reset_token = #{token}
+        AND reset_token_expire > SYSTIMESTAMP
+    </select>
+
+
+    <!-- Reset Token 삭제 -->
+    <update id="clearToken">
+        UPDATE account_tbl
+        SET reset_token = NULL,
+            reset_token_expire = NULL
+        WHERE account_id = #{accountId}
+    </update>
+
+
+
+    <update id="saveEmailVerifyCode">
+        MERGE INTO email_verification evt
+        USING dual
+        ON (evt.email = #{email})
+        WHEN MATCHED THEN
+            UPDATE SET 
+                evt.code = #{code},
+                evt.expire_at = #{expireTime},
+                evt.verified = 'N'
+        WHEN NOT MATCHED THEN
+            INSERT (email, code, expire_at, verified)
+            VALUES (#{email}, #{code}, #{expireTime}, 'N')
+    </update>
+
+
+    <select id="checkEmailCode" resultType="int">
+        SELECT COUNT(*)
+        FROM email_verification
+        WHERE email = #{email}
+        AND code = #{code}
+        AND verified = 'N'
+    </select>
+
+
+ 
+    <update id="verifyEmailRecord">
+        UPDATE email_verification
+        SET verified = 'Y'
+        WHERE email = #{email}
+    </update>
+
+
+
+    <delete id="clearEmailVerifyCode">
+        DELETE FROM email_verification
+        WHERE email = #{email}
+    </delete>
+
 
 </mapper>
