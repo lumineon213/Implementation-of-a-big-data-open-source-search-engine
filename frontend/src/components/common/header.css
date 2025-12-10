@@ -103,14 +103,13 @@
 .dropdown-menu {
   position: absolute;
   top: calc(100% - 20px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  transform: none;
   background: white;
-  min-width: 280px;
+  min-width: 180px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 8px;
-  padding-top: 24px;
+  padding: 8px 0;
   z-index: 1001;
   animation: dropdownFadeIn 0.2s ease;
 }
