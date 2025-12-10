@@ -14,4 +14,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // 허용할 HTTP 메서드
                 .allowCredentials(true); // 쿠키/인증 정보 포함 허용
     }
+
+    @Override
+    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:/C:/Users/KH/Desktop/5/Implementation-of-a-big-data-open-source-search-engine/uploads/");
+    }
 }

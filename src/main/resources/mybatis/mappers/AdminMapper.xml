@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.Admin.dao.AdminDAO">
+
+    <!-- ============== 회원 관리 ============== -->
+    <resultMap id="adminUserResultMap" type="com.boot.Admin.dto.AdminUserDTO">
+        <id property="accountId" column="account_id"/>
+        <result property="accountName" column="account_name"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="accountRole" column="account_role"/>
+        <result property="socialType" column="social_type"/>
+        <result property="regDate" column="reg_date"/>
+        <result property="reviewCount" column="review_count"/>
+        <result property="eventCount" column="event_count"/>
+    </resultMap>
+
+    <select id="selectAllUsers" resultMap="adminUserResultMap">
+        SELECT * FROM (
+            SELECT 
+                a.ACCOUNT_ID,
+                a.ACCOUNT_NAME,
+                a.EMAIL,
+                a.PHONE_NUMBER,
+                a.ACCOUNT_ROLE,
+                a.SOCIAL_TYPE,
+                a.REG_DATE,
+                (SELECT COUNT(*) FROM REVIEWS WHERE ACCOUNT_ID = a.ACCOUNT_ID) AS REVIEW_COUNT,
+                (SELECT COUNT(*) FROM USER_EVENTS WHERE ACCOUNT_ID = a.ACCOUNT_ID) AS EVENT_COUNT,
+                ROW_NUMBER() OVER (ORDER BY a.REG_DATE DESC) AS RN
+            FROM ACCOUNT_TBL a
+            <where>
+                <if test="search != null and search != ''">
+                    AND (a.ACCOUNT_ID LIKE '%' || #{search} || '%'
+                         OR a.ACCOUNT_NAME LIKE '%' || #{search} || '%'
+                         OR a.EMAIL LIKE '%' || #{search} || '%')
+                </if>
+            </where>
+        ) WHERE RN BETWEEN (#{page} * #{size} + 1) AND ((#{page} + 1) * #{size})
+    </select>
+
+    <select id="selectUserById" resultMap="adminUserResultMap">
+        SELECT 
+            a.ACCOUNT_ID,
+            a.ACCOUNT_NAME,
+            a.EMAIL,
+            a.PHONE_NUMBER,
+            a.ACCOUNT_ROLE,
+            a.SOCIAL_TYPE,
+            a.REG_DATE,
+            (SELECT COUNT(*) FROM REVIEWS WHERE ACCOUNT_ID = a.ACCOUNT_ID) AS REVIEW_COUNT,
+            (SELECT COUNT(*) FROM USER_EVENTS WHERE ACCOUNT_ID = a.ACCOUNT_ID) AS EVENT_COUNT
+        FROM ACCOUNT_TBL a
+        WHERE a.ACCOUNT_ID = #{accountId}
+    </select>
+
+    <update id="updateUserRole">
+        UPDATE ACCOUNT_TBL
+        SET ACCOUNT_ROLE = #{role}
+        WHERE ACCOUNT_ID = #{accountId}
+    </update>
+
+    <delete id="deleteUser">
+        DELETE FROM ACCOUNT_TBL
+        WHERE ACCOUNT_ID = #{accountId}
+    </delete>
+
+    <select id="countUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOUNT_TBL
+        <where>
+            <if test="search != null and search != ''">
+                AND (ACCOUNT_ID LIKE '%' || #{search} || '%'
+                     OR ACCOUNT_NAME LIKE '%' || #{search} || '%'
+                     OR EMAIL LIKE '%' || #{search} || '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- ============== 리뷰 관리 ============== -->
+    <resultMap id="adminReviewResultMap" type="com.boot.Admin.dto.AdminReviewDTO">
+        <id property="reviewId" column="review_id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="accountName" column="account_name"/>
+        <result property="placeId" column="place_id"/>
+        <result property="placeType" column="place_type"/>
+        <result property="placeName" column="place_name"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectAllReviews" resultMap="adminReviewResultMap">
+        SELECT * FROM (
+            SELECT 
+                r.REVIEW_ID,
+                r.ACCOUNT_ID,
+                a.ACCOUNT_NAME,
+                r.PLACE_ID,
+                r.PLACE_TYPE,
+                CASE 
+                    WHEN r.PLACE_TYPE = 'FOOD' THEN (SELECT TITLE FROM RESTAURANTS_DETAIL WHERE ID = r.PLACE_ID)
+                    WHEN r.PLACE_TYPE = 'STAY' THEN (SELECT TITLE FROM STAY_DETAIL WHERE CONTENT_ID = r.PLACE_ID)
+                    WHEN r.PLACE_TYPE = 'TOUR' THEN (SELECT TITLE FROM TOUR_SPOTS WHERE SPOT_ID = TO_NUMBER(REGEXP_REPLACE(r.PLACE_ID, '[^0-9]', '')))
+                    ELSE r.PLACE_ID
+                END AS PLACE_NAME,
+                r.CONTENT,
+                r.CREATED_AT,
+                r.UPDATED_AT,
+                ROW_NUMBER() OVER (ORDER BY r.CREATED_AT DESC) AS RN
+            FROM REVIEWS r
+            INNER JOIN ACCOUNT_TBL a ON r.ACCOUNT_ID = a.ACCOUNT_ID
+            <where>
+                <if test="search != null and search != ''">
+                    AND (r.CONTENT LIKE '%' || #{search} || '%'
+                         OR a.ACCOUNT_NAME LIKE '%' || #{search} || '%'
+                         OR r.PLACE_ID LIKE '%' || #{search} || '%')
+                </if>
+            </where>
+        ) WHERE RN BETWEEN (#{page} * #{size} + 1) AND ((#{page} + 1) * #{size})
+    </select>
+
+    <select id="selectReviewById" resultMap="adminReviewResultMap">
+        SELECT 
+            r.REVIEW_ID,
+            r.ACCOUNT_ID,
+            a.ACCOUNT_NAME,
+            r.PLACE_ID,
+            r.PLACE_TYPE,
+            CASE 
+                WHEN r.PLACE_TYPE = 'FOOD' THEN (SELECT TITLE FROM RESTAURANTS_DETAIL WHERE ID = r.PLACE_ID)
+                WHEN r.PLACE_TYPE = 'STAY' THEN (SELECT TITLE FROM STAY_DETAIL WHERE CONTENT_ID = r.PLACE_ID)
+                WHEN r.PLACE_TYPE = 'TOUR' THEN (SELECT TITLE FROM TOUR_SPOTS WHERE SPOT_ID = TO_NUMBER(REGEXP_REPLACE(r.PLACE_ID, '[^0-9]', '')))
+                ELSE r.PLACE_ID
+            END AS PLACE_NAME,
+            r.CONTENT,
+            r.CREATED_AT,
+            r.UPDATED_AT
+        FROM REVIEWS r
+        INNER JOIN ACCOUNT_TBL a ON r.ACCOUNT_ID = a.ACCOUNT_ID
+        WHERE r.REVIEW_ID = #{reviewId}
+    </select>
+
+    <update id="updateReviewStatus">
+        UPDATE REVIEWS
+        SET UPDATED_AT = SYSDATE
+        WHERE REVIEW_ID = #{reviewId}
+    </update>
+
+    <delete id="deleteReview">
+        DELETE FROM REVIEWS
+        WHERE REVIEW_ID = #{reviewId}
+    </delete>
+
+    <select id="countReviews" resultType="int">
+        SELECT COUNT(*)
+        FROM REVIEWS r
+        INNER JOIN ACCOUNT_TBL a ON r.ACCOUNT_ID = a.ACCOUNT_ID
+        <where>
+            <if test="search != null and search != ''">
+                AND (r.CONTENT LIKE '%' || #{search} || '%'
+                     OR a.ACCOUNT_NAME LIKE '%' || #{search} || '%'
+                     OR r.PLACE_ID LIKE '%' || #{search} || '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- ============== 통계 ============== -->
+    <select id="selectStatistics" resultType="map">
+        SELECT 
+            (SELECT COUNT(*) FROM ACCOUNT_TBL) AS TOTAL_USERS,
+            (SELECT COUNT(*) FROM REVIEWS) AS TOTAL_REVIEWS,
+            (SELECT COUNT(*) FROM USER_EVENTS) AS TOTAL_EVENTS,
+            (SELECT COUNT(*) FROM ACCOUNT_TBL WHERE TRUNC(REG_DATE) = TRUNC(SYSDATE)) AS TODAY_NEW_USERS,
+            (SELECT COUNT(*) FROM REVIEWS WHERE TRUNC(CREATED_AT) = TRUNC(SYSDATE)) AS TODAY_NEW_REVIEWS,
+            (SELECT COUNT(DISTINCT ACCOUNT_ID) FROM REVIEWS WHERE TRUNC(CREATED_AT) >= TRUNC(SYSDATE) - 30) AS ACTIVE_USERS
+        FROM DUAL
+    </select>
+
+    <select id="selectDailyStatistics" resultType="map">
+        SELECT 
+            TO_CHAR(d.DATE_VAL, 'YYYY-MM-DD') AS DATE_STR,
+            NVL((SELECT COUNT(*) FROM ACCOUNT_TBL WHERE TRUNC(REG_DATE) = d.DATE_VAL), 0) AS NEW_USERS,
+            NVL((SELECT COUNT(*) FROM REVIEWS WHERE TRUNC(CREATED_AT) = d.DATE_VAL), 0) AS NEW_REVIEWS
+        FROM (
+            SELECT TRUNC(SYSDATE) - LEVEL + 1 AS DATE_VAL
+            FROM DUAL
+            START WITH 1 = 1
+            CONNECT BY LEVEL &lt;= #{days}
+        ) d
+        ORDER BY DATE_STR
+    </select>
+
+    <select id="selectTopPlaces" resultType="map">
+        SELECT * FROM (
+            SELECT 
+                PLACE_ID,
+                PLACE_TYPE,
+                COUNT(*) AS REVIEW_COUNT
+            FROM REVIEWS
+            GROUP BY PLACE_ID, PLACE_TYPE
+            ORDER BY REVIEW_COUNT DESC
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <select id="selectTopUsers" resultType="map">
+        SELECT * FROM (
+            SELECT 
+                r.ACCOUNT_ID,
+                a.ACCOUNT_NAME,
+                COUNT(*) AS REVIEW_COUNT
+            FROM REVIEWS r
+            INNER JOIN ACCOUNT_TBL a ON r.ACCOUNT_ID = a.ACCOUNT_ID
+            GROUP BY r.ACCOUNT_ID, a.ACCOUNT_NAME
+            ORDER BY REVIEW_COUNT DESC
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <!-- ============== 신고 관리 ============== -->
+    <!-- 신고 테이블이 없으면 나중에 추가 -->
+    
+    <!-- ============== 문의 관리 ============== -->
+    <resultMap id="adminInquiryResultMap" type="com.boot.Admin.dto.AdminInquiryDTO">
+        <id property="inquiryId" column="inquiry_id"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="writerName" column="writer_name"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="answerContent" column="answer_content"/>
+        <result property="answererId" column="answerer_id"/>
+        <result property="answererName" column="answerer_name"/>
+        <result property="status" column="status"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="answeredDate" column="answered_date"/>
+    </resultMap>
+
+    <select id="selectAllInquiries" resultMap="adminInquiryResultMap">
+        SELECT * FROM (
+            SELECT 
+                i.INQUIRY_ID,
+                i.WRITER_ID,
+                w.ACCOUNT_NAME AS WRITER_NAME,
+                i.TITLE,
+                i.CONTENT,
+                i.ANSWER_CONTENT,
+                i.ANSWERER_ID,
+                a.ACCOUNT_NAME AS ANSWERER_NAME,
+                i.STATUS,
+                i.CREATED_DATE,
+                i.ANSWERED_DATE,
+                ROW_NUMBER() OVER (ORDER BY i.CREATED_DATE DESC) AS RN
+            FROM INQUIRIES i
+            LEFT JOIN ACCOUNT_TBL w ON i.WRITER_ID = w.ACCOUNT_ID
+            LEFT JOIN ACCOUNT_TBL a ON i.ANSWERER_ID = a.ACCOUNT_ID
+            <where>
+                <if test="status != null and status != ''">
+                    AND i.STATUS = #{status}
+                </if>
+            </where>
+        ) WHERE RN BETWEEN (#{page} * #{size} + 1) AND ((#{page} + 1) * #{size})
+    </select>
+
+    <select id="selectInquiryById" resultMap="adminInquiryResultMap">
+        SELECT 
+            i.INQUIRY_ID,
+            i.WRITER_ID,
+            w.ACCOUNT_NAME AS WRITER_NAME,
+            i.TITLE,
+            i.CONTENT,
+            i.ANSWER_CONTENT,
+            i.ANSWERER_ID,
+            a.ACCOUNT_NAME AS ANSWERER_NAME,
+            i.STATUS,
+            i.CREATED_DATE,
+            i.ANSWERED_DATE
+        FROM INQUIRIES i
+        LEFT JOIN ACCOUNT_TBL w ON i.WRITER_ID = w.ACCOUNT_ID
+        LEFT JOIN ACCOUNT_TBL a ON i.ANSWERER_ID = a.ACCOUNT_ID
+        WHERE i.INQUIRY_ID = #{inquiryId}
+    </select>
+
+    <update id="updateInquiryAnswer">
+        UPDATE INQUIRIES
+        SET ANSWER_CONTENT = #{answerContent},
+            ANSWERER_ID = #{answererId},
+            ANSWERED_DATE = SYSDATE,
+            STATUS = 'ANSWERED'
+        WHERE INQUIRY_ID = #{inquiryId}
+    </update>
+
+    <select id="countInquiries" resultType="int">
+        SELECT COUNT(*)
+        FROM INQUIRIES
+        <where>
+            <if test="status != null and status != ''">
+                AND STATUS = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- ============== 로그 관리 ============== -->
+    <!-- 로그 테이블이 없으면 나중에 추가 -->
+
+</mapper>
+

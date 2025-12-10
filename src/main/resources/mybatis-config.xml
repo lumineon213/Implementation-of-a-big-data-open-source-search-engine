@@ -15,6 +15,7 @@
 		<mapper resource="mybatis/mappers/MyPageMapper.xml"/>
 		<mapper resource="mybatis/mappers/NoticeMapper.xml"/>
 		<mapper resource="mybatis/mappers/StayMapper.xml"/>
+		<mapper resource="mybatis/mappers/ReviewMapper.xml"/>
 
 	</mappers>
 </configuration>

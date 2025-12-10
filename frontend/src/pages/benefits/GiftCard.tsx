@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './GiftCard.css';
+import { api } from '../../api/axios';
 
 const COUPONS = [
   {
@@ -39,17 +40,93 @@ const COUPONS = [
   },
 ];
 
+interface EventDTO {
+  eventId: number;
+  eventType: string;
+  eventName: string;
+  count: number;
+}
+
 const GiftCard: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // 쿠폰별 발급 상태 관리
   const [received, setReceived] = useState<{[id: string]: boolean}>({});
+  const [loading, setLoading] = useState<{[id: string]: boolean}>({});
+
+  // 로그인 상태 및 보유 쿠폰 확인
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('token'));
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    if (token) {
+      loadMyGifts();
+    }
   }, []);
 
-  const handleGetCoupon = (id: string, title: string) => {
-    setReceived(prev => ({ ...prev, [id]: true }));
-    alert(`${title} 쿠폰이 발급되었습니다! 마이페이지에서 확인하세요.`);
+  // 내가 보유한 기프트 조회
+  const loadMyGifts = async () => {
+    try {
+      const response = await api.get('/events/type/GIFT');
+      if (response.data.success && response.data.events) {
+        const receivedMap: {[id: string]: boolean} = {};
+        response.data.events.forEach((gift: EventDTO) => {
+          // 쿠폰 이름으로 매칭
+          const coupon = COUPONS.find(c => c.title === gift.eventName);
+          if (coupon) {
+            receivedMap[coupon.id] = true;
+          }
+        });
+        setReceived(receivedMap);
+      }
+    } catch (error) {
+      console.error('기프트 조회 실패:', error);
+    }
+  };
+
+  const handleGetCoupon = async (id: string, title: string) => {
+    // 이미 받은 쿠폰인지 확인
+    if (received[id]) {
+      alert('이미 발급받은 쿠폰입니다.');
+      return;
+    }
+
+    // 토큰 확인
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    setLoading(prev => ({ ...prev, [id]: true }));
+
+    try {
+      const response = await api.post('/events/gift', {
+        eventName: title,
+        actionType: 'COUPON_RECEIVE',
+        description: `쿠폰 발급: ${title}`
+      });
+
+      if (response.data.success) {
+        setReceived(prev => ({ ...prev, [id]: true }));
+        alert(`${title} 쿠폰이 발급되었습니다! 마이페이지에서 확인하세요.`);
+        // 쿠폰 목록 새로고침
+        loadMyGifts();
+      } else {
+        alert(response.data.msg || '쿠폰 발급에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error('쿠폰 발급 실패:', error);
+      const errorMsg = error.response?.data?.msg || error.message || '쿠폰 발급에 실패했습니다.';
+      
+      if (error.response?.status === 401) {
+        alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      } else if (error.response?.status === 400) {
+        alert(errorMsg);
+      } else {
+        alert(`쿠폰 발급에 실패했습니다: ${errorMsg}`);
+      }
+    } finally {
+      setLoading(prev => ({ ...prev, [id]: false }));
+    }
   };
 
   return (
@@ -67,11 +144,11 @@ const GiftCard: React.FC = () => {
             {isLoggedIn && (
               <button
                 className="giftcard-btn"
-                disabled={received[coupon.id]}
+                disabled={received[coupon.id] || loading[coupon.id]}
                 title={received[coupon.id] ? '이미 발급된 쿠폰입니다.' : ''}
-                onClick={!received[coupon.id] ? () => handleGetCoupon(coupon.id, coupon.title) : undefined}
+                onClick={() => handleGetCoupon(coupon.id, coupon.title)}
               >
-                {received[coupon.id] ? '받음' : '쿠폰받기'}
+                {loading[coupon.id] ? '발급중...' : (received[coupon.id] ? '받음' : '쿠폰받기')}
               </button>
             )}
           </div>
