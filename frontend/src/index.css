@@ -1,4 +1,6 @@
+@import "tailwindcss";
 @import "./styles/global.css";
+
 
 * {
   box-sizing: border-box;

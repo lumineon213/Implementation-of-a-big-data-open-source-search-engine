@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiSearch } from 'react-icons/fi';   // 돋보기 아이콘
-import './Festival.css';
+import './festival.css';
 
 // 백엔드에서 오는 실제 데이터 타입
 interface FestivalFromAPI {
