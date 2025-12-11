@@ -331,4 +331,15 @@ http://localhost:8484/api/food/save-data
 접속 후 solr가서 확인하기
 
 
-
+### 🔗 토스 결제 API 키 발급
+1. 토스 페이먼츠 개발자 페이지 접속
+https://developers.tosspayments.com/ 
+2. 우측 내 개발정보 클릭
+3. 좌측 상단 API키 선택
+4. API 개별 연동 키에서 클라이언트 키 복사해서 .env에 
+VITE_TOSS_CLIENT_KEY=클라이언트키 
+작성
+5. 시크릿 키 복사해서 secret.properties에 
+toss.secret.key=시크릿 키 
+작성
+6. npm install @tosspayments/payment-sdk 실행

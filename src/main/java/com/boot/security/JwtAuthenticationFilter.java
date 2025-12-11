@@ -30,16 +30,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
         
-        // ✅ 인증이 필요 없는 공개 경로는 JWT 체크 건너뛰기
+        // ✅ 1. 공개 경로는 JWT 체크 건너뛰기
         if (isPublicPath(path, method)) {
             filterChain.doFilter(request, response);
             return;
         }
         
         String header = request.getHeader("Authorization");
+
+        // 📌 [DEBUG 추가] 헤더 수신 여부 로그 (paymentStay의 디버그 유지)
+        System.out.println("DEBUG: Authorization Header Received: " + header);
         
-        // ✅ 토큰이 없어도 에러를 발생시키지 않고 그냥 통과
-        // (Security 설정에서 인증 필요 여부를 판단함)
+        // ✅ 2. 토큰이 없거나 "Bearer "로 시작하지 않으면 즉시 통과 (develop의 로직 채택)
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -47,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         String token = header.substring(7);
         
-        // ✅ 토큰 검증 실패해도 예외를 던지지 않음
+        // ✅ 3. 토큰 검증 및 인증 (develop의 try-catch 블록 채택)
         try {
             if (jwtUtil.validate(token)) {
                 String accountId = jwtUtil.getAccountId(token);
@@ -64,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.debug("JWT 인증 성공: {}", accountId);
             }
         } catch (Exception e) {
-            // 토큰 검증 실패해도 로그만 출력하고 계속 진행
+            // 토큰 검증 실패 시 예외를 던지지 않고 경고 로그만 남김
             log.warn("JWT 검증 실패: {}", e.getMessage());
         }
         
@@ -72,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     
     /**
-     * 인증이 필요 없는 공개 경로인지 확인
+     * 인증이 필요 없는 공개 경로인지 확인 (기존 로직 유지)
      */
     private boolean isPublicPath(String path, String method) {
         // 로그인, 회원가입
@@ -95,6 +97,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             path.startsWith("/api/theme") || path.startsWith("/api/marine") || 
             path.startsWith("/api/urban")) {
             return true;
+        }
+        
+        // 📌 추가: 숙소 조회 경로는 보통 공개되어야 합니다.
+        if (path.startsWith("/api/stay/view") && "GET".equals(method)) {
+            return true;
+        }
+        
+        // 📌 추가: 토스 결제 콜백 경로는 SecurityConfig에서 permitAll() 처리되지만, 필터에서도 통과되어야 합니다.
+        if (path.startsWith("/api/payment/toss/success") || path.startsWith("/api/payment/toss/fail")) {
+             return true;
         }
         
         return false;

@@ -1,5 +1,7 @@
 package com.boot.mypage.service;
 
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boot.mypage.dao.MyPageDAO;
 import com.boot.mypage.dto.MyPageDTO;
+import com.boot.reservation.dao.ReservationDAO;
+import com.boot.reservation.dto.ReservationHistoryDTO;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +26,9 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Autowired
     private MyPageDAO dao;
+    
+    @Autowired
+    private ReservationDAO reservationDAO;
 
     @Value("${file.upload.path}")
     private String uploadPath;
@@ -146,4 +153,9 @@ public class MyPageServiceImpl implements MyPageService {
             log.error("프로필 이미지 파일 삭제 실패 - {}", imageUrl, e);
         }
     }
+
+	@Override
+	public List<ReservationHistoryDTO> getReservationHistory(String accountId) {
+		return reservationDAO.selectReservationHistoryByAccountId(accountId);	
+	}
 }
