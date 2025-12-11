@@ -135,26 +135,3 @@
 .book-button:hover {
     background-color: #218838;
 }
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.payment-modal {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-}
