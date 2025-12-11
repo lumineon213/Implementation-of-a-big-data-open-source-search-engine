@@ -1,14 +1,22 @@
 package com.boot.mypage.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.boot.mypage.dto.MyPageDTO;
 import com.boot.mypage.service.MyPageService;
+import com.boot.reservation.dto.ReservationHistoryDTO;
 import com.boot.security.JwtUtil;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/mypage")
+@RequiredArgsConstructor
 public class MyPageController {
 
     @Autowired
@@ -41,5 +49,18 @@ public class MyPageController {
 
         return service.updateMyInfo(dto);
     }
+    
+    @GetMapping("/reservations") 
+    public ResponseEntity<List<ReservationHistoryDTO>> getMyReservations(
+            // JWT 토큰에서 사용자 정보를 자동으로 가져옵니다.
+            @AuthenticationPrincipal UserDetails userDetails) {
+        
+        // userDetails.getUsername()이 로그인 시 사용된 accountId를 반환합니다.
+        String accountId = userDetails.getUsername(); 
 
+        List<ReservationHistoryDTO> history = service.getReservationHistory(accountId);
+        
+        // 예약 내역 리스트 반환
+        return ResponseEntity.ok(history); 
+    }
 }

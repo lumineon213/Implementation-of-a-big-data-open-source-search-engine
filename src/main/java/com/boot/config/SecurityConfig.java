@@ -57,7 +57,9 @@ public class SecurityConfig {
                         // 만약 검색이 POST 방식이라면 아래 주석을 풀어서 사용하세요
                         .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/stay/search","/api/stay/view/**").permitAll()
-
+                        
+                        .requestMatchers("/api/payment/toss/success", "/api/payment/toss/fail").permitAll()
+                        
                         // (4) 마이페이지 등 회원 전용 기능은 인증(토큰) 필요
                         .requestMatchers("/api/mypage/**").authenticated() 
 

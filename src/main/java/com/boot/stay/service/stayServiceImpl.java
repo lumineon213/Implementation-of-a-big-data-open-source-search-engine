@@ -43,7 +43,7 @@ public class stayServiceImpl implements stayService {
         
         // 1. 쿼리 설정
         if (keyword != null && !keyword.isEmpty()) {
-            query.setQuery("title:" + keyword + " OR road_address:" + keyword);
+            query.setQuery("title:" + keyword + " OR road_address:" + keyword + " OR description:" + keyword);
         } else {
             query.setQuery("*:*");
         }
