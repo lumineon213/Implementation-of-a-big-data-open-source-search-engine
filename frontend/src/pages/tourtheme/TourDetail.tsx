@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
-import "./ThemeDetail.css";
+import "./TourDetail.css";
 
 interface ThemeData {
   spotId: number;
@@ -17,7 +17,7 @@ interface ThemeData {
   homepage?: string;
 }
 
-const ThemeDetail: React.FC = () => {
+const TourDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 

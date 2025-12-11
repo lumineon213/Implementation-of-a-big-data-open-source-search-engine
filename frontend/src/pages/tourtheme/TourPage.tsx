@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import "./ThemePage.css";
+import "./TourPage.css";
 
 // 데이터 타입 정의
 interface TourSpot {
@@ -12,7 +12,7 @@ interface TourSpot {
   themeId: number;
 }
 
-const ThemePage: React.FC = () => {
+const TourPage: React.FC = () => {
   const [spots, setSpots] = useState<TourSpot[]>([]);
   const [loading, setLoading] = useState(true);
 
