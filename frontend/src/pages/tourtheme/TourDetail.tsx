@@ -201,4 +201,4 @@ const TourDetail: React.FC = () => {
   );
 };
 
-export default ThemeDetail;
+export default TourDetail;

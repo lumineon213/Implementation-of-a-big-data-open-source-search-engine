@@ -180,4 +180,4 @@ const getThemeName = (id: number) => {
   }
 };
 
-export default ThemePage;
+export default TourPage;

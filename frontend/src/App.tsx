@@ -7,8 +7,8 @@ import Footer from "components/common/footer";
 import MainPage from "pages/main_Page/main_page";
 import MyPage from "pages/mypage/mypage";
 import FoodList from "pages/foodList/foodList";
-import ThemePage from "pages/tourtheme/TourPage";
-import ThemeDetail from "pages/tourtheme/TourDetail";
+import TourPage from "pages/tourtheme/TourPage";
+import TourDetail from "pages/tourtheme/TourDetail";
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
 import StayList from "pages/stayList/stayList";
@@ -98,8 +98,8 @@ function App() {
                   {/* 지도 페이지 */}
                    <Route path="/map" element={<MapPage />} />
                   {/* 테마 페이지 */}
-                  <Route path="/theme" element={<TourPage />} />
-                  <Route path="/theme/view/:id" element={<TourDetail />} />
+                  <Route path="/tour" element={<TourPage />} />
+                  <Route path="/tour/view/:id" element={<TourDetail />} />
                   {/* 축제 페이지 */}
                   <Route path="/festival" element={<Festival />} />
                   <Route path="/festival/:id" element={<FestivalDetail />} />
