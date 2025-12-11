@@ -15,9 +15,24 @@ public class TourController {
     @Autowired
     private TourService tourService;
 
+    // 1. 검색 (Solr 사용)
     @GetMapping("/search")
     public List<TourDTO> search(@RequestParam(value = "keyword", required = false) String keyword) {
-        System.out.println("요청 받은 검색어: " + keyword);
+        System.out.println("🔍 Solr 검색 요청: " + keyword);
         return tourService.getTourSpotList(keyword);
+    }
+
+    // 2. 상세 정보 조회 (DB 사용)
+    @GetMapping("/theme/{id}")
+    public TourDTO getTourDetail(@PathVariable("id") Long id) {
+        System.out.println("📄 상세 조회 요청 ID: " + id);
+        return tourService.getTourSpotById(id);
+    }
+
+    // 3. 조회수 증가 (DB 사용)
+    @GetMapping("/theme/view/{id}")
+    public void increaseViewCount(@PathVariable("id") Long id) {
+        System.out.println("👀 조회수 증가 요청 ID: " + id);
+        tourService.increaseViewCount(id);
     }
 }
