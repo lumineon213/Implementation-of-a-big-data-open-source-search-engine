@@ -83,6 +83,15 @@ public class SecurityConfig {
                         // (3) 검색 기능 (GET, POST 모두 허용)
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/search").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/stay/search","/api/stay/view/**").permitAll()
+
+                        // (4) 마이페이지 등 회원 전용 기능은 인증(토큰) 필요
+                        .requestMatchers("/api/mypage/**").authenticated() 
+                        
+                        .requestMatchers("/api/theme/**").permitAll()
+
+                        // (5) 그 외 나머지 모든 요청은 허용 (개발 중 편의를 위해)
+                        // 배포 시에는 .authenticated()로 변경하는 것을 권장
                         
                         //  (4) 검색 로그 저장 (인증 없이 허용)
                         .requestMatchers("/api/search-log/**").permitAll()

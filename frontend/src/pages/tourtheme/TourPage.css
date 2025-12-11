@@ -1,62 +1,212 @@
-.info-container { max-width: 1200px; margin: 0 auto; padding: 100px 20px 50px; }
-.page-title { text-align: center; margin-bottom: 40px; font-size: 2rem; color: #333; }
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-.tour-card { border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-.tour-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; }
-.card-image { height: 200px; background: #f0f0f0; }
-.card-image img { width: 100%; height: 100%; object-fit: cover; }
-.card-content { padding: 20px; }
-.card-content h3 { margin: 10px 0; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.card-content p { font-size: 0.9rem; color: #666; }
-.badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; color: white; background-color: #999; }
+/* 전체 레이아웃 */
+.info-container { 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 100px 20px 50px; 
+}
+
+.page-title { 
+  text-align: center; 
+  margin-bottom: 40px; 
+  font-size: 2rem; 
+  color: #333; 
+  font-weight: 700;
+}
+
+/* ★ [수정됨] 검색창 스타일: 컴팩트한 알약 형태 */
+.search-box {
+  display: flex;             /* 내부 요소를 가로로 배치 */
+  justify-content: space-between;
+  align-items: center;
+  
+  width: 100%;
+  max-width: 500px;          /* ★ 너비를 500px로 제한하여 너무 길지 않게 함 */
+  margin: 0 auto 40px;       /* 화면 중앙 정렬 및 하단 여백 */
+  
+  border: 1px solid #ddd;    /* 테두리 */
+  border-radius: 50px;       /* 둥근 모서리 (알약 모양) */
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* 살짝 그림자 */
+  overflow: hidden;          /* 내부 요소(버튼)가 둥근 테두리를 넘지 않게 */
+  transition: all 0.3s ease;
+}
+
+/* 검색창에 포커스가 갔을 때 전체 테두리 강조 */
+.search-box:focus-within,
+.search-box:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 10px rgba(0,123,255,0.15);
+}
+
+.search-box input {
+  flex: 1;                   /* 남은 공간을 모두 차지 */
+  border: none;              /* 인풋 자체의 테두리 제거 */
+  padding: 15px 25px;        /* 안쪽 여백 */
+  font-size: 16px;
+  outline: none;             /* 포커스 라인 제거 */
+  background: transparent;
+}
+
+.search-box button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px 25px;        /* 버튼 크기 (높이는 input과 자동 맞춤) */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 0;          /* 컨테이너가 둥글기 때문에 버튼은 직각 유지 */
+}
+
+.search-box button:hover {
+  background-color: #0056b3;
+}
+
+/* 모바일 반응형: 화면이 작을 땐 꽉 차게 */
+@media (max-width: 768px) {
+  .search-box {
+    max-width: 90%;
+  }
+}
+
+/* 카드 그리드 */
+.card-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+  gap: 25px; 
+}
+
+.tour-card { 
+  border: 1px solid #eee; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  background: white; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+  cursor: pointer; 
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tour-card:hover { 
+  transform: translateY(-5px); 
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+}
+
+.card-image { 
+  height: 200px; 
+  background: #f0f0f0; 
+  overflow: hidden;
+}
+
+.card-image img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  transition: transform 0.3s;
+}
+
+/* 카드 호버 시 이미지 살짝 확대 효과 */
+.tour-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-content { 
+  padding: 20px; 
+}
+
+.card-content h3 { 
+  margin: 10px 0; 
+  font-size: 1.1rem; 
+  font-weight: bold;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  color: #333;
+}
+
+.card-content p { 
+  font-size: 0.9rem; 
+  color: #666; 
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge { 
+  display: inline-block;
+  font-size: 0.75rem; 
+  padding: 4px 10px; 
+  border-radius: 20px; /* 뱃지도 둥글게 */
+  color: white; 
+  background-color: #999; 
+  font-weight: 500;
+}
+
 .badge.theme-1 { background-color: #FF6B6B; }
 .badge.theme-2 { background-color: #4ECDC4; }
 .badge.theme-3 { background-color: #FFD93D; color: #333; }
-.no-image { display: flex; align-items: center; justify-content: center; height: 100%; color: #aaa; }
-.no-result { text-align: center; padding: 50px; color: #666; font-size: 1.2rem; }
 
-/* ▼▼▼ 페이지네이션 버튼 스타일 (이게 있어야 숫자가 보입니다!) ▼▼▼ */
+.no-image { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  height: 100%; 
+  color: #aaa; 
+  background-color: #f8f9fa;
+  font-size: 0.9rem;
+}
+
+.no-result { 
+  text-align: center; 
+  padding: 80px 20px; 
+  color: #888; 
+  font-size: 1.1rem; 
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+/* 페이지네이션 버튼 스타일 */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 50px;
   gap: 8px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
 
 .page-btn {
-  min-width: 32px; /* 버튼의 최소 너비 */
-  height: 32px;    /* 버튼의 높이 */
+  min-width: 36px; 
+  height: 36px;     
   padding: 0 6px;
-  border: 1px solid #ddd;
+  border: 1px solid #e1e1e1;
   background-color: white;
-  color: #333;
+  color: #555;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: all 0.2s;
-  font-weight: bold;
-  
-  /* 숫자 가운데 정렬 */
-  display: flex;
+  font-weight: 600;
+  display: flex;             
   justify-content: center;
   align-items: center;
+  font-size: 14px;
 }
 
 .page-btn:hover:not(:disabled) {
-  background-color: #f0f0f0;
-  border-color: #bbb;
+  background-color: #f1f3f5;
+  border-color: #ccc;
+  color: #333;
 }
 
 .page-btn.active {
-  background-color: #007bff; /* 선택된 페이지 색상 (파랑) */
+  background-color: #007bff; 
   color: white;
   border-color: #007bff;
 }
 
 .page-btn:disabled {
-  background-color: #f9f9f9;
-  color: #ccc;
+  background-color: #fafafa;
+  color: #ddd;
   cursor: not-allowed;
   border-color: #eee;
 }
