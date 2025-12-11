@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
+import {
+  Map,
+  MapMarker,
+  CustomOverlayMap,
+  useKakaoLoader,
+} from "react-kakao-maps-sdk";
+
+import "./ThemeDetail.css";
 
 interface ThemeData {
   id: string;
@@ -44,12 +51,13 @@ const ThemeDetail: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [sideOpen, setSideOpen] = useState(false);
+  const [data, setData] = useState<ThemeData | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const query = new URLSearchParams(location.search);
   const historyPage = query.get("page") || 1;
   const historyKeyword = query.get("keyword") || "";
-
-  const [data, setData] = useState<ThemeData | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const [loadingMap, errorMap] = useKakaoLoader({
     appkey: import.meta.env.VITE_KAKAOMAP_KEY,
@@ -61,10 +69,7 @@ const ThemeDetail: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8484/api/theme/${id}`
-        );
-
+        const res = await axios.get(`http://localhost:8484/api/theme/${id}`);
         const doc = res.data;
 
         const formatted: ThemeData = {
@@ -94,8 +99,8 @@ const ThemeDetail: React.FC = () => {
           description: extract(doc.description),
           contents: extract(doc.contents),
 
-          latitude: doc.latitude ? parseFloat(extract(doc.latitude)) : undefined,
-          longitude: doc.longitude ? parseFloat(extract(doc.longitude)) : undefined,
+          latitude: doc.latitude ? Number(extract(doc.latitude)) : undefined,
+          longitude: doc.longitude ? Number(extract(doc.longitude)) : undefined,
 
           image_url: extract(doc.image_url),
           thumbnail: extract(doc.thumbnail),
@@ -115,226 +120,237 @@ const ThemeDetail: React.FC = () => {
     fetchData();
   }, [id, navigate]);
 
-  if (loading || loadingMap)
-    return <div className="text-center py-10 text-lg">불러오는 중…</div>;
-  if (errorMap) return <div className="text-center py-10">지도 로딩 실패</div>;
-  if (!data) return <div className="text-center py-10">데이터 없음</div>;
+  if (loading || loadingMap) return <div className="loading">불러오는 중…</div>;
+  if (errorMap) return <div className="loading">지도 로딩 실패</div>;
+  if (!data) return <div className="loading">데이터 없음</div>;
 
-  const lat = data.latitude ?? 0;
-  const lng = data.longitude ?? 0;
-  const validLocation = lat !== 0 && lng !== 0;
+  const lat = Number(data.latitude);
+  const lng = Number(data.longitude);
 
-  const typeLabel = (t?: string) => {
-    switch (t) {
-      case "THEME_TOURISM":
-        return "테마 여행지";
-      default:
-        return "여행 테마";
-    }
-  };
-
-  const paragraphs =
-    data.contents
-      ?.replace(/\r\n/g, "\n")
-      .split(/\n{2,}|\n- |\n• /)
-      .filter((p) => p.trim().length > 0) ?? [];
+  const thumbSrc = data.thumbnail || data.image_url || "/noimg.png";
 
   return (
-    <div className="min-h-screen app-content-padding pb-10 px-8 xl:px-0 flex justify-center">
-      <div className="bg-white max-w-6xl w-full shadow-md rounded-lg p-8">
+    <div className="theme-detail">
+
+      {/* HEADER */}
+      <header className="theme-header">
+        <div className="theme-thumb-box">
+          <img src={thumbSrc} alt={data.title} />
+          {data.type && <span className="theme-type-pill">테마 여행지</span>}
+        </div>
+
+        <div className="theme-title-wrap">
+          <h1>{data.main_title || data.title}</h1>
+
+          {data.subtitle && <p className="theme-subtitle">{data.subtitle}</p>}
+
+          {data.address && (
+            <div className="theme-title-location">
+              {data.address
+                .split(/[\n]+| {2,}/)
+                .filter((v) => v.trim())
+                .map((addr, i) => (
+                  <p key={i}>📍 {addr.trim()}</p>
+                ))}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* BODY */}
+      <div className="theme-container">
         <button
-          className="text-gray-600 mb-5 hover:text-black"
-          onClick={() =>
-            navigate(
-              `/course/theme?page=${historyPage}&keyword=${historyKeyword}`
-            )
-          }
+          className="theme-side-toggle-btn"
+          onClick={() => setSideOpen(!sideOpen)}
         >
-          ← 목록으로
+          {sideOpen ? "▲ 정보 닫기" : "▼ 정보 보기"}
         </button>
 
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-extrabold">
-            {data.main_title || data.title}
-          </h1>
-          {data.subtitle && (
-            <p className="text-lg text-gray-700 mt-1">{data.subtitle}</p>
-          )}
-        </div>
+        <div className="theme-content-grid">
 
-        <div className="mb-10">
-          <img
-            src={data.image_url || "/noimg.png"}
-            alt={data.title}
-            className="w-full rounded-md block mx-auto"
-          />
-        </div>
+          {/* SIDEBAR */}
+          <aside className={`theme-side-card ${sideOpen ? "open" : "closed"}`}>
+            <button
+              className="theme-back-btn"
+              onClick={() =>
+                navigate(`/course/theme?page=${historyPage}&keyword=${historyKeyword}`)
+              }
+            >
+              ← 목록으로
+            </button>
 
-        {/* 기본 정보 */}
-        <section className="mt-10">
-          <h2 className="text-xl font-bold mb-4">기본 정보</h2>
+            <section>
+              <h2>기본 정보</h2>
+              <div className="theme-info-list">
 
-          <div className="flex flex-col border-t border-gray-300 pt-4">
-            {[
-              { label: "주소", value: data.address, icon: "📍" },
-              { label: "구군", value: data.gugun, icon: "🏙" },
-              { label: "연락처", value: data.tel, icon: "📞" },
-              { label: "홈페이지", value: data.homepage, icon: "🔗", isLink: true },
-              { label: "카테고리", value: data.category, icon: "📁" },
-              { label: "장소", value: data.place, icon: "📌" },
-            ]
-              .filter((item) => item.value)
-              .map((item, i) => (
-                <div key={i} className="pb-4 border-b border-gray-200">
-                  <div className="flex items-start gap-2 mb-1">
-                    <span className="w-5 h-5 flex items-center justify-center text-[18px]">
-                      {item.icon}
-                    </span>
-                    <p className="font-semibold text-sm text-gray-700">
-                      {item.label}
-                    </p>
+                {data.address && (
+                  <div>
+                    <strong>📍 주소</strong>
+                    <p>{data.address}</p>
                   </div>
+                )}
 
-                  {item.isLink ? (
-                    <a
-                      href={item.value}
-                      target="_blank"
-                      className="text-blue-600 underline break-words text-[15px]"
-                    >
-                      {item.value}
-                    </a>
-                  ) : (
-                    <p className="text-gray-900 leading-relaxed text-[15px]">
-                      {item.value}
-                    </p>
+                {data.gugun && (
+                  <div>
+                    <strong>🏙 구군</strong>
+                    <p>{data.gugun}</p>
+                  </div>
+                )}
+
+                {data.category && (
+                  <div>
+                    <strong>📁 카테고리</strong>
+                    <p>{data.category}</p>
+                  </div>
+                )}
+
+                {data.place && (
+                  <div>
+                    <strong>📌 장소</strong>
+                    <p>{data.place}</p>
+                  </div>
+                )}
+
+                {data.tel && (
+                  <div>
+                    <strong>📞 연락처</strong>
+                    <p>{data.tel}</p>
+                  </div>
+                )}
+
+                {data.homepage && (
+                  <div>
+                    <strong>🔗 홈페이지</strong>
+                    {data.homepage
+                      .split(/\s+/)
+                      .filter((u) => u.includes("."))
+                      .map((url, i) => {
+                        const href = url.startsWith("http")
+                          ? url
+                          : `https://${url}`;
+                        return (
+                          <a key={i} href={href} target="_blank" className="theme-link-item">
+                            {href}
+                          </a>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {(data.usage_day ||
+              data.usage_time ||
+              data.holiday ||
+              data.usage_amount ||
+              data.facilities) && (
+              <section>
+                <h2>운영 및 이용 정보</h2>
+                <div className="theme-info-list">
+                  {data.usage_day && (
+                    <div>
+                      <strong>🗓 운영일</strong>
+                      <p>{data.usage_day}</p>
+                    </div>
+                  )}
+
+                  {data.usage_time && (
+                    <div>
+                      <strong>⏰ 운영 시간</strong>
+                      <p>{data.usage_time}</p>
+                    </div>
+                  )}
+
+                  {data.holiday && (
+                    <div>
+                      <strong>📌 휴무일</strong>
+                      <p>{data.holiday}</p>
+                    </div>
+                  )}
+
+                  {data.usage_amount && (
+                    <div>
+                      <strong>💰 이용 요금</strong>
+                      <p>{data.usage_amount}</p>
+                    </div>
+                  )}
+
+                  {data.facilities && (
+                    <div>
+                      <strong>🏬 편의시설</strong>
+                      <p>{data.facilities}</p>
+                    </div>
                   )}
                 </div>
-              ))}
-          </div>
-        </section>
+              </section>
+            )}
 
-        {/* 운영 정보 */}
-        {(data.usage_day ||
-          data.usage_time ||
-          data.holiday ||
-          data.usage_amount ||
-          data.facilities) && (
-          <section className="mt-10">
-            <h2 className="text-xl font-bold mb-4">운영 및 이용 정보</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 pt-4 border-t border-gray-300">
-              {data.usage_day && (
-                <div className="py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700 mb-1">
-                    🗓 운영일
-                  </p>
-                  <p className="text-gray-900">{data.usage_day}</p>
+            {data.traffic_info && (
+              <section>
+                <h2>교통 정보</h2>
+                <p>{data.traffic_info}</p>
+              </section>
+            )}
+          </aside>
+
+          {/* MAIN */}
+          <main className="theme-main-card">
+
+            <section>
+              <h2>장소 소개</h2>
+
+              {data.description && (
+                <p className="theme-paragraphs">{data.description}</p>
+              )}
+
+              {data.image_url && (
+                <div className="theme-main-image">
+                  <img src={data.image_url} alt={data.title} />
                 </div>
               )}
 
-              {data.usage_time && (
-                <div className="py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700 mb-1">
-                    ⏰ 운영 시간
-                  </p>
-                  <p className="text-gray-900">{data.usage_time}</p>
-                </div>
+              {data.contents && (
+                <div
+                  className="theme-html-content"
+                  dangerouslySetInnerHTML={{
+                    __html: data.contents.replace(
+                      /<p[^>]*>([^<]{1,25})<\/p>/g,
+                      '<p class="short-title">$1</p>'
+                    ),
+                  }}
+                />
               )}
+            </section>
 
-              {data.holiday && (
-                <div className="py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700 mb-1">
-                    📌 휴무일
-                  </p>
-                  <p className="text-gray-900">{data.holiday}</p>
+            <section>
+              <h2>위치 정보</h2>
+
+              {lat && lng ? (
+                <div className="theme-map-box">
+                  <Map center={{ lat, lng }} level={3} style={{ width: "100%", height: "100%" }}>
+                    <MapMarker position={{ lat, lng }} />
+
+                    <CustomOverlayMap position={{ lat: lat + 0.0008, lng }}>
+                      <div className="theme-marker-box">
+                        <strong>{data.title}</strong>
+                        <br />
+                        <a
+                          href={`https://map.kakao.com/link/map/${data.title},${lat},${lng}`}
+                          target="_blank"
+                        >
+                          카카오맵 보기
+                        </a>
+                      </div>
+                    </CustomOverlayMap>
+                  </Map>
                 </div>
+              ) : (
+                <div className="theme-map-fallback">위치 정보 없음</div>
               )}
+            </section>
 
-              {data.usage_amount && (
-                <div className="py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700 mb-1">
-                    💰 이용 요금
-                  </p>
-                  <p className="text-gray-900">{data.usage_amount}</p>
-                </div>
-              )}
-
-              {data.facilities && (
-                <div className="py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700 mb-1">
-                    🏬 편의시설
-                  </p>
-                  <p className="text-gray-900">{data.facilities}</p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* 교통 정보 */}
-        {data.traffic_info && (
-          <section className="mt-10 pt-4 border-t border-gray-300">
-            <h2 className="text-xl font-bold mb-4">교통 정보</h2>
-            <p className="whitespace-pre-line text-gray-700">
-              {data.traffic_info}
-            </p>
-          </section>
-        )}
-
-        {/* 소개 */}
-        <section className="mt-10 pt-4 border-t border-gray-300">
-          <h2 className="text-2xl font-extrabold mb-6 text-gray-800">
-            장소 소개
-          </h2>
-
-          {data.description && (
-            <p className="mb-6 text-xl font-semibold text-gray-700 leading-snug">
-              {data.description}
-            </p>
-          )}
-
-          {paragraphs.length > 0 && (
-            <div className="space-y-6 text-gray-800 text-base leading-relaxed">
-              {paragraphs.map((p, i) => (
-                <p key={i}>{p.trim()}</p>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* 지도 */}
-        <section className="mt-12 pt-4 border-t border-gray-300">
-          <h2 className="text-2xl font-extrabold mb-6 text-gray-800">
-            위치 정보
-          </h2>
-
-          {validLocation ? (
-            <div className="w-full h-[400px] overflow-hidden rounded-md border border-gray-300">
-              <Map
-                center={{ lat, lng }}
-                level={3}
-                style={{ width: "100%", height: "100%" }}
-              >
-                <MapMarker position={{ lat, lng }}>
-                  <div className="text-[12px] p-1">
-                    {data.title}
-                    <br />
-                    <a
-                      href={`https://map.kakao.com/link/map/${data.title},${lat},${lng}`}
-                      target="_blank"
-                      className="text-blue-600 underline"
-                    >
-                      카카오맵 보기
-                    </a>
-                  </div>
-                </MapMarker>
-              </Map>
-            </div>
-          ) : (
-            <div className="h-[400px] flex items-center justify-center bg-gray-100 border border-gray-300">
-              위치 정보 없음
-            </div>
-          )}
-        </section>
+          </main>
+        </div>
       </div>
     </div>
   );

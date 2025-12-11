@@ -7,7 +7,7 @@ interface MarineCourse {
   id: string;
   title: string;
   subtitle?: string;
-  address?: string;
+  address?: string | string[];
   image_url?: string;
 }
 
@@ -15,7 +15,6 @@ const MarineCourseList: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // URL → 상태 초기화
   const query = new URLSearchParams(location.search);
   const defaultPage = Number(query.get("page")) || 1;
   const defaultKeyword = query.get("keyword") || "";
@@ -28,19 +27,19 @@ const MarineCourseList: React.FC = () => {
   const [searchInput, setSearchInput] = useState(defaultKeyword);
 
   const [total, setTotal] = useState(0);
-  const size = 9;
+  const size = 12;
   const pageGroupSize = 10;
 
-  // page 또는 keyword가 바뀌면 URL 동기화
+  /** 🔄 URL 유지 */
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("page", String(page));
     if (keyword) params.set("keyword", keyword);
 
     navigate(`/course/marine?${params.toString()}`, { replace: true });
-  }, [page, keyword, navigate]);
+  }, [page, keyword]);
 
-  // 데이터 불러오기
+  /** 📡 API 호출 */
   useEffect(() => {
     const fetchMarine = async () => {
       setLoading(true);
@@ -62,7 +61,10 @@ const MarineCourseList: React.FC = () => {
   }, [page, keyword]);
 
   const totalPages = Math.max(1, Math.ceil(total / size));
-  const startPage = Math.floor((page - 1) / pageGroupSize) * pageGroupSize + 1;
+
+  /** 🔢 페이징 그룹 */
+  const currentGroup = Math.floor((page - 1) / pageGroupSize);
+  const startPage = currentGroup * pageGroupSize + 1;
   const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
 
   const handleSearch = () => {
@@ -70,99 +72,109 @@ const MarineCourseList: React.FC = () => {
     setKeyword(searchInput);
   };
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-      window.scrollTo(0, 0);
-    }
-  };
-
   if (loading) return <div className="loading">해양 체험 정보를 불러오는 중입니다...</div>;
 
   return (
-    <div className="marine-container">
+    <div className="marine-list-page">
+      <div className="marine-list-container">
 
-      {/* 검색 */}
-      <div className="search-filter-container">
-        <h2 className="search-title">부산 해양 체험 🌊</h2>
-        <p className="search-sub">서핑 · 요트 · 아쿠아리움 등 바다 여행 코스를 만나보세요.</p>
+        {/* 헤더 */}
+        <div className="marine-list-header">
+          <h2 className="marine-list-title">부산 해양 체험 🌊</h2>
+          <p className="marine-list-sub">서핑 · 요트 · 아쿠아리움 등 바다 여행 코스를 만나보세요.</p>
+        </div>
 
-        <div className="search-box-wrapper">
+        {/* 검색 */}
+        <div className="marine-list-search-box">
           <input
             type="text"
             placeholder="시설명 또는 지역명 검색"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="main-search-input"
+            className="marine-list-search-input"
           />
-          <button className="main-search-btn" onClick={handleSearch}>검색</button>
+          <button className="marine-list-search-btn" onClick={handleSearch}>
+            검색
+          </button>
         </div>
-      </div>
 
-      {/* 총 개수 */}
-      <div className="list-info-bar">
-        총 <b>{total.toLocaleString()}</b>개의 해양 체험
-      </div>
+        {/* 총 개수 */}
+        <div className="marine-list-info-bar">
+          총 <span className="marine-list-total">{total.toLocaleString()}</span>개의 해양 체험
+        </div>
 
-      {/* 리스트 */}
-      <div className="marine-list-wrapper">
-        {courses.length === 0 ? (
-          <div className="empty">검색 결과가 없습니다.</div>
-        ) : (
-          courses.map((course) => (
-            <div
-              className="marine-card"
-              key={course.id}
-              style={{ cursor: "pointer" }}
-              onClick={() =>
-                navigate(
-                  `/course/marine/${course.id}?page=${page}&keyword=${keyword}`
-                )
-              }
-            >
-              <div className="marine-image-box">
-                <img
-                  src={course.image_url || "https://via.placeholder.com/200?text=Marine"}
-                  alt={course.title}
-                />
-              </div>
-              <div className="marine-info-box">
-                <h3 className="marine-title">{course.title}</h3>
-                {course.subtitle && <p className="marine-sub">{course.subtitle}</p>}
-                {course.address && <p className="marine-address">{course.address}</p>}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+        {/* 리스트 */}
+        <div className="marine-list-grid">
+          {courses.length === 0 ? (
+            <div className="marine-list-empty">검색 결과가 없습니다.</div>
+          ) : (
+            courses.map((course) => {
+              const addressText = Array.isArray(course.address)
+                ? course.address.join(" ")
+                : course.address || "";
 
-      {/* 페이지네이션 */}
-      <div className="pagination-wrapper">
-        <div className="pagination-numbers">
+              return (
+                <div
+                  key={course.id}
+                  className="marine-list-card"
+                  onClick={() =>
+                    navigate(`/course/marine/${course.id}?page=${page}&keyword=${keyword}`)
+                  }
+                >
+                  <div className="marine-list-image-box">
+                    <img
+                      src={course.image_url || "https://via.placeholder.com/200?text=Marine"}
+                      alt={course.title}
+                    />
+                  </div>
+
+                  <div className="marine-list-info">
+                    <h3 className="marine-list-card-title">{course.title}</h3>
+
+                    {course.subtitle && (
+                      <p className="marine-list-card-sub">{course.subtitle}</p>
+                    )}
+
+                    {course.address && (
+                      <p className="marine-address">{addressText}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* 페이지네이션 */}
+        <div className="marine-list-pagination">
+          {/* 이전 그룹 */}
           <button
-            className="page-btn prev-next"
-            onClick={() => handlePageChange(page - 1)}
+            className="marine-list-page-btn"
+            onClick={() => setPage(startPage - 1)}
             disabled={page === 1}
           >
             &lt;
           </button>
 
-          {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(
-            (num) => (
+          {/* 페이징 번호 */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const num = startPage + i;
+            return (
               <button
                 key={num}
-                className={`page-btn ${page === num ? "active" : ""}`}
-                onClick={() => handlePageChange(num)}
+                className={`marine-list-page-btn ${num === page ? "active" : ""}`}
+                onClick={() => setPage(num)}
               >
                 {num}
               </button>
-            )
-          )}
+            );
+          })}
 
+          {/* 다음 그룹 */}
           <button
-            className="page-btn prev-next"
-            onClick={() => handlePageChange(page + 1)}
+            className="marine-list-page-btn"
+            onClick={() => setPage(endPage + 1)}
             disabled={page === totalPages}
           >
             &gt;

@@ -1,0 +1,334 @@
+/* -----------------------------------------
+   전체 영역 – HEADER + BODY
+------------------------------------------ */
+.theme-detail {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding-bottom: 120px;
+}
+
+/* HEADER */
+.theme-header {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 120px 100px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+@media (min-width: 1024px) {
+  .theme-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* -----------------------------------------
+   모바일 전용 토글 버튼
+------------------------------------------ */
+.theme-side-toggle-btn {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .theme-side-toggle-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    margin: 20px auto 10px;
+    background: #ede9fe;
+    border: 1px solid #ddd6fe;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #6d28d9;
+  }
+
+  /* 모바일에서만 사이드바 높이 제한 */
+  .theme-side-card {
+    position: static !important;
+    top: auto !important;
+
+    max-height: 60vh;
+    overflow-y: auto;
+
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+  }
+
+  .theme-side-card.closed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Thumbnail */
+.theme-thumb-box {
+  width: 100%;
+  max-width: 500px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.15);
+  aspect-ratio: 4/3;
+}
+
+.theme-thumb-box img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.theme-type-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: white;
+  background: #6d28d9;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+}
+
+/* Title */
+.theme-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.theme-title-wrap h1 {
+  font-size: 36px;
+  font-weight: 900;
+  color: #5b21b6;
+}
+
+.theme-title-location {
+  margin-top: 10px;
+  font-size: 17px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.theme-title-meta {
+  margin-top: 4px;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.theme-subtitle {
+  margin-top: 10px;
+  font-size: 20px;
+  color: #8b5cf6;
+}
+
+/* -----------------------------------------
+   BODY 컨테이너
+------------------------------------------ */
+.theme-container {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 100px;
+}
+
+/* -----------------------------------------
+   GRID (🔥 layout 붕괴 방지 핵심 포함)
+------------------------------------------ */
+.theme-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 40px;
+
+  /* 모바일에서는 기본 stretch라 크게 상관 없음 */
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .theme-content-grid {
+    grid-template-columns: 350px 1fr;
+    /* 🔥 사이드바가 길어도 두 카드가 같은 높이로 맞춰지게 */
+    align-items: stretch;
+  }
+  .theme-side-card {
+    max-height: calc(100vh - 150px); /* 화면 기준 최대 높이 제한 */
+    overflow-y: auto;                /* 내부 스크롤 */
+  }
+}
+
+/* -----------------------------------------
+   SIDE (데스크탑에서는 height 제한 없음)
+------------------------------------------ */
+.theme-side-card {
+  padding: 28px;
+  background: rgba(237,233,254,0.55);
+  border: 1px solid #ddd6fe;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.15);
+  position: sticky;
+  top: 120px;
+  line-height: 1.55;
+}
+
+.theme-side-card p {
+  white-space: pre-line;
+}
+
+.theme-back-btn {
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  color: #5b21b6;
+}
+
+.theme-back-btn:hover {
+  background: #ddd6fe;
+}
+
+.theme-side-card h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #5b21b6;
+  padding-left: 8px;
+  border-left: 4px solid #8b5cf6;
+  margin-bottom: 14px;
+  margin-top: 30px;
+}
+
+.theme-info-list > div {
+  margin-bottom: 18px;
+}
+
+.theme-info-list strong {
+  font-weight: 700;
+  color: #5b21b6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-link-item {
+  display: block;
+  padding: 6px 10px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+  font-size: 14px;
+  word-break: break-all;
+  transition: background 0.2s;
+}
+
+.theme-link-item:hover {
+  background: #ddd6fe;
+}
+
+/* -----------------------------------------
+   MAIN CONTENT
+------------------------------------------ */
+.theme-main-card {
+  padding: 40px;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.15);
+}
+
+.theme-main-card section + section {
+  margin-top: 60px;
+}
+
+.theme-main-card h2 {
+  border-left: 4px solid #8b5cf6;
+  padding-left: 10px;
+  margin-bottom: 20px;
+  color: #5b21b6;
+}
+
+.theme-main-image img {
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.theme-paragraphs p {
+  margin-bottom: 16px;
+  line-height: 1.75;
+}
+
+/* 지도 */
+.theme-map-box {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd6fe;
+}
+
+.theme-map-fallback {
+  padding: 20px;
+  text-align: center;
+  background: #f3f4ff;
+  border-radius: 12px;
+}
+
+/* 지도 마커 정보 박스 */
+.theme-marker-box {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  white-space: normal;
+  width: max-content;
+  max-width: 240px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* HTML CONTENT */
+.theme-html-content {
+  margin-top: 30px;
+  color: #111827;
+  font-size: 16px;
+}
+
+.theme-html-content p {
+  margin: 0 0 26px 0;
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+.theme-html-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 24px 0;
+  border-radius: 12px;
+}
+
+.theme-html-content .short-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #5b21b6;
+  margin-top: 36px;
+  padding-top: 6px;
+  margin-bottom: 16px;
+  padding-left: 6px;
+  border-left: 4px solid #8b5cf6;
+  line-height: 1.4;
+}

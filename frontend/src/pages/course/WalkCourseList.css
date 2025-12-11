@@ -1,79 +1,114 @@
-/* 전체 영역 */
-.walk-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 50px 20px 100px;
-  animation: fadeIn 0.4s ease;
+.walk-list-page {
+  width: 100%;
 }
 
-/* 제목 영역 */
-.search-title {
+/* 메인 컨테이너 */
+.walk-list-container {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 90px 20px 50px; /* 상단 여백 안정화 */
+}
+
+/* 헤더 */
+.walk-list-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.walk-list-title {
   font-size: 32px;
   font-weight: 800;
-  color: #1a3c7a;
-  text-align: center;
-  margin-bottom: 8px;
+  color: #0d7a5f;  /* 도보 메인 초록 */
 }
 
-.search-sub {
-  text-align: center;
-  color: #666;
-  margin-bottom: 30px;
-  font-size: 15px;
+.walk-list-sub {
+  color: #3a544c;
+  margin-top: 6px;
+  margin-bottom: 25px;
+  font-size: 14px;
 }
 
-/* 검색창 */
-.search-box-wrapper {
+/* 검색 */
+.walk-list-search-box {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-bottom: 30px;
 }
 
-.main-search-input {
+.walk-list-search-input {
   width: 350px;
   padding: 12px 16px;
-  border: 1px solid #d2d5da;
-  border-radius: 8px;
+  border: 2px solid #b8e9d5;
+  border-radius: 10px;
   font-size: 15px;
 }
 
-.main-search-btn {
+.walk-list-search-input:focus {
+  outline: none;
+  border-color: #0d7a5f;
+  box-shadow: 0 0 0 3px #d9f5e9;
+}
+
+.walk-list-search-btn {
   padding: 12px 24px;
+  border-radius: 10px;
+  background: #0d7a5f;
   border: none;
-  border-radius: 8px;
-  background: #3578e5;
   color: #fff;
   cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.walk-list-search-btn:hover {
+  background: #0b604b;
+}
+
+/* 총 개수 */
+.walk-list-info-bar {
+  margin: 10px 0 20px;
+  text-align: right;
+  color: #0d7a5f;
   font-size: 15px;
-  font-weight: 600;
-  transition: 0.15s;
 }
 
-.main-search-btn:hover {
-  background: #245ec7;
+.walk-list-total {
+  color: #0d7a5f;
+  font-weight: 800;
 }
 
-/* 리스트 정보 */
-.list-info-bar {
-  margin: 20px 0 20px;
-  font-size: 15px;
-  color: #333;
-}
-
-.total-count b {
-  color: #3578e5;
-}
-
-/* 카드 영역 */
-.walk-list-wrapper {
+/* 리스트 GRID (4 × 3 구조) */
+.walk-list-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 25px;
-  margin-top: 20px;
 }
 
-.walk-card {
+/* 태블릿 */
+@media (max-width: 1024px) {
+  .walk-list-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .walk-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 작은 모바일 */
+@media (max-width: 480px) {
+  .walk-list-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* 카드 */
+.walk-list-card {
   background: #fff;
   border-radius: 14px;
   overflow: hidden;
@@ -82,95 +117,102 @@
   cursor: pointer;
 }
 
-.walk-card:hover {
+.walk-list-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* 이미지 비율 통일 */
-.walk-image-box img {
+/* 카드 이미지 개선 — 썸네일 잘림 해결 */
+.walk-list-image-box {
   width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
+  aspect-ratio: 16 / 9; /* 🔥 비율 고정으로 이미지 품질 보존 */
+  overflow: hidden;
+  background: #f2f2f2;
 }
 
-/* 카드 텍스트 */
-.walk-info-box {
+.walk-list-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 텍스트 정보 */
+.walk-list-info {
   padding: 16px 14px 20px;
 }
 
-.walk-title {
+.walk-list-card-title {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 6px;
-  color: #1a3c7a;
+  color: #0d7a5f;
+  margin-bottom: 5px;
 }
 
-.walk-address {
-  color: #666;
+.walk-list-card-sub {
+  color: #4f6f62;
+  margin-bottom: 4px;
+}
+
+.walk-list-cat {
   font-size: 14px;
-  line-height: 1.4;
+  color: #0d7a5f;
 }
 
-/* 페이징 전체 영역 */
-.pagination-wrapper {
+.walk-list-address {
+  color: #4f6f62;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* 빈 상태 */
+.walk-list-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+  color: #6b7280;
+}
+
+/* 페이징 */
+.walk-list-pagination {
   margin-top: 40px;
   text-align: center;
 }
 
-/* 페이징 버튼 */
-.page-btn {
+.walk-list-page-btn {
   margin: 0 4px;
   padding: 8px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid #b8e9d5;
+  border-radius: 8px;
+  background: #ffffff;
   cursor: pointer;
   transition: 0.2s;
+  color: #0d7a5f;
+  font-weight: 600;
 }
 
-.page-btn:hover {
-  background: #f0f4ff;
-  border-color: #3578e5;
+.walk-list-page-btn:hover {
+  background: #d9f5e9;
+  border-color: #0d7a5f;
 }
 
-.page-btn.active {
-  background: #3578e5;
-  border-color: #3578e5;
+.walk-list-page-btn.active {
+  background: #0d7a5f;
+  border-color: #0d7a5f;
   color: #fff;
+}
+
+.walk-list-prev-next {
   font-weight: 700;
 }
 
-/* 좌우 화살표 */
-.prev-next {
-  font-weight: 700;
-}
-
-/* 페이지 점프 */
-.pagination-jump {
-  margin-top: 15px;
-}
-
-.jump-input {
-  width: 60px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.jump-btn {
-  padding: 6px 12px;
-  margin-left: 5px;
-  border-radius: 6px;
-  background: #3578e5;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-/* 부드러운 페이드인 */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* 애니메이션 */
+@keyframes walk-list-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
