@@ -22,6 +22,7 @@ interface KakaoMapProps {
   setThemes: (themes: any[]) => void;
   setMarines: (marines: any[]) => void;
   setUrbans: (urbans: any[]) => void;
+  setStays: (stays: any[]) => void;
   setCurrentLocation: (location: { lat: number; lng: number } | null) => void;
   onRestaurantClick: (restaurant: any) => void;
   externalLocation?: { lat: number; lng: number; title: string } | null;
@@ -36,6 +37,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setThemes,
   setMarines,
   setUrbans,
+  setStays,
   setCurrentLocation,
   onRestaurantClick,
   externalLocation
@@ -52,6 +54,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const themeMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const marineMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const urbanMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const stayMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const currentLocation = useRef<{lat: number, lng: number} | null>(null);
   const currentInfowindow = useRef<any>(null);
 
@@ -115,6 +118,68 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       alert("음식점 데이터를 불러오는데 실패했습니다.");
     }
   }, [setRestaurants]);
+
+  /* 숙소 데이터 가져오기 */
+  const fetchStays = useCallback(async (lat: number, lng: number, radiusKm: number, keyword?: string) => {
+    try {
+      const baseUrl = new URL("http://localhost:8484/api/stay/search");
+      baseUrl.searchParams.set("page", "1");
+      baseUrl.searchParams.set("size", "100");
+      if (keyword) {
+        baseUrl.searchParams.set("keyword", keyword);
+      }
+
+      const response = await fetch(baseUrl.toString());
+      const data = await response.json();
+      const resultsArray = data?.list || [];
+
+      if (resultsArray.length === 0) {
+        setStays([]);
+        displayStayMarkers([]);
+        return;
+      }
+
+      const nearbyStays = resultsArray
+        .filter((stay: any) => {
+          const latValue = Array.isArray(stay.latitude) ? stay.latitude[0] : stay.latitude;
+          const lngValue = Array.isArray(stay.longitude) ? stay.longitude[0] : stay.longitude;
+          if (latValue === undefined || lngValue === undefined) return false;
+
+          const stayLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const stayLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          if (isNaN(stayLat) || isNaN(stayLng)) return false;
+
+          const distance = getDistance(lat, lng, stayLat, stayLng);
+          return distance <= radiusKm;
+        })
+        .map((stay: any) => {
+          const latValue = Array.isArray(stay.latitude) ? stay.latitude[0] : stay.latitude;
+          const lngValue = Array.isArray(stay.longitude) ? stay.longitude[0] : stay.longitude;
+          const stayLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const stayLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+
+          return {
+            id: stay.content_id || stay.id,
+            title: stay.title,
+            address: stay.address,
+            latitude: stayLat,
+            longitude: stayLng,
+            image: stay.firstimage,
+            description: stay.overview,
+            type: stay.type,
+            distance: getDistance(lat, lng, stayLat, stayLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+
+      setStays(nearbyStays);
+      displayStayMarkers(nearbyStays);
+    } catch (error) {
+      console.error("숙소 데이터 불러오기 실패:", error);
+      alert("숙소 데이터를 불러오는데 실패했습니다.");
+    }
+  }, [setStays]);
 
   /* Solr에서 도보여행 데이터 가져오기 */
   const fetchWalks = useCallback(async (lat: number, lng: number, radiusKm: number) => {
@@ -453,6 +518,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (activeCategories.includes('도시여행')) {
       fetchUrbans(lat, lng, newDistanceKm);
     }
+    if (activeCategories.includes('숙소')) {
+      fetchStays(lat, lng, newDistanceKm, searchKeyword);
+    }
   };
 
   /* 음식점 카테고리 선택 시 처리 (초기 로딩 및 카테고리 전환 시) */
@@ -509,7 +577,18 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       clearUrbanMarkers();
       setUrbans([]);
     }
-  }, [activeCategories, setUrbans, searchRadiusKm]); 
+  }, [activeCategories, fetchUrbans, setUrbans, searchRadiusKm]); 
+
+  /* 숙소 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('숙소')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchStays(lat, lng, searchRadiusKm, searchKeyword);
+    } else {
+      clearStayMarkers();
+      setStays([]);
+    }
+  }, [activeCategories, fetchStays, setStays, searchRadiusKm, searchKeyword]);
   
   /* 초기 지도 로드 */
   useEffect(() => {
@@ -678,6 +757,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     urbanMarkers.current = [];
   };
 
+  /* 숙소 마커 제거 */
+  const clearStayMarkers = () => {
+    stayMarkers.current.forEach(item => item.marker.setMap(null));
+    stayMarkers.current = [];
+  };
+
   /* 음식점 마커 표시 (주황색 핀 마커 사용) */
   const displayRestaurantMarkers = (restaurants: any[]) => {
     clearRestaurantMarkers();
@@ -830,6 +915,37 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     });
   };
 
+  /* 숙소 마커 표시 (보라색 핀 마커 사용) */
+  const displayStayMarkers = (stays: any[]) => {
+    clearStayMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    stays.forEach(stay => {
+      const position = new window.kakao.maps.LatLng(stay.latitude, stay.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.STAY);
+      
+      content.onclick = () => onRestaurantClick(stay);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+      
+      const title = Array.isArray(stay.title) ? stay.title[0] : stay.title;
+      const subtitle = Array.isArray(stay.address) ? stay.address[0] : stay.address;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, stay.distance)
+      });
+
+      stayMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
   /* 현재 위치 버튼 */
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) {
@@ -957,6 +1073,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
             if (activeCategories.includes('도시여행')) {
               fetchUrbans(lat, lng, searchRadiusKm);
             }
+
+            // 숙소 카테고리가 활성화되어 있으면 숙소 데이터 가져오기
+            if (activeCategories.includes('숙소')) {
+              fetchStays(lat, lng, searchRadiusKm, searchKeyword);
+            }
           }
         );
       },
@@ -976,9 +1097,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       alert("먼저 현재 위치를 설정해주세요.");
       return;
     }
+    const { lat, lng } = currentLocation.current;
     if (activeCategories.includes('음식점')) {
-      const { lat, lng } = currentLocation.current;
       fetchRestaurants(lat, lng, searchRadiusKm, searchKeyword);
+    }
+    if (activeCategories.includes('숙소')) {
+      fetchStays(lat, lng, searchRadiusKm, searchKeyword);
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./inquiry.css";
+import { api } from "../../api/axios";
 
 interface FormData {
   name: string;
@@ -49,16 +50,23 @@ const Inquiry: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // 실제로는 백엔드 API 호출
-    // await fetch('/api/inquiry', { method: 'POST', body: JSON.stringify(formData) });
-    
-    // 시뮬레이션
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      
-      // 3초 후 폼 초기화
-      setTimeout(() => {
+    try {
+      const combinedContent = [
+        `분류: ${formData.category}`,
+        `이름: ${formData.name}`,
+        `이메일: ${formData.email}`,
+        formData.phone ? `연락처: ${formData.phone}` : null,
+        "",
+        formData.message
+      ].filter(Boolean).join("\n");
+
+      const res = await api.post("/inquiries", {
+        title: formData.subject,
+        content: combinedContent
+      });
+
+      if (res.data?.success) {
+        setSubmitSuccess(true);
         setFormData({
           name: "",
           email: "",
@@ -67,9 +75,16 @@ const Inquiry: React.FC = () => {
           subject: "",
           message: ""
         });
-        setSubmitSuccess(false);
-      }, 3000);
-    }, 1500);
+      } else {
+        alert(res.data?.msg || "문의 접수에 실패했습니다.");
+      }
+    } catch (error: any) {
+      console.error("문의 전송 실패:", error);
+      alert(error?.response?.data?.msg || "문의 전송에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSubmitSuccess(false), 2500);
+    }
   };
 
   return (

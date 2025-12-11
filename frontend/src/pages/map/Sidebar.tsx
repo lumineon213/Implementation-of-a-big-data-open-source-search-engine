@@ -26,6 +26,8 @@ interface SidebarProps {
   onMarineClick: (marine: any) => void;
   urbans: any[];
   onUrbanClick: (urban: any) => void;
+  stays: any[];
+  onStayClick: (stay: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -42,7 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   marines,
   onMarineClick,
   urbans,
-  onUrbanClick
+  onUrbanClick,
+  stays,
+  onStayClick
 }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -114,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleHistoryPlaceClick = (placeId: string) => {
-    const allPlaces = [...restaurants, ...walks, ...themes, ...marines, ...urbans];
+    const allPlaces = [...restaurants, ...walks, ...themes, ...marines, ...urbans, ...stays];
     const foundPlace = allPlaces.find(p => p.id === placeId);
     if (foundPlace) {
       if (restaurants.some(r => r.id === placeId)) onRestaurantClick(foundPlace);
@@ -122,6 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       else if (themes.some(t => t.id === placeId)) onThemeClick(foundPlace);
       else if (marines.some(m => m.id === placeId)) onMarineClick(foundPlace);
       else if (urbans.some(u => u.id === placeId)) onUrbanClick(foundPlace);
+      else if (stays.some(s => s.id === placeId)) onStayClick(foundPlace);
     }
   };
 
@@ -435,6 +440,105 @@ const Sidebar: React.FC<SidebarProps> = ({
                             borderRadius: '12px'
                           }}>#{item.trim()}</span>
                         ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*숙소 목록 표시 */}
+          {activeCategories.includes('숙소') && stays.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🏨 주변 숙소 ({stays.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {stays.map((stay) => (
+                  <div 
+                    key={stay.id} 
+                    className="restaurant-card"
+                    onClick={() => handlePlaceClick(stay, onStayClick)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={stay.image || stay.image_url || stay.firstimage || "https://via.placeholder.com/80?text=Stay"} 
+                        alt={stay.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Stay";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(stay.title) ? stay.title[0] : stay.title}
+                      </div>
+                      {stay.distance && (
+                        <div className="restaurant-distance" style={{ 
+                          fontSize: '12px',
+                          color: '#666',
+                          marginBottom: '6px'
+                        }}>
+                          📍 {stay.distance.toFixed(2)}km
+                        </div>
+                      )}
+                      <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {stay.address && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#F3E5F5',
+                            color: '#7B1FA2',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(stay.address) ? stay.address[0] : stay.address}</span>
+                        )}
                       </div>
                     </div>
                   </div>

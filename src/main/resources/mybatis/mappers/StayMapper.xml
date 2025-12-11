@@ -23,5 +23,16 @@
         SET VIEW_COUNT = NVL(VIEW_COUNT, 0) + 1
         WHERE CONTENT_ID = #{id}
     </update>
-    
+    <select id="selectAllStayDataForSync" resultType="com.boot.stay.dto.stayDTO"> 
+        SELECT 
+            content_id, 
+            title, 
+            address, 
+            firstimage, 
+            overview, 
+            latitude, 
+            longitude,
+            view_count
+        FROM STAY_DETAIL
+    </select>
 </mapper>

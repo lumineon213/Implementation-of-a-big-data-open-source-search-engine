@@ -43,4 +43,17 @@ public class MarineController {
             return ResponseEntity.internalServerError().body("검색 실패: " + e.getMessage());
         }
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMarineDetail(@PathVariable("id") String id) {
+        try {
+            Map<String, Object> result = marineService.getById(id);
+            if (result == null) return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("조회 실패: " + e.getMessage());
+        }
+    }
+
+
 }

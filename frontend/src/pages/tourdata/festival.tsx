@@ -1,301 +1,371 @@
 import React, { useState, useEffect } from 'react';
-import { FiSearch } from 'react-icons/fi';   // 돋보기 아이콘
+import { FiSearch } from 'react-icons/fi';   // 돋보기 아이콘
 import './festival.css';
 
-// 백엔드에서 오는 실제 데이터 타입
+// 백엔드에서 오는 실제 데이터 타입 (status와 period를 백엔드에서 받는 것으로 변경)
 interface FestivalFromAPI {
-  ucSeq: string;
-  mainTitle: string;
-  gugunNm: string;
-  place: string;
-  title?: string;
-  addr1?: string;
-  mainImgNormal?: string;
-  itemCntnts?: string;
-  usageDay?: string;        // 예: "20250401~20250410"
-  usagePeriod?: string;
+  ucSeq: string;
+  mainTitle: string;
+  gugunNm: string;
+  place: string;
+  title?: string;
+  addr1?: string;
+  mainImgNormal?: string;
+  itemCntnts?: string;
+  
+  // 백엔드에서 계산된 필드
+  status: 'upcoming' | 'ongoing' | 'ended';
+  period: string; // YYYY.MM.DD ~ YYYY.MM.DD 형태로 기대
 }
 
 interface Festival {
-  id: string;
-  title: string;
-  period: string;
-  location: string;
-  description: string;
-  image: string;          // 이모지 or 실제 이미지 URL
-  category: string;
-  status: 'upcoming' | 'ongoing' | 'ended';
+  id: string;
+  title: string;
+  period: string;
+  location: string;
+  description: string;
+  image: string;          
+  category: string;
+  status: 'upcoming' | 'ongoing' | 'ended';
 }
 
 const Festival: React.FC = () => {
-  const [festivals, setFestivals] = useState<Festival[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [festivals, setFestivals] = useState<Festival[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const size = 12;
+  // ⭐ 검색 트리거 상태 추가: 버튼 클릭 시만 변경
+  const [searchTrigger, setSearchTrigger] = useState<number>(0); 
 
-  // 날짜 기반으로 상태 계산
-  const getStatusFromPeriod = (period: string): 'upcoming' | 'ongoing' | 'ended' => {
-    if (!period) return 'upcoming';
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const size = 12; // 페이지당 항목 수
 
-    const today = new Date();
-    const todayStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+  // 카테고리 매핑
+const getCategory = (title: string | null | undefined, gugun: string | null | undefined): string => {
+  const str = title ? String(title).trim() : '';
+  const lower = str.toLowerCase();
 
-    const match = period.match(/(\d{8})[~～-]\s*(\d{8})/);
-    if (!match) return 'upcoming';
-
-    const start = match[1];
-    const end = match[2];
-
-    if (todayStr < start) return 'upcoming';
-    if (todayStr >= start && todayStr <= end) return 'ongoing';
-    return 'ended';
-  };
-
-  // 카테고리 매핑
-const getCategory = (title: string | null | undefined): string => {
-  // title이 없거나 null이면 빈 문자열로 처리
-  const str = title ? String(title).trim() : '';
-  const lower = str.toLowerCase();
-
-  if (lower.includes('영화')) return '문화';
-  if (lower.includes('불꽃') || lower.includes('축제')) return '문화';
-  if (lower.includes('먹거리') || lower.includes('자갈치') || lower.includes('맛집')) return '먹거리';
-  if (lower.includes('모래') || lower.includes('체험')) return '체험';
-  if (lower.includes('벚꽃') || lower.includes('단풍')) return '자연';
-  return '문화';
+  if (lower.includes('영화')) return '문화';
+  if (lower.includes('불꽃') || lower.includes('축제')) return '문화';
+  if (lower.includes('먹거리') || lower.includes('자갈치') || lower.includes('맛집')) return '먹거리';
+  if (lower.includes('모래') || lower.includes('체험')) return '체험';
+  if (lower.includes('벚꽃') || lower.includes('단풍')) return '자연';
+  return '문화';
 };
 
-  // API 호출
-  const fetchFestivals = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // API 호출
+  const fetchFestivals = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-      const params = new URLSearchParams({
-        keyword: searchTerm,
-        page: page.toString(),
-        size: size.toString(),
-      });
+      const params = new URLSearchParams({
+        keyword: searchTerm,
+        page: page.toString(),
+        size: size.toString(),
+      });
 
-      const res = await fetch(`/api/festival/search?${params}`);
-      if (!res.ok) throw new Error('데이터를 불러오지 못했습니다.');
+      const res = await fetch(`/api/festival/search?${params}`);
+      if (!res.ok) throw new Error('데이터를 불러오지 못했습니다.');
 
-      const data = await res.json();
-      const list: FestivalFromAPI[] = data.list || [];
-      setTotal(data.total || 0);
+      const data = await res.json();
+      const list: FestivalFromAPI[] = data.list || []; 
+      setTotal(data.total || 0);
 
-      const converted: Festival[] = list.map((item) => {
-        const period = item.usageDay || item.usagePeriod || '20250101~20251231';
+      const converted: Festival[] = list.map((item) => {
+        
         const title = item.mainTitle || item.title || '제목 없음';
-        const location = item.place || item.addr1 || item.gugunNm || '부산';
+        const location = item.place || item.addr1 || item.gugunNm || '부산';
 
-        return {
-          id: item.ucSeq,
-          title,
-          period: period.replace(/(\d{4})(\d{2})(\d{2})/g, '$1.$2.$3').replace('~', ' - '),
-          location,
-          description: item.itemCntnts?.slice(0, 100) + '...' || '부산의 멋진 축제입니다.',
-          image: item.mainImgNormal ? item.mainImgNormal : '축제', // 실제 이미지 있으면 사용
-          category: getCategory(title, item.gugunNm || ''),
-          status: getStatusFromPeriod(period),
-        };
-      });
+        return {
+          id: item.ucSeq,
+          title,
+          // 백엔드에서 받은 period를 그대로 사용
+          period: item.period, 
+          location,
+          description: item.itemCntnts?.slice(0, 100) + '...' || '부산의 멋진 축제입니다.',
+          image: item.mainImgNormal ? item.mainImgNormal : '축제', 
+          category: getCategory(title, item.gugunNm || ''),
+          // 백엔드에서 받은 status를 그대로 사용
+          status: item.status, 
+        };
+      });
 
-      setFestivals(converted);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '오류 발생');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+      setFestivals(converted);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '오류 발생');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ⭐ 검색 실행 핸들러 함수 ⭐
+  const handleSearchClick = () => {
+      setPage(1); // 검색 시 페이지 1로 초기화
+      setSearchTrigger(prev => prev + 1); // 트리거 상태를 변경하여 useEffect 호출
   };
 
-  useEffect(() => {
-    setPage(1);
-    fetchFestivals();
-  }, [searchTerm, selectedCategory, selectedStatus]);
 
-  useEffect(() => {
-    fetchFestivals();
-  }, [page]);
+  // 검색어/필터 변경 시 페이지 1로 초기화 후 데이터 호출
+  useEffect(() => {
+    setPage(1);
+    fetchFestivals();
+  }, [searchTrigger, selectedCategory, selectedStatus]); // ⭐ searchTrigger에 의존
 
-  const filteredFestivals = festivals.filter(festival => {
-    const matchesCategory = selectedCategory === 'all' || festival.category === selectedCategory;
-    const matchesStatus = selectedStatus === 'all' || festival.status === selectedStatus;
-    return matchesCategory && matchesStatus;
-  });
+  // 페이지 번호 변경 시 데이터 호출
+  useEffect(() => {
+    fetchFestivals();
+  }, [page]);
 
-  const categories = ['all', '문화', '먹거리', '체험', '자연'];
-  const statuses = [
-    { value: 'all', label: '전체' },
-    { value: 'upcoming', label: '예정' },
-    { value: 'ongoing', label: '진행중' },
-    { value: 'ended', label: '종료' }
-  ];
+  // 프론트엔드에서 필터링 (현재 페이지에서 불러온 데이터 내에서)
+  const filteredFestivals = festivals.filter(festival => {
+    const matchesCategory = selectedCategory === 'all' || festival.category === selectedCategory;
+    const matchesStatus = selectedStatus === 'all' || festival.status === selectedStatus;
+    return matchesCategory && matchesStatus;
+  });
 
-  const getStatusBadge = (status: string) => {
-    const badges = {
-      upcoming: { text: '예정', class: 'status-upcoming' },
-      ongoing: { text: '진행중', class: 'status-ongoing' },
-      ended: { text: '종료', class: 'status-ended' }
-    };
-    return badges[status as keyof typeof badges];
-  };
+  const categories = ['all', '문화', '먹거리', '체험', '자연'];
+  const statuses = [
+    { value: 'all', label: '전체' },
+    { value: 'upcoming', label: '예정' },
+    { value: 'ongoing', label: '진행중' },
+    { value: 'ended', label: '종료' }
+  ];
+
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      upcoming: { text: '예정', class: 'status-upcoming' },
+      ongoing: { text: '진행중', class: 'status-ongoing' },
+      ended: { text: '종료', class: 'status-ended' }
+    };
+    return badges[status as keyof typeof badges];
+  };
 
 const handleDetailClick = (id: string) => {
-  // alert 대신 페이지 이동!
-  window.location.href = `/festival/${id}`;
-  // 또는 navigate 쓰고 싶으면 useNavigate 훅 쓰기
+  // 상세 페이지 이동
+  window.location.href = `/festival/${id}`;
 };
 
-  return (
-    <div className="festival-container">
-      {/* 헤더 */}
-      <div className="festival-header">
-        <h1>부산 축제</h1>
-        <p>부산에서 열리는 다양한 축제를 만나보세요</p>
-      </div>
 
-      {/* 검색 & 필터 */}
-      <div className="festival-filters">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="축제명 또는 장소로 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <FiSearch className="search-icon" />   {/* 돋보기 아이콘으로 변경 완료! */}
+// ------------------------------------------
+// 페이지네이션 로직
+// ------------------------------------------
+const totalPages = Math.ceil(total / size);
+const maxPageButtons = 5; // 화면에 표시할 최대 페이지 버튼 개수
+
+const handlePageClick = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        setPage(pageNumber);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// 현재 페이지를 중심으로 표시할 페이지 범위 계산
+const currentPageChunk = Math.ceil(page / maxPageButtons);
+const startPage = (currentPageChunk - 1) * maxPageButtons + 1;
+const endPage = Math.min(totalPages, currentPageChunk * maxPageButtons);
+
+
+  return (
+    <div className="festival-container">
+      {/* 헤더 */}
+      <div className="festival-header">
+        <h1>부산 축제</h1>
+        <p>부산에서 열리는 다양한 축제를 만나보세요</p>
+      </div>
+
+      {/* 검색 & 필터 영역 */}
+      <div className="search-filter-wrapper"> 
+        {/* ⭐ 검색창 + 버튼 디자인 적용 ⭐ */}
+        <div className="search-box-combined">
+          <input
+            type="text"
+            placeholder="축제명 또는 장소로 검색"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => { 
+              if (e.key === 'Enter') {
+                handleSearchClick();
+              }
+            }}
+          />
+          <button className="search-btn-orange" onClick={handleSearchClick}>
+                검색
+            </button>
+        </div>
+
+        {/* 필터 그룹 섹션 */}
+        <div className="filter-group">
+          <div className="filter-section">
+            <label>카테고리</label>
+            <div className="filter-buttons">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  className={`filter-btn ${selectedCategory === category ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category === 'all' ? '전체' : category}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-section">
+            <label>진행상태</label>
+            <div className="filter-buttons">
+              {statuses.map(status => (
+                <button
+                  key={status.value}
+                  className={`filter-btn ${selectedStatus === status.value ? 'active' : ''}`}
+                  onClick={() => setSelectedStatus(status.value)}
+                >
+                  {status.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 결과 카운트 */}
+      <div className="result-count">
+        <span>총 {total}개의 축제 ({filteredFestivals.length}개 표시중)</span>
+      </div>
+
+      {/* 로딩 상태 */}
+      {loading ? (
+        <div className="no-results">
+          <p>축제를 불러오는 중...</p>
+        </div>
+      ) : error ? (
+        <div className="no-results">
+          <p style={{ color: 'red' }}>{error}</p>
+          <p style={{ color: '#888' }}>백엔드 서버의 콘솔 로그를 확인하세요.</p> 
+        </div>
+      ) : (
+        <div className="festival-grid">
+          {filteredFestivals.length > 0 ? (
+            filteredFestivals.map(festival => (
+              <div key={festival.id} className="festival-card" onClick={() => handleDetailClick(festival.id)}>
+                <div className="festival-image">
+                  {festival.image.startsWith('http') ? (
+                    <img src={festival.image} alt={festival.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span className="festival-emoji">{festival.image}</span>
+                  )}
+                  <span className={`status-badge ${getStatusBadge(festival.status).class}`}>
+                    {getStatusBadge(festival.status).text}
+                  </span>
+                </div>
+
+                <div className="festival-content">
+                  <div className="festival-category">{festival.category}</div>
+                  <h3 className="festival-title">{festival.title}</h3>
+
+                  <div className="festival-info">
+                    <div className="info-item">
+                      <span className="info-icon">날짜</span>
+                      <span>{festival.period}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-icon">장소</span>
+                      <span>{festival.location}</span>
+                    </div>
+                  </div>
+
+                  <p className="festival-description">{festival.description}</p>
+
+                  <button
+                    className="detail-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDetailClick(festival.id);
+                    }}
+                  >
+                    자세히 보기
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-results">
+              <span className="no-results-icon">???</span>
+              <p>검색 조건에 맞는 축제가 없습니다.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ⭐ 페이지네이션 ⭐ */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+            
+            {/* 첫 페이지 / 이전 묶음 버튼 (<<, <) */}
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(1)} 
+                disabled={page === 1}
+            >
+                &lt;&lt;
+            </button>
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(page - 1)} 
+                disabled={page === 1}
+            >
+                &lt;
+            </button>
+
+            {/* 숫자 버튼 */}
+            {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                const pageNumber = startPage + i;
+                return (
+                    <button
+                        key={pageNumber}
+                        className={`page-btn ${page === pageNumber ? 'active' : ''}`}
+                        onClick={() => handlePageClick(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                );
+            })}
+            
+            {/* 다음 묶음 / 끝 페이지 버튼 (>, >>) */}
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(page + 1)} 
+                disabled={page === totalPages}
+            >
+                &gt;
+            </button>
+            <button 
+                className="page-btn" 
+                onClick={() => handlePageClick(totalPages)} 
+                disabled={page === totalPages}
+            >
+                &gt;&gt;
+            </button>
         </div>
+      )}
 
-        <div className="filter-group">
-          <div className="filter-section">
-            <label>카테고리</label>
-            <div className="filter-buttons">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  className={`filter-btn ${selectedCategory === category ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category === 'all' ? '전체' : category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="filter-section">
-            <label>진행상태</label>
-            <div className="filter-buttons">
-              {statuses.map(status => (
-                <button
-                  key={status.value}
-                  className={`filter-btn ${selectedStatus === status.value ? 'active' : ''}`}
-                  onClick={() => setSelectedStatus(status.value)}
-                >
-                  {status.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 결과 카운트 */}
-      <div className="result-count">
-        <span>총 {total}개의 축제 ({filteredFestivals.length}개 표시중)</span>
-      </div>
-
-      {/* 로딩 상태 */}
-      {loading ? (
-        <div className="no-results">
-          <p>축제를 불러오는 중...</p>
-        </div>
-      ) : error ? (
-        <div className="no-results">
-          <p style={{ color: 'red' }}>{error}</p>
-        </div>
-      ) : (
-        <div className="festival-grid">
-          {filteredFestivals.length > 0 ? (
-            filteredFestivals.map(festival => (
-              <div key={festival.id} className="festival-card" onClick={() => handleDetailClick(festival.id)}>
-                <div className="festival-image">
-                  {festival.image.startsWith('http') ? (
-                    <img src={festival.image} alt={festival.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <span className="festival-emoji">{festival.image}</span>
-                  )}
-                  <span className={`status-badge ${getStatusBadge(festival.status).class}`}>
-                    {getStatusBadge(festival.status).text}
-                  </span>
-                </div>
-
-                <div className="festival-content">
-                  <div className="festival-category">{festival.category}</div>
-                  <h3 className="festival-title">{festival.title}</h3>
-
-                  <div className="festival-info">
-                    <div className="info-item">
-                      <span className="info-icon">날짜</span>
-                      <span>{festival.period}</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-icon">장소</span>
-                      <span>{festival.location}</span>
-                    </div>
-                  </div>
-
-                  <p className="festival-description">{festival.description}</p>
-
-                  <button
-                    className="detail-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDetailClick(festival.id);
-                    }}
-                  >
-                    자세히 보기
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="no-results">
-              <span className="no-results-icon">???</span>
-              <p>검색 조건에 맞는 축제가 없습니다.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 페이징 */}
-      {total > size && (
-        <div style={{ textAlign: 'center', margin: '40px 0' }}>
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>이전</button>
-          <span style={{ margin: '0 20px' }}>페이지 {page}</span>
-          <button disabled={page * size >= total} onClick={() => setPage(p => p + 1)}>다음</button>
-        </div>
-      )}
-
-      {/* 안내사항 */}
-      <div className="festival-notice">
-        <h3>안내사항</h3>
-        <ul>
-          <li>축제 일정은 주최 측 사정에 따라 변경될 수 있습니다.</li>
-          <li>날씨나 기타 사유로 축제가 취소될 수 있으니 방문 전 확인해주세요.</li>
-          <li>자세한 정보는 각 축제 공식 홈페이지를 참고해주세요.</li>
-        </ul>
-      </div>
-    </div>
-  );
+      {/* 안내사항 */}
+      <div className="festival-notice">
+        <h3>안내사항</h3>
+        <ul>
+          <li>축제 일정은 주최 측 사정에 따라 변경될 수 있습니다.</li>
+          <li>날씨나 기타 사유로 축제가 취소될 수 있으니 방문 전 확인해주세요.</li>
+          <li>자세한 정보는 각 축제 공식 홈페이지를 참고해주세요.</li>
+        </ul>
+      </div>
+    </div>
+  );
 };
 
 export default Festival;

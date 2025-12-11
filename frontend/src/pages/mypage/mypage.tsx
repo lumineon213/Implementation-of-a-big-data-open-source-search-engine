@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./MyPage.css";
+import { api } from "../../api/axios";
 
 interface MyPageDTO {
   accountId: string;
@@ -10,22 +10,21 @@ interface MyPageDTO {
   phoneNumber: string;
   accountRole: string;
   regDate: string;
-
-  travelThemes?: string[];
-  transportType?: string;
-  budgetLevel?: string;
-  travelStyle?: string;
-
-  preferredArea?: string;
-  foodPreference?: string;
-  nightLifeLevel?: string;
-  walkingLevel?: string;
-  ageGroup?: string;
-
   profileImage?: string;
 }
 
+interface EventHistoryDTO {
+  historyId: number;
+  eventType: string;
+  eventName: string;
+  actionType?: string;
+  description?: string;
+  count: number;
+  createdAt: string;
+}
+
 type PageMode = "view" | "edit";
+type HistoryTab = "all" | "stamp" | "gift" | "badge";
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,66 +35,190 @@ const MyPage: React.FC = () => {
   const [mode, setMode] = useState<PageMode>("view");
 
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const token = localStorage.getItem("token");
-
-  const [currentDate] = useState(new Date());
-
-  const generateCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const first = new Date(year, month, 1);
-    const last = new Date(year, month + 1, 0);
-    const prev = new Date(year, month, 0);
-
-    const firstDay = first.getDay();
-    const lastDate = last.getDate();
-    const prevLast = prev.getDate();
-
-    const grid: any[] = [];
-
-    for (let i = firstDay - 1; i >= 0; i--) grid.push({ date: prevLast - i, isCurrentMonth: false });
-    for (let i = 1; i <= lastDate; i++) grid.push({ date: i, isCurrentMonth: true });
-
-    while (grid.length < 42) grid.push({ date: grid.length, isCurrentMonth: false });
-    return grid;
-  };
-
-  const isToday = (date: number) => {
-    const now = new Date();
-    return (
-      now.getDate() === date &&
-      now.getMonth() === currentDate.getMonth() &&
-      now.getFullYear() === currentDate.getFullYear()
-    );
-  };
+  
+  // 이벤트 히스토리 관련 상태
+  const [eventHistory, setEventHistory] = useState<EventHistoryDTO[]>([]);
+  const [historyTab, setHistoryTab] = useState<HistoryTab>("all");
+  const [historyPage, setHistoryPage] = useState(1);
+  const itemsPerPage = 5; // 페이지당 항목 수
+  
+  // 리뷰 관련 상태
+  interface Review {
+    reviewId: number;
+    placeId: string;
+    placeName?: string;
+    placeType?: string;
+    content: string;
+    images?: string[];
+    createdAt: string;
+    accountName?: string;
+  }
+  const [myReviews, setMyReviews] = useState<Review[]>([]);
+  const [reviewPage, setReviewPage] = useState(1);
 
   // ============== 데이터 로딩 ==============
   const loadMyPage = async () => {
-    try {
-      const res = await axios.get("/api/mypage", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    // 토큰 여부 확인 (JWT가 없으면 로그인 페이지로 이동)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log("토큰이 없어서 로그인 페이지로 이동합니다.");
+      navigate('/login');
+      setLoading(false);
+      return;
+    }
 
+    try {
+      const res = await api.get("/mypage");
+
+      const userInfo = res.data.userInfo || res.data;
       const data: MyPageDTO = {
-        ...res.data,
-        travelThemes: res.data.travelThemes || [],
-        transportType: res.data.transportType || "walk",
-        budgetLevel: res.data.budgetLevel || "mid",
-        travelStyle: res.data.travelStyle || "slow",
-        preferredArea: res.data.preferredArea || "해운대",
-        foodPreference: res.data.foodPreference || "seafood",
-        nightLifeLevel: res.data.nightLifeLevel || "low",
-        walkingLevel: res.data.walkingLevel || "mid",
-        ageGroup: res.data.ageGroup || "20",
-        profileImage: res.data.profileImage || null,
+        accountId: userInfo.accountId,
+        accountName: userInfo.accountName,
+        email: userInfo.email,
+        phoneNumber: userInfo.phoneNumber,
+        accountRole: userInfo.accountRole,
+        regDate: userInfo.regDate,
+        profileImage: userInfo.profileImage || null,
       };
 
       setUser(data);
       setEditData(data);
+      
+      // 이벤트 정보는 더 이상 사용하지 않지만 API 호환성을 위해 유지
+      // 필요시 주석 처리 가능
+      
+      // 이벤트 히스토리 로드
+      loadEventHistory();
+      
+      // 리뷰 내역 로드
+      if (data.accountId) {
+        loadMyReviews(data.accountId);
+      }
     } catch (e) {
+      console.error("마이페이지 로딩 실패:", e);
       alert("마이페이지 정보를 불러올 수 없습니다.");
+      navigate('/login');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 이벤트 히스토리 로드
+  const loadEventHistory = async () => {
+    try {
+      const res = await api.get("/events/history");
+      if (res.data.success && res.data.history) {
+        setEventHistory(res.data.history);
+      }
+    } catch (e) {
+      console.error("이벤트 히스토리 로딩 실패:", e);
+    }
+  };
+  
+  // 내 리뷰 로드
+  const loadMyReviews = async (accountId: string) => {
+    try {
+      const res = await api.get(`/reviews/user/${accountId}`);
+      if (res.data.success && res.data.reviews) {
+        console.log("리뷰 데이터:", res.data.reviews); // 디버깅용
+        setMyReviews(res.data.reviews);
+      }
+    } catch (e) {
+      console.error("리뷰 내역 로딩 실패:", e);
+    }
+  };
+  
+  // 리뷰 클릭 시 맵 디테일 열기
+  const handleReviewClick = async (review: Review) => {
+    try {
+      let placeData: any = null;
+      
+      // placeType에 따라 다른 API 호출
+      if (review.placeType === 'FOOD') {
+        const res = await api.get(`/food/${review.placeId}`);
+        placeData = res.data;
+      } else if (review.placeType === 'STAY') {
+        const res = await api.get(`/stay/view/${review.placeId}`);
+        placeData = res.data;
+      } else if (review.placeType === 'URBAN' || review.placeType === 'WALK') {
+        const res = await api.get(`/urban/${review.placeId}`);
+        placeData = res.data;
+      } else if (review.placeType === 'TOUR') {
+        // TOUR 타입은 별도 처리 필요
+        console.log('TOUR 타입은 아직 지원하지 않습니다.');
+        return;
+      }
+      
+      if (placeData) {
+        // 맵 페이지로 이동하면서 장소 정보 전달
+        navigate('/map', {
+          state: {
+            placeId: review.placeId,
+            placeType: review.placeType,
+            placeData: placeData
+          }
+        });
+      }
+    } catch (error) {
+      console.error('장소 정보 로딩 실패:', error);
+      alert('장소 정보를 불러올 수 없습니다.');
+    }
+  };
+  
+  // 탭별 필터링된 히스토리
+  const filteredHistory = eventHistory.filter((item) => {
+    if (historyTab === "all") return true;
+    return item.eventType === historyTab.toUpperCase();
+  });
+  
+  // 이벤트 내역 페이징 계산
+  const totalHistoryPages = Math.ceil(filteredHistory.length / itemsPerPage);
+  const startHistoryIndex = (historyPage - 1) * itemsPerPage;
+  const endHistoryIndex = startHistoryIndex + itemsPerPage;
+  const paginatedHistory = filteredHistory.slice(startHistoryIndex, endHistoryIndex);
+  
+  // 리뷰 페이징 계산
+  const totalReviewPages = Math.ceil(myReviews.length / itemsPerPage);
+  const startReviewIndex = (reviewPage - 1) * itemsPerPage;
+  const endReviewIndex = startReviewIndex + itemsPerPage;
+  const paginatedReviews = myReviews.slice(startReviewIndex, endReviewIndex);
+  
+  // 탭 변경 시 페이지 초기화
+  const handleHistoryTabChange = (tab: HistoryTab) => {
+    setHistoryTab(tab);
+    setHistoryPage(1);
+  };
+  
+  // 이벤트 타입별 아이콘
+  const getEventIcon = (eventType: string) => {
+    switch (eventType) {
+      case "STAMP": return "✉️";
+      case "GIFT": return "🎁";
+      case "BADGE": return "🏅";
+      default: return "📌";
+    }
+  };
+  
+  // 날짜 포맷팅
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days === 0) {
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      if (hours === 0) {
+        const minutes = Math.floor(diff / (1000 * 60));
+        return minutes <= 1 ? "방금 전" : `${minutes}분 전`;
+      }
+      return `${hours}시간 전`;
+    } else if (days === 1) {
+      return "어제";
+    } else if (days < 7) {
+      return `${days}일 전`;
+    } else {
+      return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
     }
   };
 
@@ -108,39 +231,118 @@ const MyPage: React.FC = () => {
     setEditData((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  const toggleTheme = (theme: string) => {
-    setEditData((prev) => {
-      if (!prev) return prev;
-      const list = prev.travelThemes || [];
-
-      return list.includes(theme)
-        ? { ...prev, travelThemes: list.filter((t) => t !== theme) }
-        : { ...prev, travelThemes: [...list, theme] };
-    });
-  };
-
-  // ============== 프로필 이미지 업로드 ==============
-  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ============== 프로필 이미지 업로드 (FormData 방식) ==============
+  const handleProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 미리보기 설정 (즉시 UI 업데이트)
     const reader = new FileReader();
     reader.onload = () => {
       setProfilePreview(reader.result as string);
-      setEditData((prev) => (prev ? { ...prev, profileImage: reader.result as string } : prev));
     };
     reader.readAsDataURL(file);
+
+    // 서버에 즉시 업로드
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append('accountName', editData?.accountName || user?.accountName || '');
+      formData.append('email', editData?.email || user?.email || '');
+      formData.append('phoneNumber', editData?.phoneNumber || user?.phoneNumber || '');
+      formData.append('profileImage', file);
+
+      console.log('📤 FormData에 포함된 파일:', file.name, 'Size:', file.size);
+
+      const response = await api.put('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('📸 이미지 업로드 응답:', response.data);
+
+      if (response.data.success) {
+        // 업로드된 이미지 URL로 상태 업데이트
+        const uploadedImageUrl = response.data.data?.profileImage;
+        console.log('✅ 업로드된 이미지 URL:', uploadedImageUrl);
+        console.log('✅ response.data.data 전체:', response.data.data);
+        
+        if (uploadedImageUrl) {
+          // ✅ 캐시 무효화를 위해 쿼리 파라미터 추가
+          const urlWithTimestamp = `${uploadedImageUrl}?t=${Date.now()}`;
+          
+          console.log('🔄 상태 업데이트 시작');
+          setUser((prev) => {
+            const updated = prev ? { ...prev, profileImage: urlWithTimestamp } : prev;
+            console.log('✅ setUser 실행:', updated);
+            return updated;
+          });
+          
+          setEditData((prev) => {
+            const updated = prev ? { ...prev, profileImage: urlWithTimestamp } : prev;
+            console.log('✅ setEditData 실행:', updated);
+            return updated;
+          });
+          
+          setProfilePreview(null);
+          
+          // ✅ 파일 input 초기화 (매우 중요!)
+          const fileInput = document.getElementById("profileUpload") as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          
+          console.log('✅ 모든 상태 업데이트 완료, 최종 URL:', urlWithTimestamp);
+          alert('프로필 이미지가 성공적으로 변경되었습니다.');
+        } else {
+          console.warn('⚠️ 응답에 profileImage URL이 없습니다');
+          console.warn('⚠️ response.data.data:', response.data.data);
+          alert('이미지 URL을 받지 못했습니다. 서버 응답을 확인하세요.');
+        }
+      } else {
+        console.error('❌ success가 false:', response.data.message);
+        alert('이미지 업로드에 실패했습니다: ' + response.data.message);
+        setProfilePreview(null);
+      }
+    } catch (error: any) {
+      console.error('❌ 이미지 업로드 실패:', error);
+      console.error('응답 상태:', error.response?.status);
+      console.error('응답 데이터:', error.response?.data);
+      alert('이미지 업로드 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
+      setProfilePreview(null);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // ============== 저장 ==============
+  // ============== 저장 (FormData 방식) ==============
   const handleSave = async () => {
     if (!editData) return;
     setIsSaving(true);
 
     try {
-      await axios.put("/api/mypage", editData, { headers: { Authorization: `Bearer ${token}` } });
-      setUser(editData);
-      setMode("view");
+      const formData = new FormData();
+      formData.append('accountName', editData.accountName);
+      formData.append('email', editData.email);
+      formData.append('phoneNumber', editData.phoneNumber);
+
+      const response = await api.put('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        setUser(editData);
+        setMode("view");
+        alert("정보가 수정되었습니다.");
+      } else {
+        alert("정보 수정에 실패했습니다: " + response.data.message);
+      }
+    } catch (error: any) {
+      console.error("저장 실패:", error);
+      alert("정보 수정에 실패했습니다.");
     } finally {
       setIsSaving(false);
     }
@@ -159,7 +361,7 @@ const MyPage: React.FC = () => {
     navigate("/login");
   };
 
-  if (loading) return <>로딩중...</>;
+  if (loading) return <div style={{ padding: "50px", textAlign: "center" }}>로딩중...</div>;
 
   if (!user)
     return (
@@ -169,21 +371,32 @@ const MyPage: React.FC = () => {
       </div>
     );
 
-  const cal = generateCalendar();
-
   return (
     <div className="mypage-layout">
       <h2 className="mypage-title">마이페이지</h2>
 
       <div className="mypage-main">
-        {/* LEFT */}
+        {/* LEFT - 프로필 */}
         <div className="mypage-left">
           <div className="profile-card">
-     
             {/* 프로필 이미지 */}
             <img
+              key={profilePreview || user.profileImage}
               src={profilePreview || user.profileImage || "/default-profile.png"}
               className="profile-image"
+              alt="프로필"
+              crossOrigin="anonymous"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                console.error('❌ 이미지 로딩 실패:', img.src);
+                // 만약 상대 경로였다면 절대 경로로 변경 시도
+                if (!img.src.includes('://')) {
+                  img.src = `http://localhost:8484${img.src}`;
+                }
+              }}
+              onLoad={(e) => {
+                console.log('✅ 이미지 로딩 성공:', (e.target as HTMLImageElement).src);
+              }}
             />
 
             {/* 숨겨진 파일 입력 */}
@@ -201,221 +414,383 @@ const MyPage: React.FC = () => {
               className="profile-edit-btn"
               onClick={() => document.getElementById("profileUpload")?.click()}
             >
-              프로필 이미지 설정
+              프로필 이미지 변경
             </button>
           </div>
 
-          <div className="calendar-box">
-            <p className="calendar-title">
-              📅 {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-            </p>
-
-            <div className="calendar-grid">
-              {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
-                <div key={d} className="calendar-weekday">
-                  {d}
-                </div>
-              ))}
-
-              {cal.map((c, i) => (
-                <div
-                  key={i}
-                  className={`calendar-date 
-                    ${c.isCurrentMonth ? "" : "other-month"}
-                    ${isToday(c.date) ? "today" : ""}`}
-                >
-                  {c.date}
-                </div>
-              ))}
-            </div>
+          {/* 회원 정보 카드 */}
+          <div className="benefit-card">
+            <h3>회원 정보</h3>
+            <ul>
+              <li><strong>아이디:</strong> {user.accountId}</li>
+              <li><strong>이름:</strong> {user.accountName}</li>
+              <li><strong>이메일:</strong> {user.email}</li>
+              <li><strong>전화번호:</strong> {user.phoneNumber || "미등록"}</li>
+              <li><strong>가입일:</strong> {user.regDate ? new Date(user.regDate).toLocaleDateString('ko-KR') : "-"}</li>
+            </ul>
+            
+            {mode === "view" && (
+              <button 
+                className="edit-profile-btn" 
+                onClick={() => setMode("edit")}
+                style={{ marginTop: "15px" }}
+              >
+                정보 수정
+              </button>
+            )}
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT - 이벤트 및 활동 */}
         <div className="mypage-right">
-          <div className="benefit-card">
-            <h3>나의 여행 취향</h3>
-            <ul>
-              <li>선호 테마: {user.travelThemes?.join(", ") || "미설정"}</li>
-              <li>선호 지역: {user.preferredArea}</li>
-              <li>음식 취향: {user.foodPreference}</li>
-              <li>이동 방식: {user.transportType}</li>
-              <li>예산: {user.budgetLevel}</li>
-              <li>여행 스타일: {user.travelStyle}</li>
-              <li>도보 가능도: {user.walkingLevel}</li>
-              <li>밤문화 선호도: {user.nightLifeLevel}</li>
-              <li>연령대: {user.ageGroup}</li>
-            </ul>
-          </div>
 
-          <div className="activity-card">
-            <div className="activity-title-row">
-              <h3>부산 여행 활동</h3>
+          {/* 수정 모드 */}
+          {mode === "edit" && (
+            <div className="profile-edit-box">
+              <h4>회원 정보 수정</h4>
+              <label>이름</label>
+              <input
+                type="text"
+                value={editData?.accountName || ""}
+                onChange={(e) => handleChange("accountName", e.target.value)}
+              />
 
-              {mode === "view" && (
-                <button className="edit-profile-btn" onClick={() => setMode("edit")}>
-                  수정
+              <label>이메일</label>
+              <input
+                type="email"
+                value={editData?.email || ""}
+                onChange={(e) => handleChange("email", e.target.value)}
+              />
+
+              <label>전화번호</label>
+              <input
+                type="tel"
+                value={editData?.phoneNumber || ""}
+                onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              />
+
+              <div className="edit-btn-row">
+                <button onClick={handleCancel}>취소</button>
+                <button disabled={isSaving} onClick={handleSave}>
+                  {isSaving ? "저장중..." : "저장하기"}
                 </button>
-              )}
-            </div>
-
-            {/* VIEW MODE */}
-            {mode === "view" ? (
-              <>
-                <div className="activity-grid">
-                  <div className="activity-item">📍 추천 명소</div>
-                  <div className="activity-item">🍜 맛집 기록</div>
-                  <div className="activity-item">🗺 나만의 동선</div>
-                  <div className="activity-item">🚶 뚜벅이 코스</div>
-                  <div className="activity-item">🎆 밤문화 코스</div>
-                  <div className="activity-item">📸 사진 명소</div>
-                </div>
-
-                <button onClick={handleLogout} className="logout-button">
-                  로그아웃
-                </button>
-              </>
-            ) : (
-              // EDIT MODE
-              <div className="profile-edit-box">
-                <h4>회원 정보 + 여행 취향 수정</h4>
-
-                {/* 회원 정보 */}
-                <label>이름</label>
-                <input
-                  type="text"
-                  value={editData?.accountName || ""}
-                  onChange={(e) => handleChange("accountName", e.target.value)}
-                />
-
-                <label>이메일</label>
-                <input
-                  type="email"
-                  value={editData?.email || ""}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                />
-
-                <label>전화번호</label>
-                <input
-                  type="tel"
-                  value={editData?.phoneNumber || ""}
-                  onChange={(e) => handleChange("phoneNumber", e.target.value)}
-                />
-
-                {/* 여행 테마 */}
-                <label>여행 테마</label>
-                <div className="theme-options">
-                  {["힐링", "맛집", "뚜벅이", "밤문화", "사진명소", "자연", "문화"].map(
-                    (theme) => (
-                      <button
-                        key={theme}
-                        className={
-                          editData?.travelThemes?.includes(theme)
-                            ? "theme-btn selected"
-                            : "theme-btn"
-                        }
-                        onClick={() => toggleTheme(theme)}
-                        type="button"
-                      >
-                        {theme}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <label>선호 지역</label>
-                <select
-                  value={editData?.preferredArea}
-                  onChange={(e) => handleChange("preferredArea", e.target.value)}
-                >
-                  <option value="해운대">해운대</option>
-                  <option value="광안리">광안리</option>
-                  <option value="남포동">남포동</option>
-                  <option value="서면">서면</option>
-                </select>
-
-                <label>음식 취향</label>
-                <select
-                  value={editData?.foodPreference}
-                  onChange={(e) => handleChange("foodPreference", e.target.value)}
-                >
-                  <option value="seafood">해산물</option>
-                  <option value="meat">고기</option>
-                  <option value="dessert">디저트</option>
-                  <option value="local">부산 전통 음식</option>
-                </select>
-
-                <label>이동 방식</label>
-                <select
-                  value={editData?.transportType}
-                  onChange={(e) => handleChange("transportType", e.target.value)}
-                >
-                  <option value="walk">도보</option>
-                  <option value="public">대중교통</option>
-                  <option value="car">자차</option>
-                </select>
-
-                <label>예산</label>
-                <select
-                  value={editData?.budgetLevel}
-                  onChange={(e) => handleChange("budgetLevel", e.target.value)}
-                >
-                  <option value="low">저가</option>
-                  <option value="mid">중간</option>
-                  <option value="high">고급</option>
-                </select>
-
-                <label>여행 스타일</label>
-                <select
-                  value={editData?.travelStyle}
-                  onChange={(e) => handleChange("travelStyle", e.target.value)}
-                >
-                  <option value="slow">여유롭게</option>
-                  <option value="fast">빠르게</option>
-                </select>
-
-                <label>도보 가능도</label>
-                <select
-                  value={editData?.walkingLevel}
-                  onChange={(e) => handleChange("walkingLevel", e.target.value)}
-                >
-                  <option value="low">짧게만</option>
-                  <option value="mid">적당히</option>
-                  <option value="high">많이 걷기</option>
-                </select>
-
-                <label>밤문화 선호도</label>
-                <select
-                  value={editData?.nightLifeLevel}
-                  onChange={(e) => handleChange("nightLifeLevel", e.target.value)}
-                >
-                  <option value="none">없음</option>
-                  <option value="low">조금</option>
-                  <option value="mid">보통</option>
-                  <option value="high">많음</option>
-                </select>
-
-                <label>연령대</label>
-                <select
-                  value={editData?.ageGroup}
-                  onChange={(e) => handleChange("ageGroup", e.target.value)}
-                >
-                  <option value="10">10대</option>
-                  <option value="20">20대</option>
-                  <option value="30">30대</option>
-                  <option value="40">40대</option>
-                  <option value="50">50대 이상</option>
-                </select>
-
-                <div className="edit-btn-row">
-                  <button onClick={handleCancel}>취소</button>
-                  <button disabled={isSaving} onClick={handleSave}>
-                    {isSaving ? "저장중..." : "저장하기"}
-                  </button>
-                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* 이벤트 내역 패널 */}
+          {mode === "view" && (
+            <div className="benefit-card" style={{ marginBottom: "20px" }}>
+              <h3>📋 이벤트 내역</h3>
+                  
+                  {/* 탭 메뉴 */}
+                  <div style={{ display: "flex", gap: "8px", marginTop: "15px", marginBottom: "20px", borderBottom: "2px solid #eee", paddingBottom: "10px" }}>
+                    <button
+                      onClick={() => handleHistoryTabChange("all")}
+                      style={{
+                        padding: "8px 16px",
+                        border: "none",
+                        background: historyTab === "all" ? "#2196f3" : "#f5f5f5",
+                        color: historyTab === "all" ? "#fff" : "#666",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "500"
+                      }}
+                    >
+                      전체
+                    </button>
+                    <button
+                      onClick={() => handleHistoryTabChange("stamp")}
+                      style={{
+                        padding: "8px 16px",
+                        border: "none",
+                        background: historyTab === "stamp" ? "#ffc107" : "#f5f5f5",
+                        color: historyTab === "stamp" ? "#fff" : "#666",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "500"
+                      }}
+                    >
+                      ✉️ 스템프
+                    </button>
+                    <button
+                      onClick={() => handleHistoryTabChange("gift")}
+                      style={{
+                        padding: "8px 16px",
+                        border: "none",
+                        background: historyTab === "gift" ? "#dc3545" : "#f5f5f5",
+                        color: historyTab === "gift" ? "#fff" : "#666",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "500"
+                      }}
+                    >
+                      🎁 쿠폰
+                    </button>
+                    <button
+                      onClick={() => handleHistoryTabChange("badge")}
+                      style={{
+                        padding: "8px 16px",
+                        border: "none",
+                        background: historyTab === "badge" ? "#17a2b8" : "#f5f5f5",
+                        color: historyTab === "badge" ? "#fff" : "#666",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "500"
+                      }}
+                    >
+                      🏅 배지
+                    </button>
+                  </div>
+                  
+                  {/* 내역 리스트 */}
+                  <div style={{ minHeight: "200px" }}>
+                    {filteredHistory.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "40px 20px", color: "#999" }}>
+                        <div style={{ fontSize: "48px", marginBottom: "10px" }}>📭</div>
+                        <p>이벤트 내역이 없습니다</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                          {paginatedHistory.map((item) => (
+                          <div
+                            key={item.historyId}
+                            style={{
+                              padding: "15px",
+                              background: "#f9f9f9",
+                              borderRadius: "8px",
+                              border: "1px solid #eee",
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "12px"
+                            }}
+                          >
+                            <div style={{ fontSize: "24px", flexShrink: 0 }}>
+                              {getEventIcon(item.eventType)}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: "bold", marginBottom: "4px", fontSize: "15px" }}>
+                                {item.eventName}
+                              </div>
+                              {item.description && (
+                                <div style={{ fontSize: "13px", color: "#666", marginBottom: "6px" }}>
+                                  {item.description}
+                                </div>
+                              )}
+                              <div style={{ fontSize: "12px", color: "#999", display: "flex", alignItems: "center", gap: "8px" }}>
+                                <span>{formatDate(item.createdAt)}</span>
+                                {item.count > 1 && (
+                                  <span style={{ background: "#e3f2fd", padding: "2px 8px", borderRadius: "10px" }}>
+                                    +{item.count}개
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          ))}
+                        </div>
+                        
+                        {/* 페이징 버튼 */}
+                        {totalHistoryPages > 1 && (
+                          <div style={{ 
+                            display: "flex", 
+                            justifyContent: "center", 
+                            alignItems: "center", 
+                            gap: "10px", 
+                            marginTop: "20px",
+                            paddingTop: "15px",
+                            borderTop: "1px solid #eee"
+                          }}>
+                            <button
+                              onClick={() => setHistoryPage(prev => Math.max(1, prev - 1))}
+                              disabled={historyPage === 1}
+                              style={{
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: historyPage === 1 ? "#f5f5f5" : "#fff",
+                                color: historyPage === 1 ? "#999" : "#333",
+                                borderRadius: "4px",
+                                cursor: historyPage === 1 ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              }}
+                            >
+                              이전
+                            </button>
+                            <span style={{ fontSize: "13px", color: "#666" }}>
+                              {historyPage} / {totalHistoryPages}
+                            </span>
+                            <button
+                              onClick={() => setHistoryPage(prev => Math.min(totalHistoryPages, prev + 1))}
+                              disabled={historyPage === totalHistoryPages}
+                              style={{
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: historyPage === totalHistoryPages ? "#f5f5f5" : "#fff",
+                                color: historyPage === totalHistoryPages ? "#999" : "#333",
+                                borderRadius: "4px",
+                                cursor: historyPage === totalHistoryPages ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              }}
+                            >
+                              다음
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+            </div>
+          )}
+          
+          {/* 리뷰 내역 패널 */}
+          {mode === "view" && (
+            <div className="benefit-card" style={{ marginBottom: "20px" }}>
+              <h3>✍️ 내가 작성한 리뷰</h3>
+                  
+                  {/* 리뷰 리스트 */}
+                  <div style={{ minHeight: "200px", marginTop: "15px" }}>
+                    {myReviews.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "40px 20px", color: "#999" }}>
+                        <div style={{ fontSize: "48px", marginBottom: "10px" }}>📝</div>
+                        <p>작성한 리뷰가 없습니다</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                          {paginatedReviews.map((review) => (
+                          <div
+                            key={review.reviewId}
+                            onClick={() => handleReviewClick(review)}
+                            style={{
+                              padding: "15px",
+                              background: "#f9f9f9",
+                              borderRadius: "8px",
+                              border: "1px solid #eee",
+                              cursor: "pointer",
+                              transition: "all 0.2s"
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "#f0f0f0";
+                              e.currentTarget.style.borderColor = "#ddd";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "#f9f9f9";
+                              e.currentTarget.style.borderColor = "#eee";
+                            }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: "bold", marginBottom: "6px", fontSize: "15px", color: "#333" }}>
+                                  📍 {review.placeName || review.placeId}
+                                </div>
+                                <div style={{ fontSize: "14px", color: "#555", lineHeight: "1.5", marginBottom: "8px" }}>
+                                  {review.content}
+                                </div>
+                                {review.images && review.images.length > 0 && (
+                                  <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>
+                                    {review.images.slice(0, 3).map((img, idx) => (
+                                      <img
+                                        key={idx}
+                                        src={img}
+                                        alt={`리뷰 이미지 ${idx + 1}`}
+                                        style={{
+                                          width: "60px",
+                                          height: "60px",
+                                          objectFit: "cover",
+                                          borderRadius: "6px",
+                                          border: "1px solid #ddd"
+                                        }}
+                                      />
+                                    ))}
+                                    {review.images.length > 3 && (
+                                      <div style={{
+                                        width: "60px",
+                                        height: "60px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        background: "#f0f0f0",
+                                        borderRadius: "6px",
+                                        fontSize: "12px",
+                                        color: "#666"
+                                      }}>
+                                        +{review.images.length - 3}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div style={{ fontSize: "12px", color: "#999", marginTop: "8px" }}>
+                              {formatDate(review.createdAt)}
+                            </div>
+                          </div>
+                          ))}
+                        </div>
+                        
+                        {/* 페이징 버튼 */}
+                        {totalReviewPages > 1 && (
+                          <div style={{ 
+                            display: "flex", 
+                            justifyContent: "center", 
+                            alignItems: "center", 
+                            gap: "10px", 
+                            marginTop: "20px",
+                            paddingTop: "15px",
+                            borderTop: "1px solid #eee"
+                          }}>
+                            <button
+                              onClick={() => setReviewPage(prev => Math.max(1, prev - 1))}
+                              disabled={reviewPage === 1}
+                              style={{
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: reviewPage === 1 ? "#f5f5f5" : "#fff",
+                                color: reviewPage === 1 ? "#999" : "#333",
+                                borderRadius: "4px",
+                                cursor: reviewPage === 1 ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              }}
+                            >
+                              이전
+                            </button>
+                            <span style={{ fontSize: "13px", color: "#666" }}>
+                              {reviewPage} / {totalReviewPages}
+                            </span>
+                            <button
+                              onClick={() => setReviewPage(prev => Math.min(totalReviewPages, prev + 1))}
+                              disabled={reviewPage === totalReviewPages}
+                              style={{
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: reviewPage === totalReviewPages ? "#f5f5f5" : "#fff",
+                                color: reviewPage === totalReviewPages ? "#999" : "#333",
+                                borderRadius: "4px",
+                                cursor: reviewPage === totalReviewPages ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              }}
+                            >
+                              다음
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+            </div>
+          )}
+          
+          {/* 로그아웃 버튼 */}
+          {mode === "view" && (
+            <button onClick={handleLogout} className="logout-button">
+              로그아웃
+            </button>
+          )}
         </div>
       </div>
     </div>
