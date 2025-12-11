@@ -7,7 +7,7 @@ interface UrbanCourse {
   id: string;
   title: string;
   subtitle?: string;
-  address?: string;
+  address?: string | string[];
   image_url?: string;
 }
 
@@ -15,7 +15,7 @@ const UrbanCourseList: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // URL 쿼리 읽기
+  // URL 쿼리 파싱
   const query = new URLSearchParams(location.search);
   const defaultPage = Number(query.get("page")) || 1;
   const defaultKeyword = query.get("keyword") || "";
@@ -28,18 +28,19 @@ const UrbanCourseList: React.FC = () => {
   const [searchInput, setSearchInput] = useState(defaultKeyword);
 
   const [total, setTotal] = useState(0);
-  const size = 9;
+  const size = 12;
   const pageGroupSize = 10;
 
-  // URL 동기화 (page 또는 keyword 바뀔 때마다 반영)
+  // URL 변경 반영
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("page", String(page));
     if (keyword) params.set("keyword", keyword);
-    navigate(`/course/urban?${params.toString()}`, { replace: true });
-  }, [page, keyword, navigate]);
 
-  // 데이터 로딩
+    navigate(`/course/urban?${params.toString()}`, { replace: true });
+  }, [page, keyword]);
+
+  // API 호출
   useEffect(() => {
     const fetchUrban = async () => {
       setLoading(true);
@@ -61,7 +62,9 @@ const UrbanCourseList: React.FC = () => {
   }, [page, keyword]);
 
   const totalPages = Math.max(1, Math.ceil(total / size));
-  const startPage = Math.floor((page - 1) / pageGroupSize) * pageGroupSize + 1;
+
+  const currentGroup = Math.floor((page - 1) / pageGroupSize);
+  const startPage = currentGroup * pageGroupSize + 1;
   const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
 
   const handleSearch = () => {
@@ -73,105 +76,111 @@ const UrbanCourseList: React.FC = () => {
     return <div className="loading">도심 관광 정보를 불러오는 중입니다...</div>;
 
   return (
-    <div className="urban-container">
-      {/* 검색 영역 */}
-      <div className="search-filter-container">
-        <h2 className="search-title">부산 도심 관광 🏙</h2>
-        <p className="search-sub">
-          전시·카페·공원·도심 명소 등 다양한 도심 여행을 둘러보세요.
-        </p>
+    <div className="urban-list-page">
+      <div className="urban-list-container">
+        
+        {/* 제목 */}
+        <div className="urban-list-header">
+          <h2 className="urban-list-title">부산 도심 관광 🏙</h2>
+          <p className="urban-list-sub">
+            전시 · 카페 · 공원 · 도심 명소 등 다양한 도시 여행지
+          </p>
+        </div>
 
-        <div className="search-box-wrapper">
+        {/* 검색 */}
+        <div className="urban-list-search-box">
           <input
             type="text"
             placeholder="시설명 또는 지역명 검색"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="main-search-input"
+            className="urban-list-search-input"
           />
-          <button className="main-search-btn" onClick={handleSearch}>
+          <button className="urban-list-search-btn" onClick={handleSearch}>
             검색
           </button>
         </div>
-      </div>
 
-      {/* 총 개수 */}
-      <div className="list-info-bar">
-        총 <b>{total.toLocaleString()}</b>개의 도심 관광지
-      </div>
+        {/* 총 개수 */}
+        <div className="urban-list-info-bar">
+          총 <span className="urban-list-total">{total.toLocaleString()}</span>개의 도심 관광지
+        </div>
 
-      {/* 리스트 */}
-      <div className="urban-list-wrapper">
-        {courses.length === 0 ? (
-          <div className="empty">검색 결과가 없습니다.</div>
-        ) : (
-          courses.map((course) => (
-            <div
-              className="urban-card"
-              key={course.id}
-              onClick={() =>
-                navigate(
-                  `/course/urban/${course.id}?page=${page}&keyword=${keyword}`
-                )
-              }
-              style={{ cursor: "pointer" }}
-            >
-              <div className="urban-image-box">
-                <img
-                  src={
-                    course.image_url ||
-                    "https://via.placeholder.com/200?text=Urban"
+        {/* 리스트 */}
+        <div className="urban-list-grid">
+          {courses.length === 0 ? (
+            <div className="urban-list-empty">검색 결과가 없습니다.</div>
+          ) : (
+            courses.map((course) => {
+              const addressText = Array.isArray(course.address)
+                ? course.address.join(" ")
+                : course.address || "";
+
+              return (
+                <div
+                  key={course.id}
+                  className="urban-list-card"
+                  onClick={() =>
+                    navigate(`/course/urban/${course.id}?page=${page}&keyword=${keyword}`)
                   }
-                  alt={course.title}
-                />
-              </div>
-              <div className="urban-info-box">
-                <h3 className="urban-title">{course.title}</h3>
-                {course.subtitle && (
-                  <p className="urban-sub">{course.subtitle}</p>
-                )}
-                {course.address && (
-                  <p className="urban-address">{course.address}</p>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+                >
+                  <div className="urban-list-image-box">
+                    <img
+                      src={course.image_url || "https://via.placeholder.com/200?text=Urban"}
+                      alt={course.title}
+                    />
+                  </div>
 
-      {/* 페이지네이션 */}
-      <div className="pagination-wrapper">
-        <div className="pagination-numbers">
+                  <div className="urban-list-info">
+                    <h3 className="urban-list-card-title">{course.title}</h3>
+
+                    {course.subtitle && (
+                      <p className="urban-list-card-sub">{course.subtitle}</p>
+                    )}
+
+                    {addressText && (
+                      <p className="urban-address">{addressText}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* 페이지네이션 */}
+        <div className="urban-list-pagination">
           <button
-            className="page-btn prev-next"
-            onClick={() => setPage(page - 1)}
+            className="urban-list-page-btn"
+            onClick={() => setPage(startPage - 1)}
             disabled={page === 1}
           >
             &lt;
           </button>
 
-          {Array.from(
-            { length: endPage - startPage + 1 },
-            (_, i) => startPage + i
-          ).map((num) => (
-            <button
-              key={num}
-              className={`page-btn ${page === num ? "active" : ""}`}
-              onClick={() => setPage(num)}
-            >
-              {num}
-            </button>
-          ))}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const num = startPage + i;
+            return (
+              <button
+                key={num}
+                className={`urban-list-page-btn ${num === page ? "active" : ""}`}
+                onClick={() => setPage(num)}
+              >
+                {num}
+              </button>
+            );
+          })}
 
           <button
-            className="page-btn prev-next"
-            onClick={() => setPage(page + 1)}
+            className="urban-list-page-btn"
+            onClick={() => setPage(endPage + 1)}
             disabled={page === totalPages}
           >
             &gt;
           </button>
         </div>
+
       </div>
     </div>
   );

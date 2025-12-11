@@ -71,76 +71,85 @@ const WalkCourseList: React.FC = () => {
     return <div className="loading">도보 여행 정보를 불러오는 중입니다...</div>;
 
   return (
-    <div className="walk-container">
-      <div className="search-filter-container">
-        <h2 className="search-title">부산 도보 여행 🥾</h2>
-        <p className="search-sub">부산의 다양한 도보 여행 코스를 둘러보세요.</p>
+    <div className="walk-list-page">
+      <div className="walk-list-container">
+        {/* HEADER */}
+        <div className="walk-list-header">
+          <h2 className="walk-list-title">부산 도보 여행 🥾</h2>
+          <p className="walk-list-sub">
+            부산의 다양한 도보 여행 코스를 둘러보세요.
+          </p>
 
-        <div className="search-box-wrapper">
-          <input
-            type="text"
-            placeholder="지역명 또는 코스명 검색"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="main-search-input"
-          />
-          <button className="main-search-btn" onClick={handleSearch}>
-            검색
-          </button>
+          <div className="walk-list-search-box">
+            <input
+              type="text"
+              placeholder="지역명 또는 코스명 검색"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="walk-list-search-input"
+            />
+            <button className="walk-list-search-btn" onClick={handleSearch}>
+              검색
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="list-info-bar">
-        총 <b>{total.toLocaleString()}</b>개의 도보 코스
-      </div>
+        {/* TOTAL COUNT */}
+        <div className="walk-list-info-bar">
+          총{" "}
+          <span className="walk-list-total">
+            {total.toLocaleString()}
+          </span>
+          개의 도보 코스
+        </div>
 
-      <div className="walk-list-wrapper">
-        {courses.length === 0 ? (
-          <div className="empty">검색 결과가 없습니다.</div>
-        ) : (
-          courses.map((course) => (
-            <div
-              className="walk-card"
-              key={course.id}
-              onClick={() =>
-                navigate(
-                  `/course/walk/${course.id}?page=${page}&keyword=${keyword}`
-                )
-              }
-              style={{ cursor: "pointer" }}
-            >
-              <div className="walk-image-box">
-                <img
-                  src={
-                    course.image_url ||
-                    "https://via.placeholder.com/200?text=Walk+Course"
-                  }
-                  alt={course.title}
-                />
+        {/* LIST */}
+        <div className="walk-list-grid">
+          {courses.length === 0 ? (
+            <div className="walk-list-empty">검색 결과가 없습니다.</div>
+          ) : (
+            courses.map((course) => (
+              <div
+                className="walk-list-card"
+                key={course.id}
+                onClick={() =>
+                  navigate(
+                    `/course/walk/${course.id}?page=${page}&keyword=${keyword}`
+                  )
+                }
+              >
+                <div className="walk-list-image-box">
+                  <img
+                    src={
+                      course.image_url ||
+                      "https://via.placeholder.com/200?text=Walk+Course"
+                    }
+                    alt={course.title}
+                  />
+                </div>
+
+                <div className="walk-list-info">
+                  <h3 className="walk-list-card-title">{course.title}</h3>
+                  {course.subtitle && (
+                    <p className="walk-list-card-sub">{course.subtitle}</p>
+                  )}
+                  {course.category && (
+                    <p className="walk-list-cat">📁 {course.category}</p>
+                  )}
+                  {course.place && (
+                    <p className="walk-list-address">📍 {course.place}</p>
+                  )}
+                </div>
               </div>
+            ))
+          )}
+        </div>
 
-              <div className="walk-info-box">
-                <h3 className="walk-title">{course.title}</h3>
-                {course.subtitle && (
-                  <p className="walk-sub">{course.subtitle}</p>
-                )}
-                {course.category && (
-                  <p className="walk-cat">📁 {course.category}</p>
-                )}
-                {course.place && (
-                  <p className="walk-address">📍 {course.place}</p>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="pagination-wrapper">
-        <div className="pagination-numbers">
+        {/* PAGINATION */}
+        <div className="walk-list-pagination">
           <button
-            className="page-btn prev-next"
+            className="walk-list-page-btn walk-list-prev-next"
             onClick={() => setPage(page - 1)}
             disabled={page === 1}
           >
@@ -153,7 +162,9 @@ const WalkCourseList: React.FC = () => {
           ).map((num) => (
             <button
               key={num}
-              className={`page-btn ${page === num ? "active" : ""}`}
+              className={
+                "walk-list-page-btn" + (page === num ? " active" : "")
+              }
               onClick={() => setPage(num)}
             >
               {num}
@@ -161,7 +172,7 @@ const WalkCourseList: React.FC = () => {
           ))}
 
           <button
-            className="page-btn prev-next"
+            className="walk-list-page-btn walk-list-prev-next"
             onClick={() => setPage(page + 1)}
             disabled={page === totalPages}
           >

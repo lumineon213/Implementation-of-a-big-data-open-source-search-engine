@@ -1,0 +1,360 @@
+/* -----------------------------------------
+   전체 영역 – HEADER + BODY (marine-detail)
+------------------------------------------ */
+.marine-detail {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding-bottom: 120px;
+}
+
+/* HEADER (marine-header) */
+.marine-header {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 120px 100px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+@media (min-width: 1024px) {
+  .marine-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* -----------------------------------------
+   모바일 전용 토글 버튼 (side-toggle-btn)
+------------------------------------------ */
+.side-toggle-btn {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .side-toggle-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    margin: 20px auto 10px;
+    background: #e0f2fe; /* marine color */
+    border: 1px solid #bae6fd; /* marine color */
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #0369a1; /* marine color */
+  }
+
+  /* 모바일에서만 사이드바 스타일 (side-card) */
+  .side-card {
+    position: static !important;
+    top: auto !important;
+
+    /* 모바일 접힘/펴짐 로직에 사용 */
+    transition: all 0.3s ease; /* marine style */
+  }
+  
+  /* 접힘 상태 */
+  .side-card.closed {
+    height: 0; /* marine style */
+    opacity: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    border: 0; /* marine style */
+    pointer-events: none;
+  }
+}
+
+/* Thumbnail (thumb-box) */
+.thumb-box {
+  width: 100%;
+  max-width: 500px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  background: #e0f2fe; /* marine color */
+  border: 1px solid #bae6fd; /* marine color */
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(3, 105, 161, 0.15); /* marine color */
+  aspect-ratio: 4 / 3;
+}
+
+.thumb-box img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.type-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: white;
+  background: #0369a1; /* marine color */
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+}
+
+/* Title (title-wrap) */
+.title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-wrap h1 {
+  font-size: 36px;
+  font-weight: 900;
+  color: #075985; /* marine color */
+}
+
+.title-location {
+  margin-top: 10px;
+  font-size: 17px;
+  color: #0f172a; /* marine color */
+  font-weight: 500;
+}
+
+.title-meta {
+  margin-top: 4px;
+  font-size: 15px;
+  color: #64748b; /* marine color */
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 20px;
+  color: #0ea5e9; /* marine color */
+}
+
+/* -----------------------------------------
+   BODY 컨테이너 (container) - marine 너비 적용
+------------------------------------------ */
+.container {
+  width: 95vw; /* marine style */
+  max-width: none; /* marine style */
+  margin: 0 auto;
+  padding: 0 60px; /* marine style */
+}
+
+/* -----------------------------------------
+   GRID (content-grid) - marine align-items 적용
+------------------------------------------ */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 40px;
+
+  /* 데스크탑에서 align-items: stretch 대신 start 적용 */
+  align-items: stretch; 
+}
+
+@media (min-width: 1024px) {
+  .content-grid {
+    grid-template-columns: 350px 1fr;
+    /* theme-detail의 stretch 대신 marine-detail의 start를 반영 */
+    align-items: start; 
+  }
+}
+
+/* -----------------------------------------
+   SIDE (side-card) - marine color 적용
+------------------------------------------ */
+.side-card {
+  padding: 28px;
+  background: rgba(224, 242, 254, 0.45); /* marine color */
+  border: 1px solid #bae6fd; /* marine color */
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15); /* marine color */
+  position: sticky;
+  top: 120px;
+  line-height: 1.55;
+  
+  /* theme-detail에 있던 max-height 제거 (모바일에서만 필요하며, 위에서 처리) */
+  /* 데스크탑에서는 스크롤 가능하도록 overflow-y: auto를 삭제하지 않음 */
+  /* marine-detail에서는 max-height와 overflow가 side-card에 명시되지 않았으므로 제거 */
+}
+
+.side-card p {
+  white-space: pre-line;
+}
+
+/* Back button (back-btn) */
+.back-btn {
+  background: #e0f2fe; /* marine color */
+  border: 1px solid #bae6fd; /* marine color */
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  color: #075985; /* marine text color - theme에 있던 color 추가 */
+}
+
+.back-btn:hover {
+  background: #bae6fd; /* marine color */
+}
+
+/* Side section title (side-card h2) */
+.side-card h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #075985; /* marine color */
+  padding-left: 8px;
+  border-left: 4px solid #0ea5e9; /* marine color */
+  margin-bottom: 14px;
+  margin-top: 30px;
+}
+
+/* Info items (info-list) */
+.info-list > div {
+  margin-bottom: 18px;
+}
+
+.info-list strong {
+  font-weight: 700;
+  color: #075985; /* marine color */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 홈페이지 링크 버튼 (link-item) */
+.link-item {
+  display: block;
+  padding: 6px 10px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: #e0f2fe; /* marine color */
+  border: 1px solid #bae6fd; /* marine color */
+  color: #0369a1; /* marine color */
+  font-size: 14px;
+  word-break: break-all;
+  transition: background 0.2s;
+}
+
+.link-item:hover {
+  background: #bae6fd; /* marine color */
+}
+
+/* -----------------------------------------
+   MAIN CONTENT (main-card) - marine color 적용
+------------------------------------------ */
+.main-card {
+  padding: 40px;
+  background: #f0f9ff; /* marine color */
+  border: 1px solid #bae6fd; /* marine color */
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(3, 105, 161, 0.15); /* marine color */
+}
+
+.main-card section + section {
+  margin-top: 60px;
+}
+
+.main-card h2 {
+  border-left: 4px solid #0ea5e9; /* marine color */
+  padding-left: 10px;
+  margin-bottom: 20px;
+  color: #075985; /* marine color */
+}
+
+.main-image img {
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.paragraphs p {
+  margin-bottom: 16px;
+  line-height: 1.75;
+}
+
+/* 지도 (map-box) */
+.map-box {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #bae6fd; /* marine color */
+}
+
+.map-fallback {
+  padding: 20px;
+  text-align: center;
+  background: #f3f4f6; /* marine color */
+  border-radius: 12px;
+}
+
+/* 지도 마커 정보 박스 (marker-box) */
+.marker-box {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  white-space: normal; 
+  width: max-content; 
+  max-width: 240px; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* HTML CONTENT (html-content) - marine detail 추가 */
+.html-content {
+  margin-top: 30px;
+  color: #0f172a; /* marine color */
+  font-size: 16px;
+}
+
+/* p 문단 */
+.html-content p {
+  margin: 0 0 26px 0;
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+/* 줄바꿈 br */
+.html-content br { /* marine style 추가 */
+  content: "";
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* 이미지 */
+.html-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 24px 0;
+  border-radius: 12px;
+}
+
+/* 리스트 */
+.html-content ul, /* marine style 추가 */
+.html-content ol { /* marine style 추가 */
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.html-content li { /* marine style 추가 */
+  margin-bottom: 8px;
+}
+
+/* 소제목 자동 감지 스타일 */
+.html-content .short-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #075985; /* marine color */
+
+  margin-top: 36px;
+  padding-top: 6px;
+  margin-bottom: 16px;
+
+  padding-left: 6px;
+  border-left: 4px solid #0ea5e9; /* marine color */
+  line-height: 1.4;
+}
