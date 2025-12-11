@@ -61,5 +61,6 @@ export const MARKER_COLORS = {
   WALK: '#0b7691',        // 청록색
   THEME: '#59ce16',       // 초록색
   MARINE: '#0866f1',      // 파란색
-  URBAN: '#b80b0b'        // 빨간색
+  URBAN: '#b80b0b',       // 빨간색
+  STAY: '#9C27B0'         // 보라색 (숙소)
 };

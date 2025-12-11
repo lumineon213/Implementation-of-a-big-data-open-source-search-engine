@@ -8,15 +8,28 @@
         <result property="title" column="title" />
         <result property="address" column="address" />
         <result property="description" column="description" jdbcType="CLOB" javaType="java.lang.String"/>
+        
         <result property="imageUrl" column="image_url" />
         <result property="viewCount" column="view_count" />
+        
         <result property="createdAt" column="created_at" />
         <result property="themeId" column="theme_id" />
+        <result property="latitude" column="latitude" />
+        <result property="longitude" column="longitude" />
+        <result property="tel" column="tel" />
+        <result property="homepage" column="homepage" />
     </resultMap>
 
+    <select id="selectSpotById" parameterType="long" resultMap="tourSpotResultMap">
+        SELECT * FROM TOUR_SPOTS WHERE spot_id = #{id}
+    </select>
+
+    <update id="updateViewCount" parameterType="long">
+        UPDATE TOUR_SPOTS SET view_count = view_count + 1 WHERE spot_id = #{id}
+    </update>
+
     <select id="selectAllSpots" resultMap="tourSpotResultMap">
-        SELECT * FROM TOUR_SPOTS 
-        ORDER BY spot_id DESC
+        SELECT * FROM TOUR_SPOTS ORDER BY spot_id DESC
     </select>
 
     <select id="selectSpotsByKeyword" resultMap="tourSpotResultMap">

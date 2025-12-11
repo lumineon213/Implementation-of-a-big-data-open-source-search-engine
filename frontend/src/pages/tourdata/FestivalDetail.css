@@ -2,7 +2,7 @@
 
 /* 전체 컨테이너 설정: 좌우 공백 최소화 */
 .detail-container {
-    max-width: 80%; 
+    max-width: 90%; 
     margin: 80px auto 50px;
     padding: 0 2%; /* ⭐ 좌우 패딩을 최소화 (2% 유지) */
     display: block; 

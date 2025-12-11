@@ -1,5 +1,5 @@
 .festival-container {
-  max-width: 100%;
+  max-width: 90%;
   margin: 80px auto 0;
   padding: 40px 24px;
 }
@@ -36,13 +36,7 @@
   margin-bottom: 30px;
   padding: 0 0 0 15px;
 }
-.search-box-large input {
-    flex-grow: 1;
-    border: none;
-    outline: none;
-    font-size: 18px;
-    padding: 15px 0; /* 높이를 주기 위해 내부 패딩 조정 */
-}
+
 .search-box input {
   width: 100%;
   padding: 14px 50px 14px 20px;
@@ -65,21 +59,55 @@
   font-size: 20px;
   color: #999;
 }
-.search-icon-large {
-    font-size: 20px;
-    color: white; /* 아이콘 색상 흰색 */
-    cursor: pointer;
-    /* 버튼 배경 및 패딩 */
-    background: #007bff; /* 파란색 배경 */
-    padding: 15px; /* 충분한 클릭 영역 확보 */
-    margin: -1px; /* input과의 경계선 미세 조정 */
-    border-radius: 0 8px 8px 0; /* 우측만 둥글게 */
-    transition: background 0.2s;
-    
-    /* 플렉스 컨테이너 안에서 아이콘을 수직 정렬하기 위해 */
-    display: flex;
-    align-items: center; 
+
+/* 검색 및 필터 섹션 */
+.festival-filters {
+  /* ... (기존 스타일 유지) ... */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
 }
+
+/* ⭐ 1. 새로운 검색창 + 버튼 컨테이너 스타일 ⭐ */
+.search-box-combined {
+    display: flex;
+    margin-bottom: 25px; /* 필터와 간격 */
+}
+
+/* ⭐ 2. Input 스타일 (버튼과 결합되도록 테두리 조정) ⭐ */
+.search-box-combined input {
+    flex-grow: 1; /* 남은 공간을 모두 차지 */
+    padding: 18px 20px;
+    border: 1px solid #ccc; /* 얇은 테두리 */
+    border-right: none; /* 버튼과 붙도록 오른쪽 테두리 제거 */
+    border-radius: 8px 0 0 8px; /* 왼쪽만 둥글게 */
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.search-box-combined input:focus {
+    border-color: #ff7f50; /* 포커스 시 주황색 테두리 */
+    border-right: none;
+}
+
+/* ⭐ 3. 주황색 검색 버튼 스타일 ⭐ */
+.search-btn-orange {
+    padding: 0 25px; 
+    background: #ff7f50; /* 주황색 배경 */
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    border: 1px solid #ff7f50;
+    border-radius: 0 8px 8px 0; /* 오른쪽만 둥글게 */
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.search-btn-orange:hover {
+    background: #ff6347; /* 호버 시 약간 어둡게 */
+    border-color: #ff6347;
+}
+
 .search-icon-large:hover {
     background: #0056b3; /* 호버 시 색상 어둡게 */
 }
@@ -87,6 +115,8 @@
 .search-icon-large:active {
     transform: scale(0.98); /* 클릭 시 약간 축소 */
 }
+
+
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -373,4 +403,45 @@
     padding: 8px 16px;
     font-size: 13px;
   }
+}
+
+/* ⭐ 페이지네이션 컨테이너 스타일 ⭐ */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 40px 0;
+    padding: 10px;
+}
+
+.page-btn {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    color: #555;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 40px;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: #007bff;
+    color: #007bff;
+    background: #f0f8ff;
+}
+
+.page-btn.active {
+    background: #ff7f50; /* 이미지에서 본 주황색 활성화 버튼 */
+    border-color: #ff7f50;
+    color: white;
+    font-weight: 700;
+}
+
+.page-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }

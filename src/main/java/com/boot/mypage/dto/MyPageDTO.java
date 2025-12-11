@@ -10,4 +10,5 @@ public class MyPageDTO {
     private String phoneNumber;
     private String accountRole;
     private String regDate;
+    private String profileImage;
 }
