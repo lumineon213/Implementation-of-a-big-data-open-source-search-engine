@@ -52,11 +52,11 @@ public class SolrDataController {
                 doc.addField("description", dto.getDescription());
 
                 // ★ "mycore" 부분을 본인의 진짜 코어 이름으로 바꾸세요!
-                solrClient.add("mycore", doc); 
+                solrClient.add("Search", doc); 
             }
 
             // 3. 저장 확정 (Commit) - 이거 안 하면 저장 안 됨!
-            solrClient.commit("mycore"); // ★ 여기도 코어 이름 확인!
+            solrClient.commit("Search"); // ★ 여기도 코어 이름 확인!
             
             return "성공! " + dbList.size() + "건의 데이터가 Solr로 복사되었습니다.";
 

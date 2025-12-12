@@ -33,7 +33,7 @@ const TourDetail: React.FC = () => {
   useEffect(() => {
     // 1. ID가 없으면 목록으로 리턴
     if (!id) {
-        navigate("/theme");
+        navigate("/tour");
         return;
     }
 
@@ -43,14 +43,14 @@ const TourDetail: React.FC = () => {
 
         // 조회수 증가 API (실패해도 상세 정보는 불러와야 하므로 개별 try-catch 혹은 무시)
         try {
-            await axios.get(`http://localhost:8484/api/theme/view/${id}`);
+            await axios.get(`http://localhost:8484/api/tour/view/${id}`);
         } catch (e) {
             console.warn("조회수 증가 실패 (무시됨)", e);
         }
 
         // 상세 정보 가져오기
         // 주의: 백엔드 컨트롤러에서 @GetMapping("/api/theme/{id}")가 있어야 함
-        const response = await axios.get(`http://localhost:8484/api/theme/${id}`);
+        const response = await axios.get(`http://localhost:8484/api/tour/${id}`);
         
         console.log("상세 데이터 원본:", response.data);
 
@@ -96,14 +96,14 @@ const TourDetail: React.FC = () => {
   if (!theme) return (
     <div className="error-state">
         <p>해당 여행지 정보를 찾을 수 없습니다.</p>
-        <button onClick={() => navigate("/theme")}>목록으로 돌아가기</button>
+        <button onClick={() => navigate("/tour")}>목록으로 돌아가기</button>
     </div>
   );
 
   return (
     <div className="detail-page-container">
       <div className="nav-header">
-        <button onClick={() => navigate("/theme")} className="back-btn">
+        <button onClick={() => navigate("/tour")} className="back-btn">
           <span>←</span> 목록으로 돌아가기
         </button>
       </div>
