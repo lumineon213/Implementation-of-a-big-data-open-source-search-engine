@@ -21,8 +21,9 @@ body {
   overflow: hidden;
 }
 
-body.dark-mode .find-container {
-  background: #0a1929;
+body.dark-mode .find-container,
+.dark-mode .find-container {
+  background: var(--bg-primary);
 }
 
 /* 로그인 동일 애니메이션 원 */
@@ -76,10 +77,11 @@ body.dark-mode .gradient-circle-2 {
   border: 1px solid rgba(227,242,253,1);
 }
 
-body.dark-mode .find-card {
-  background: rgba(13, 27, 42, 0.9);
-  border-color: rgba(21, 101, 192, 0.3);
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+body.dark-mode .find-card,
+.dark-mode .find-card {
+  background: rgba(26, 26, 26, 0.9);
+  border-color: var(--border-color);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* 제목 동일 계열 */
@@ -91,8 +93,9 @@ body.dark-mode .find-card {
   color: #111827;
 }
 
-body.dark-mode .find-title {
-  color: #e0e0e0;
+body.dark-mode .find-title,
+.dark-mode .find-title {
+  color: var(--text-primary);
 }
 
 /* 입력 영역 */
@@ -109,8 +112,9 @@ body.dark-mode .find-title {
   margin-bottom: 0.5rem;
 }
 
-body.dark-mode .find-label {
-  color: #b3e5fc;
+body.dark-mode .find-label,
+.dark-mode .find-label {
+  color: var(--text-secondary);
 }
 
 .find-input {
@@ -129,10 +133,18 @@ body.dark-mode .find-label {
   box-shadow: 0 0 0 3px rgba(66,165,245,0.2);
 }
 
-body.dark-mode .find-input {
-  background: rgba(21,101,192,0.1);
-  border-color: rgba(100,181,246,0.3);
-  color: #e0e0e0;
+body.dark-mode .find-input,
+.dark-mode .find-input {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .find-input:focus,
+.dark-mode .find-input:focus {
+  background: var(--bg-secondary);
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
 }
 
 /* === 버튼 동일 === */

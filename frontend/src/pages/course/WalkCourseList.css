@@ -216,3 +216,115 @@
     transform: translateY(0);
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .walk-list-page,
+body.dark-mode .walk-list-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .walk-list-container,
+body.dark-mode .walk-list-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .walk-list-title,
+body.dark-mode .walk-list-title {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-sub,
+body.dark-mode .walk-list-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .walk-list-search-input,
+body.dark-mode .walk-list-search-input {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .walk-list-search-input:focus,
+body.dark-mode .walk-list-search-input:focus {
+  border-color: #66bb6a;
+  box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+}
+
+.dark-mode .walk-list-info-bar,
+body.dark-mode .walk-list-info-bar {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-total,
+body.dark-mode .walk-list-total {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-card,
+body.dark-mode .walk-list-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .walk-list-card:hover,
+body.dark-mode .walk-list-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  border-color: #66bb6a;
+}
+
+.dark-mode .walk-list-image-box,
+body.dark-mode .walk-list-image-box {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .walk-list-info,
+body.dark-mode .walk-list-info {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .walk-list-card-title,
+body.dark-mode .walk-list-card-title {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-card-sub,
+body.dark-mode .walk-list-card-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .walk-list-cat,
+body.dark-mode .walk-list-cat {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-address,
+body.dark-mode .walk-list-address {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .walk-list-empty,
+body.dark-mode .walk-list-empty {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .walk-list-page-btn,
+body.dark-mode .walk-list-page-btn {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: #66bb6a;
+}
+
+.dark-mode .walk-list-page-btn:hover,
+body.dark-mode .walk-list-page-btn:hover {
+  background: var(--bg-secondary);
+  border-color: #66bb6a;
+}
+
+.dark-mode .walk-list-page-btn.active,
+body.dark-mode .walk-list-page-btn.active {
+  background: #66bb6a;
+  border-color: #66bb6a;
+  color: white;
+}

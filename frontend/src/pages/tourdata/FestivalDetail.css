@@ -149,3 +149,80 @@
         height: 300px;
     }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .detail-container,
+body.dark-mode .detail-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .main-content-wrapper,
+body.dark-mode .main-content-wrapper {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .festival-title-area h1,
+body.dark-mode .festival-title-area h1 {
+  color: var(--text-primary);
+}
+
+.dark-mode .festival-title-area .view-count,
+body.dark-mode .festival-title-area .view-count {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .festival-title-area,
+body.dark-mode .festival-title-area {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .sidebar-section,
+body.dark-mode .sidebar-section {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .sidebar-section h3,
+body.dark-mode .sidebar-section h3 {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .sidebar-item,
+body.dark-mode .sidebar-item {
+  color: var(--text-secondary);
+}
+
+.dark-mode .sidebar-item strong,
+body.dark-mode .sidebar-item strong {
+  color: var(--text-primary);
+}
+
+.dark-mode .description-section,
+body.dark-mode .description-section {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .description-section h2,
+body.dark-mode .description-section h2 {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .description-section p,
+body.dark-mode .description-section p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .map-section,
+body.dark-mode .map-section {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .map-section h2,
+body.dark-mode .map-section h2 {
+  color: var(--text-primary);
+}

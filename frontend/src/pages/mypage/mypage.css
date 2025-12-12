@@ -447,6 +447,227 @@
   .activity-card {
     padding: 20px;
   }
+}
 
+/* 다크모드 스타일 */
+.dark-mode .mypage-layout,
+body.dark-mode .mypage-layout {
+  background: var(--bg-primary);
+}
 
+.dark-mode .mypage-title,
+body.dark-mode .mypage-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .mypage-title::before,
+body.dark-mode .mypage-title::before {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .profile-card,
+body.dark-mode .profile-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.dark-mode .calendar-box,
+body.dark-mode .calendar-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-track,
+body.dark-mode .calendar-box::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-thumb,
+body.dark-mode .calendar-box::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-thumb:hover,
+body.dark-mode .calendar-box::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+.dark-mode .calendar-title,
+body.dark-mode .calendar-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-weekday,
+body.dark-mode .calendar-weekday {
+  color: var(--text-secondary);
+}
+
+.dark-mode .calendar-weekday.saturday,
+body.dark-mode .calendar-weekday.saturday {
+  color: #64b5f6;
+}
+
+.dark-mode .calendar-date,
+body.dark-mode .calendar-date {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-date:hover,
+body.dark-mode .calendar-date:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-date.today,
+body.dark-mode .calendar-date.today {
+  background: #64b5f6;
+  color: white;
+}
+
+.dark-mode .calendar-date.saturday,
+body.dark-mode .calendar-date.saturday {
+  color: #64b5f6;
+}
+
+.dark-mode .calendar-date.other-month,
+body.dark-mode .calendar-date.other-month {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .benefit-card,
+body.dark-mode .benefit-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .benefit-card h3,
+body.dark-mode .benefit-card h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .benefit-card li,
+body.dark-mode .benefit-card li {
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .activity-card,
+body.dark-mode .activity-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .activity-title-row h3,
+body.dark-mode .activity-title-row h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-profile-btn,
+body.dark-mode .edit-profile-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .edit-profile-btn:hover,
+body.dark-mode .edit-profile-btn:hover {
+  background: var(--bg-secondary);
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .activity-item,
+body.dark-mode .activity-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .activity-item:hover,
+body.dark-mode .activity-item:hover {
+  border-color: #64b5f6;
+  box-shadow: 0 2px 8px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .activity-item::before,
+body.dark-mode .activity-item::before {
+  background: #64b5f6;
+}
+
+.dark-mode .logout-button,
+body.dark-mode .logout-button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .logout-button:hover,
+body.dark-mode .logout-button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box,
+body.dark-mode .profile-edit-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .profile-edit-box h4,
+body.dark-mode .profile-edit-box h4 {
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box label,
+body.dark-mode .profile-edit-box label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .profile-edit-box input,
+body.dark-mode .profile-edit-box input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box input:focus,
+body.dark-mode .profile-edit-box input:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .edit-btn-row button:first-child,
+body.dark-mode .edit-btn-row button:first-child {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .edit-btn-row button:first-child:hover,
+body.dark-mode .edit-btn-row button:first-child:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-btn-row button:last-child,
+body.dark-mode .edit-btn-row button:last-child {
+  background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
+  border-color: #64b5f6;
+}
+
+.dark-mode .edit-btn-row button:last-child:hover,
+body.dark-mode .edit-btn-row button:last-child:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  border-color: #1976d2;
+}
+
+.dark-mode .edit-btn-row button:disabled,
+body.dark-mode .edit-btn-row button:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border-color: var(--border-color);
 }

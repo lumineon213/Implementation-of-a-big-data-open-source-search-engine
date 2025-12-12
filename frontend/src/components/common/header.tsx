@@ -9,6 +9,7 @@ import walk from '../../components/common/img/walk.png';
 import theme from '../../components/common/img/theme.png';
 import marine from '../../components/common/img/marine.png';
 import urban from '../../components/common/img/urban.png';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 
 interface User {
@@ -22,6 +23,7 @@ interface User {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null); 
@@ -356,6 +358,14 @@ const Header: React.FC = () => {
                   👤
                 </Link>
               )}
+
+              <button 
+                className="icon-btn dark-mode-toggle" 
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "라이트 모드" : "다크 모드"}
+              >
+                {isDarkMode ? "☀️" : "🌙"}
+              </button>
 
               <button className="icon-btn language-btn">
                 한국어 ▼

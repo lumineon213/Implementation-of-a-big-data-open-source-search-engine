@@ -821,3 +821,199 @@ body, html {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .login-container,
+body.dark-mode .login-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .logo,
+body.dark-mode .logo {
+  color: var(--text-primary);
+}
+
+.dark-mode .logo-accent,
+body.dark-mode .logo-accent {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.dark-mode .login-card,
+body.dark-mode .login-card {
+  background: rgba(26, 26, 26, 0.85);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .tab-container,
+body.dark-mode .tab-container {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .tab-button,
+body.dark-mode .tab-button {
+  color: var(--text-secondary);
+}
+
+.dark-mode .tab-button:hover,
+body.dark-mode .tab-button:hover {
+  color: #64b5f6;
+}
+
+.dark-mode .tab-active,
+body.dark-mode .tab-active {
+  background: var(--bg-secondary);
+  color: #64b5f6;
+  box-shadow: 0 2px 4px 0 rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .input-field,
+body.dark-mode .input-field {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .input-field:focus,
+body.dark-mode .input-field:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .tooltip,
+body.dark-mode .tooltip {
+  color: #64b5f6;
+}
+
+.dark-mode .checkbox-label,
+body.dark-mode .checkbox-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .checkbox-label:hover,
+body.dark-mode .checkbox-label:hover {
+  color: #64b5f6;
+}
+
+.dark-mode .lock-message,
+body.dark-mode .lock-message {
+  background: rgba(198, 40, 40, 0.2);
+  color: #ef5350;
+}
+
+.dark-mode .password-rules,
+body.dark-mode .password-rules {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .forgot-password,
+body.dark-mode .forgot-password {
+  color: #64b5f6;
+}
+
+.dark-mode .forgot-password:hover,
+body.dark-mode .forgot-password:hover {
+  color: #90caf9;
+}
+
+.dark-mode .divider,
+body.dark-mode .divider {
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+}
+
+.dark-mode .social-button.google,
+body.dark-mode .social-button.google {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .social-button.google:hover,
+body.dark-mode .social-button.google:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .verify-success,
+body.dark-mode .verify-success {
+  color: #66bb6a;
+}
+
+.dark-mode .modal-overlay,
+body.dark-mode .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .modal-content,
+body.dark-mode .modal-content {
+  background: var(--bg-secondary);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .modal-header,
+body.dark-mode .modal-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .modal-header h2,
+body.dark-mode .modal-header h2 {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-close,
+body.dark-mode .modal-close {
+  color: var(--text-secondary);
+}
+
+.dark-mode .modal-close:hover,
+body.dark-mode .modal-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.dark-mode .terms-all-item,
+body.dark-mode .terms-all-item {
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+}
+
+.dark-mode .terms-all-item:hover,
+body.dark-mode .terms-all-item:hover {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+}
+
+.dark-mode .terms-all-title,
+body.dark-mode .terms-all-title {
+  color: #64b5f6;
+}
+
+.dark-mode .terms-divider,
+body.dark-mode .terms-divider {
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+}
+
+.dark-mode .terms-item,
+body.dark-mode .terms-item {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .terms-item:hover,
+body.dark-mode .terms-item:hover {
+  background: rgba(100, 181, 246, 0.1);
+}
+
+.dark-mode .terms-title,
+body.dark-mode .terms-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .terms-content,
+body.dark-mode .terms-content {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .modal-footer,
+body.dark-mode .modal-footer {
+  border-top: 1px solid var(--border-color);
+}
