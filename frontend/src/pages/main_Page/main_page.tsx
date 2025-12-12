@@ -11,11 +11,13 @@ import imgSlide3 from '../../components/common/img/감천문화마을.jpg';
 
 // 타입 정의
 interface SolrPlace {
-  id: string;
+  spotId?: number;
+  id?: string;
   title: string;
   description?: string;
   place?: string;
   address?: string;
+  imageUrl?: string;
   [key: string]: any;
 }
 
@@ -95,31 +97,33 @@ const Home: React.FC = () => {
       try {
         setLoadingPlaces(true);
 
-        // Solr에서 부산 관련 인기 장소 검색
-        const keywords = ['해운대', '광안리', '감천문화마을', '태종대', '용두산공원', '부산타워'];
-        const randomKeywords = keywords.sort(() => 0.5 - Math.random()).slice(0, 3);
+        // /api/solr/all에서 모든 데이터 가져오기
+        const response = await axios.get('/api/solr/all');
+        
+        // 에러 응답인 경우 처리
+        if (response.data && response.data.error) {
+          console.error('서버 에러:', response.data.message);
+          setPopularPlaces([]);
+          return;
+        }
+        
+        const allPlaces: SolrPlace[] = Array.isArray(response.data) ? response.data : (response.data?.data || []);
 
-        const promises = randomKeywords.map(keyword =>
-          axios.get(`/solr/${SOLR_CORE_NAME}/select`, {
-            params: {
-              q: keyword,
-              defType: 'edismax',
-              qf: 'title^3 place description',
-              rows: 1,
-              wt: 'json',
-              fl: 'id,title,description,place,address'
-            }
-          })
-        );
+        console.log('가져온 데이터 개수:', allPlaces.length);
 
-        const responses = await Promise.all(promises);
-        const places = responses
-          .map(res => res.data.response.docs[0])
-          .filter(doc => doc !== undefined);
-
-        setPopularPlaces(places);
-      } catch (error) {
+        if (allPlaces && allPlaces.length > 0) {
+          // 랜덤으로 3개 선택
+          const shuffled = [...allPlaces].sort(() => 0.5 - Math.random());
+          const randomPlaces = shuffled.slice(0, 3);
+          console.log('랜덤 선택된 장소:', randomPlaces);
+          setPopularPlaces(randomPlaces);
+        } else {
+          console.warn('Solr에 데이터가 없습니다. /api/solr/import를 먼저 실행해주세요.');
+          setPopularPlaces([]);
+        }
+      } catch (error: any) {
         console.error('인기 여행지 데이터 로딩 실패:', error);
+        console.error('에러 상세:', error.response?.status, error.response?.data);
         // 실패 시 빈 배열 유지
         setPopularPlaces([]);
       } finally {
@@ -233,36 +237,40 @@ const Home: React.FC = () => {
         ) : (
           <div className="popular-grid">
             {popularPlaces.length > 0 ? (
-              popularPlaces.map((place) => (
-                <div
-                  key={place.id}
-                  className="popular-card"
-                  onClick={() => navigate(`/detail/${place.id}`)}
-                >
-                  <div className="card-image" style={{ backgroundImage: `url(${getImageByTitle(place.title)})` }}>
-                    <div className="card-badge">
-                      {getCategoryIcon(place.title)}
-                      <span>{place.place || '부산'}</span>
+              popularPlaces.map((place) => {
+                const placeId = place.spotId || place.id;
+                const imageUrl = place.imageUrl || getImageByTitle(place.title);
+                return (
+                  <div
+                    key={placeId}
+                    className="popular-card"
+                    onClick={() => navigate(`/tour/view/${placeId}`)}
+                  >
+                    <div className="card-image" style={{ backgroundImage: `url(${imageUrl})` }}>
+                      <div className="card-badge">
+                        {getCategoryIcon(place.title)}
+                        <span>{place.place || '부산'}</span>
+                      </div>
+                    </div>
+                    <div className="card-content">
+                      <h3 className="card-title">{place.title}</h3>
+                      {place.address && (
+                        <p className="card-address">
+                          <MapPin size={14} style={{ marginRight: '4px' }} />
+                          {place.address}
+                        </p>
+                      )}
+                      <p className="card-description">
+                        {place.description
+                          ? place.description.length > 80
+                            ? place.description.substring(0, 80) + '...'
+                            : place.description
+                          : '부산의 아름다운 명소를 만나보세요'}
+                      </p>
                     </div>
                   </div>
-                  <div className="card-content">
-                    <h3 className="card-title">{place.title}</h3>
-                    {place.address && (
-                      <p className="card-address">
-                        <MapPin size={14} style={{ marginRight: '4px' }} />
-                        {place.address}
-                      </p>
-                    )}
-                    <p className="card-description">
-                      {place.description
-                        ? place.description.length > 80
-                          ? place.description.substring(0, 80) + '...'
-                          : place.description
-                        : '부산의 아름다운 명소를 만나보세요'}
-                    </p>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="no-places">
                 <p>인기 여행지 정보를 불러올 수 없습니다.</p>

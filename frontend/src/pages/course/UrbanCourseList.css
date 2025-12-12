@@ -207,3 +207,100 @@
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .urban-list-page,
+body.dark-mode .urban-list-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .urban-list-container,
+body.dark-mode .urban-list-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .urban-list-title,
+body.dark-mode .urban-list-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .urban-list-sub,
+body.dark-mode .urban-list-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-search-input,
+body.dark-mode .urban-list-search-input {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .urban-list-search-input:focus,
+body.dark-mode .urban-list-search-input:focus {
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.2);
+}
+
+.dark-mode .urban-list-info-bar,
+body.dark-mode .urban-list-info-bar {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-total,
+body.dark-mode .urban-list-total {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-card,
+body.dark-mode .urban-list-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .urban-list-card:hover,
+body.dark-mode .urban-list-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .urban-list-card-title,
+body.dark-mode .urban-list-card-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .urban-list-card-sub,
+body.dark-mode .urban-list-card-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-address,
+body.dark-mode .urban-address {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-empty,
+body.dark-mode .urban-list-empty {
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-page-btn,
+body.dark-mode .urban-list-page-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .urban-list-page-btn:hover,
+body.dark-mode .urban-list-page-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: #9ca3af;
+  color: var(--text-primary);
+}
+
+.dark-mode .urban-list-page-btn.active,
+body.dark-mode .urban-list-page-btn.active {
+  background: #6b7280;
+  border-color: #6b7280;
+  color: white;
+}

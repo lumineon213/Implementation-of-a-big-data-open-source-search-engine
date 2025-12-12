@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./MyPage.css";
 import { api } from "../../api/axios";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 interface MyPageDTO {
   accountId: string;
@@ -28,6 +29,7 @@ type HistoryTab = "all" | "stamp" | "gift" | "badge";
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
   const [user, setUser] = useState<MyPageDTO | null>(null);
   const [editData, setEditData] = useState<MyPageDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,23 @@ const MyPage: React.FC = () => {
   }
   const [myReviews, setMyReviews] = useState<Review[]>([]);
   const [reviewPage, setReviewPage] = useState(1);
+
+  // 문의 관련 상태
+  interface Inquiry {
+    inquiryId: number;
+    writerId: string;
+    writerName?: string;
+    title: string;
+    content: string;
+    answerContent?: string;
+    answererId?: string;
+    answererName?: string;
+    status: string;
+    createdDate: string;
+    answeredDate?: string;
+  }
+  const [myInquiries, setMyInquiries] = useState<Inquiry[]>([]);
+  const [inquiryPage, setInquiryPage] = useState(1);
 
   // ============== 데이터 로딩 ==============
   const loadMyPage = async () => {
@@ -93,6 +112,7 @@ const MyPage: React.FC = () => {
       // 리뷰 내역 로드
       if (data.accountId) {
         loadMyReviews(data.accountId);
+        loadMyInquiries();
       }
     } catch (e) {
       console.error("마이페이지 로딩 실패:", e);
@@ -125,6 +145,29 @@ const MyPage: React.FC = () => {
       }
     } catch (e) {
       console.error("리뷰 내역 로딩 실패:", e);
+    }
+  };
+
+  // 내 문의 내역 로드
+  const loadMyInquiries = async () => {
+    try {
+      const res = await api.get("/inquiries");
+      if (res.data.success && res.data.inquiries) {
+        console.log("문의 데이터:", res.data.inquiries);
+        setMyInquiries(res.data.inquiries);
+      } else {
+        console.warn("문의 데이터 응답 형식 오류:", res.data);
+        setMyInquiries([]);
+      }
+    } catch (e: any) {
+      console.error("문의 내역 로딩 실패:", e);
+      if (e.response) {
+        console.error("에러 상세:", e.response.status, e.response.data);
+        if (e.response.status === 405) {
+          console.error("405 오류: 백엔드 서버를 재시작해주세요.");
+        }
+      }
+      setMyInquiries([]);
     }
   };
   
@@ -182,6 +225,17 @@ const MyPage: React.FC = () => {
   const startReviewIndex = (reviewPage - 1) * itemsPerPage;
   const endReviewIndex = startReviewIndex + itemsPerPage;
   const paginatedReviews = myReviews.slice(startReviewIndex, endReviewIndex);
+
+  // 답변된 문의만 필터링
+  const answeredInquiries = myInquiries.filter(inq => 
+    inq.status === "ANSWERED" && inq.answerContent && inq.answerContent.trim() !== ""
+  );
+
+  // 문의 페이징 계산
+  const totalInquiryPages = Math.ceil(answeredInquiries.length / itemsPerPage);
+  const startInquiryIndex = (inquiryPage - 1) * itemsPerPage;
+  const endInquiryIndex = startInquiryIndex + itemsPerPage;
+  const paginatedInquiries = answeredInquiries.slice(startInquiryIndex, endInquiryIndex);
   
   // 탭 변경 시 페이지 초기화
   const handleHistoryTabChange = (tab: HistoryTab) => {
@@ -220,6 +274,65 @@ const MyPage: React.FC = () => {
     } else {
       return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
     }
+  };
+
+  // 다크모드 스타일 헬퍼
+  const getDarkModeStyle = (lightStyle: React.CSSProperties): React.CSSProperties => {
+    if (!isDarkMode) return lightStyle;
+    
+    const darkStyle: React.CSSProperties = { ...lightStyle };
+    
+    // background와 backgroundColor 충돌 방지
+    if (lightStyle.background) {
+      if (lightStyle.background === "#f9f9f9") {
+        darkStyle.background = "var(--bg-tertiary)";
+      } else if (lightStyle.background === "#fff") {
+        darkStyle.background = "var(--bg-secondary)";
+      } else if (lightStyle.background === "#f5f5f5") {
+        darkStyle.background = "var(--bg-tertiary)";
+      } else if (lightStyle.background === "#e8f5e9") {
+        darkStyle.background = "rgba(76, 175, 80, 0.2)";
+      } else if (lightStyle.background === "#eaf4ff") {
+        darkStyle.background = "rgba(100, 181, 246, 0.2)";
+      }
+    } else if (lightStyle.backgroundColor) {
+      if (lightStyle.backgroundColor === "#f9f9f9") {
+        darkStyle.backgroundColor = "var(--bg-tertiary)";
+      } else if (lightStyle.backgroundColor === "#fff") {
+        darkStyle.backgroundColor = "var(--bg-secondary)";
+      } else if (lightStyle.backgroundColor === "#f5f5f5") {
+        darkStyle.backgroundColor = "var(--bg-tertiary)";
+      }
+    }
+    
+    // color 처리
+    if (lightStyle.color === "#333" || lightStyle.color === "#222") {
+      darkStyle.color = "var(--text-primary)";
+    } else if (lightStyle.color === "#666" || lightStyle.color === "#555") {
+      darkStyle.color = "var(--text-secondary)";
+    } else if (lightStyle.color === "#999") {
+      darkStyle.color = "var(--text-tertiary)";
+    }
+    
+    // border와 borderColor 충돌 방지
+    if (lightStyle.border) {
+      // border는 그대로 유지하되 색상만 변경
+      const borderValue = String(lightStyle.border);
+      if (borderValue.includes("#eee") || borderValue.includes("#ddd")) {
+        darkStyle.border = borderValue.replace(/#eee|#ddd/g, "var(--border-color)");
+      }
+    } else if (lightStyle.borderColor) {
+      if (lightStyle.borderColor === "#eee" || lightStyle.borderColor === "#ddd") {
+        darkStyle.borderColor = "var(--border-color)";
+      }
+    }
+    
+    // borderTopColor 처리
+    if (lightStyle.borderTopColor === "#eee") {
+      darkStyle.borderTopColor = "var(--border-color)";
+    }
+    
+    return darkStyle;
   };
 
   useEffect(() => {
@@ -484,14 +597,21 @@ const MyPage: React.FC = () => {
               <h3>📋 이벤트 내역</h3>
                   
                   {/* 탭 메뉴 */}
-                  <div style={{ display: "flex", gap: "8px", marginTop: "15px", marginBottom: "20px", borderBottom: "2px solid #eee", paddingBottom: "10px" }}>
+                  <div style={getDarkModeStyle({ 
+                    display: "flex", 
+                    gap: "8px", 
+                    marginTop: "15px", 
+                    marginBottom: "20px", 
+                    borderBottom: "2px solid #eee", 
+                    paddingBottom: "10px" 
+                  })}>
                     <button
                       onClick={() => handleHistoryTabChange("all")}
                       style={{
                         padding: "8px 16px",
                         border: "none",
-                        background: historyTab === "all" ? "#2196f3" : "#f5f5f5",
-                        color: historyTab === "all" ? "#fff" : "#666",
+                        background: historyTab === "all" ? "#2196f3" : (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5"),
+                        color: historyTab === "all" ? "#fff" : (isDarkMode ? "var(--text-secondary)" : "#666"),
                         borderRadius: "20px",
                         cursor: "pointer",
                         fontSize: "13px",
@@ -505,8 +625,8 @@ const MyPage: React.FC = () => {
                       style={{
                         padding: "8px 16px",
                         border: "none",
-                        background: historyTab === "stamp" ? "#ffc107" : "#f5f5f5",
-                        color: historyTab === "stamp" ? "#fff" : "#666",
+                        background: historyTab === "stamp" ? "#ffc107" : (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5"),
+                        color: historyTab === "stamp" ? "#fff" : (isDarkMode ? "var(--text-secondary)" : "#666"),
                         borderRadius: "20px",
                         cursor: "pointer",
                         fontSize: "13px",
@@ -520,8 +640,8 @@ const MyPage: React.FC = () => {
                       style={{
                         padding: "8px 16px",
                         border: "none",
-                        background: historyTab === "gift" ? "#dc3545" : "#f5f5f5",
-                        color: historyTab === "gift" ? "#fff" : "#666",
+                        background: historyTab === "gift" ? "#dc3545" : (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5"),
+                        color: historyTab === "gift" ? "#fff" : (isDarkMode ? "var(--text-secondary)" : "#666"),
                         borderRadius: "20px",
                         cursor: "pointer",
                         fontSize: "13px",
@@ -535,8 +655,8 @@ const MyPage: React.FC = () => {
                       style={{
                         padding: "8px 16px",
                         border: "none",
-                        background: historyTab === "badge" ? "#17a2b8" : "#f5f5f5",
-                        color: historyTab === "badge" ? "#fff" : "#666",
+                        background: historyTab === "badge" ? "#17a2b8" : (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5"),
+                        color: historyTab === "badge" ? "#fff" : (isDarkMode ? "var(--text-secondary)" : "#666"),
                         borderRadius: "20px",
                         cursor: "pointer",
                         fontSize: "13px",
@@ -550,7 +670,7 @@ const MyPage: React.FC = () => {
                   {/* 내역 리스트 */}
                   <div style={{ minHeight: "200px" }}>
                     {filteredHistory.length === 0 ? (
-                      <div style={{ textAlign: "center", padding: "40px 20px", color: "#999" }}>
+                      <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
                         <div style={{ fontSize: "48px", marginBottom: "10px" }}>📭</div>
                         <p>이벤트 내역이 없습니다</p>
                       </div>
@@ -560,7 +680,7 @@ const MyPage: React.FC = () => {
                           {paginatedHistory.map((item) => (
                           <div
                             key={item.historyId}
-                            style={{
+                            style={getDarkModeStyle({
                               padding: "15px",
                               background: "#f9f9f9",
                               borderRadius: "8px",
@@ -568,24 +688,24 @@ const MyPage: React.FC = () => {
                               display: "flex",
                               alignItems: "flex-start",
                               gap: "12px"
-                            }}
+                            })}
                           >
                             <div style={{ fontSize: "24px", flexShrink: 0 }}>
                               {getEventIcon(item.eventType)}
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontWeight: "bold", marginBottom: "4px", fontSize: "15px" }}>
+                              <div style={{ fontWeight: "bold", marginBottom: "4px", fontSize: "15px", color: isDarkMode ? "var(--text-primary)" : "#333" }}>
                                 {item.eventName}
                               </div>
                               {item.description && (
-                                <div style={{ fontSize: "13px", color: "#666", marginBottom: "6px" }}>
+                                <div style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666", marginBottom: "6px" }}>
                                   {item.description}
                                 </div>
                               )}
-                              <div style={{ fontSize: "12px", color: "#999", display: "flex", alignItems: "center", gap: "8px" }}>
+                              <div style={{ fontSize: "12px", color: isDarkMode ? "var(--text-tertiary)" : "#999", display: "flex", alignItems: "center", gap: "8px" }}>
                                 <span>{formatDate(item.createdAt)}</span>
                                 {item.count > 1 && (
-                                  <span style={{ background: "#e3f2fd", padding: "2px 8px", borderRadius: "10px" }}>
+                                  <span style={{ background: isDarkMode ? "rgba(100, 181, 246, 0.2)" : "#e3f2fd", padding: "2px 8px", borderRadius: "10px", color: isDarkMode ? "#64b5f6" : "#1976d2" }}>
                                     +{item.count}개
                                   </span>
                                 )}
@@ -597,7 +717,7 @@ const MyPage: React.FC = () => {
                         
                         {/* 페이징 버튼 */}
                         {totalHistoryPages > 1 && (
-                          <div style={{ 
+                          <div style={getDarkModeStyle({ 
                             display: "flex", 
                             justifyContent: "center", 
                             alignItems: "center", 
@@ -605,37 +725,37 @@ const MyPage: React.FC = () => {
                             marginTop: "20px",
                             paddingTop: "15px",
                             borderTop: "1px solid #eee"
-                          }}>
+                          })}>
                             <button
                               onClick={() => setHistoryPage(prev => Math.max(1, prev - 1))}
                               disabled={historyPage === 1}
-                              style={{
+                              style={getDarkModeStyle({
                                 padding: "6px 12px",
                                 border: "1px solid #ddd",
-                                background: historyPage === 1 ? "#f5f5f5" : "#fff",
-                                color: historyPage === 1 ? "#999" : "#333",
+                                background: historyPage === 1 ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: historyPage === 1 ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
                                 borderRadius: "4px",
                                 cursor: historyPage === 1 ? "not-allowed" : "pointer",
                                 fontSize: "13px"
-                              }}
+                              })}
                             >
                               이전
                             </button>
-                            <span style={{ fontSize: "13px", color: "#666" }}>
+                            <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
                               {historyPage} / {totalHistoryPages}
                             </span>
                             <button
                               onClick={() => setHistoryPage(prev => Math.min(totalHistoryPages, prev + 1))}
                               disabled={historyPage === totalHistoryPages}
-                              style={{
+                              style={getDarkModeStyle({
                                 padding: "6px 12px",
                                 border: "1px solid #ddd",
-                                background: historyPage === totalHistoryPages ? "#f5f5f5" : "#fff",
-                                color: historyPage === totalHistoryPages ? "#999" : "#333",
+                                background: historyPage === totalHistoryPages ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: historyPage === totalHistoryPages ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
                                 borderRadius: "4px",
                                 cursor: historyPage === totalHistoryPages ? "not-allowed" : "pointer",
                                 fontSize: "13px"
-                              }}
+                              })}
                             >
                               다음
                             </button>
@@ -655,7 +775,7 @@ const MyPage: React.FC = () => {
                   {/* 리뷰 리스트 */}
                   <div style={{ minHeight: "200px", marginTop: "15px" }}>
                     {myReviews.length === 0 ? (
-                      <div style={{ textAlign: "center", padding: "40px 20px", color: "#999" }}>
+                      <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
                         <div style={{ fontSize: "48px", marginBottom: "10px" }}>📝</div>
                         <p>작성한 리뷰가 없습니다</p>
                       </div>
@@ -666,29 +786,29 @@ const MyPage: React.FC = () => {
                           <div
                             key={review.reviewId}
                             onClick={() => handleReviewClick(review)}
-                            style={{
+                            style={getDarkModeStyle({
                               padding: "15px",
                               background: "#f9f9f9",
                               borderRadius: "8px",
                               border: "1px solid #eee",
                               cursor: "pointer",
                               transition: "all 0.2s"
-                            }}
+                            })}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "#f0f0f0";
-                              e.currentTarget.style.borderColor = "#ddd";
+                              e.currentTarget.style.background = isDarkMode ? "var(--bg-secondary)" : "#f0f0f0";
+                              e.currentTarget.style.borderColor = isDarkMode ? "var(--border-color)" : "#ddd";
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.background = "#f9f9f9";
-                              e.currentTarget.style.borderColor = "#eee";
+                              e.currentTarget.style.background = isDarkMode ? "var(--bg-tertiary)" : "#f9f9f9";
+                              e.currentTarget.style.borderColor = isDarkMode ? "var(--border-color)" : "#eee";
                             }}
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
                               <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: "bold", marginBottom: "6px", fontSize: "15px", color: "#333" }}>
+                                <div style={{ fontWeight: "bold", marginBottom: "6px", fontSize: "15px", color: isDarkMode ? "var(--text-primary)" : "#333" }}>
                                   📍 {review.placeName || review.placeId}
                                 </div>
-                                <div style={{ fontSize: "14px", color: "#555", lineHeight: "1.5", marginBottom: "8px" }}>
+                                <div style={{ fontSize: "14px", color: isDarkMode ? "var(--text-secondary)" : "#555", lineHeight: "1.5", marginBottom: "8px" }}>
                                   {review.content}
                                 </div>
                                 {review.images && review.images.length > 0 && (
@@ -703,7 +823,7 @@ const MyPage: React.FC = () => {
                                           height: "60px",
                                           objectFit: "cover",
                                           borderRadius: "6px",
-                                          border: "1px solid #ddd"
+                                          border: isDarkMode ? "1px solid var(--border-color)" : "1px solid #ddd"
                                         }}
                                       />
                                     ))}
@@ -714,10 +834,10 @@ const MyPage: React.FC = () => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        background: "#f0f0f0",
+                                        background: isDarkMode ? "var(--bg-tertiary)" : "#f0f0f0",
                                         borderRadius: "6px",
                                         fontSize: "12px",
-                                        color: "#666"
+                                        color: isDarkMode ? "var(--text-secondary)" : "#666"
                                       }}>
                                         +{review.images.length - 3}
                                       </div>
@@ -726,7 +846,7 @@ const MyPage: React.FC = () => {
                                 )}
                               </div>
                             </div>
-                            <div style={{ fontSize: "12px", color: "#999", marginTop: "8px" }}>
+                            <div style={{ fontSize: "12px", color: isDarkMode ? "var(--text-tertiary)" : "#999", marginTop: "8px" }}>
                               {formatDate(review.createdAt)}
                             </div>
                           </div>
@@ -735,7 +855,7 @@ const MyPage: React.FC = () => {
                         
                         {/* 페이징 버튼 */}
                         {totalReviewPages > 1 && (
-                          <div style={{ 
+                          <div style={getDarkModeStyle({ 
                             display: "flex", 
                             justifyContent: "center", 
                             alignItems: "center", 
@@ -743,37 +863,37 @@ const MyPage: React.FC = () => {
                             marginTop: "20px",
                             paddingTop: "15px",
                             borderTop: "1px solid #eee"
-                          }}>
+                          })}>
                             <button
                               onClick={() => setReviewPage(prev => Math.max(1, prev - 1))}
                               disabled={reviewPage === 1}
-                              style={{
+                              style={getDarkModeStyle({
                                 padding: "6px 12px",
                                 border: "1px solid #ddd",
-                                background: reviewPage === 1 ? "#f5f5f5" : "#fff",
-                                color: reviewPage === 1 ? "#999" : "#333",
+                                background: reviewPage === 1 ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: reviewPage === 1 ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
                                 borderRadius: "4px",
                                 cursor: reviewPage === 1 ? "not-allowed" : "pointer",
                                 fontSize: "13px"
-                              }}
+                              })}
                             >
                               이전
                             </button>
-                            <span style={{ fontSize: "13px", color: "#666" }}>
+                            <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
                               {reviewPage} / {totalReviewPages}
                             </span>
                             <button
                               onClick={() => setReviewPage(prev => Math.min(totalReviewPages, prev + 1))}
                               disabled={reviewPage === totalReviewPages}
-                              style={{
+                              style={getDarkModeStyle({
                                 padding: "6px 12px",
                                 border: "1px solid #ddd",
-                                background: reviewPage === totalReviewPages ? "#f5f5f5" : "#fff",
-                                color: reviewPage === totalReviewPages ? "#999" : "#333",
+                                background: reviewPage === totalReviewPages ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: reviewPage === totalReviewPages ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
                                 borderRadius: "4px",
                                 cursor: reviewPage === totalReviewPages ? "not-allowed" : "pointer",
                                 fontSize: "13px"
-                              }}
+                              })}
                             >
                               다음
                             </button>
@@ -785,6 +905,119 @@ const MyPage: React.FC = () => {
             </div>
           )}
           
+          {/* 문의 답변 패널 */}
+          {mode === "view" && (
+            <div className="benefit-card" style={{ marginBottom: "20px" }}>
+              <h3>💬 문의사항 답변</h3>
+                  
+                  {/* 문의 리스트 */}
+                  <div style={{ minHeight: "200px", marginTop: "15px" }}>
+                    {answeredInquiries.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
+                        <div style={{ fontSize: "48px", marginBottom: "10px" }}>📭</div>
+                        <p>답변된 문의가 없습니다</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                          {paginatedInquiries.map((inquiry) => (
+                          <div
+                            key={inquiry.inquiryId}
+                            style={getDarkModeStyle({
+                              padding: "12px",
+                              background: "#f9f9f9",
+                              borderRadius: "8px",
+                              border: "1px solid #eee",
+                              fontSize: "13px"
+                            })}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: "bold", marginBottom: "4px", fontSize: "14px", color: isDarkMode ? "var(--text-primary)" : "#333" }}>
+                                  {inquiry.title}
+                                </div>
+                                <div style={{ fontSize: "12px", color: isDarkMode ? "var(--text-secondary)" : "#666", marginBottom: "6px", lineHeight: "1.4" }}>
+                                  {inquiry.content.length > 50 ? inquiry.content.substring(0, 50) + "..." : inquiry.content}
+                                </div>
+                                <div style={{ 
+                                  padding: "8px", 
+                                  background: isDarkMode ? "rgba(76, 175, 80, 0.2)" : "#e8f5e9", 
+                                  borderRadius: "6px", 
+                                  marginTop: "8px",
+                                  fontSize: "12px",
+                                  lineHeight: "1.5"
+                                }}>
+                                  <div style={{ fontWeight: "600", color: isDarkMode ? "#81c784" : "#2e7d32", marginBottom: "4px" }}>
+                                    ✓ 답변:
+                                  </div>
+                                  <div style={{ color: isDarkMode ? "var(--text-secondary)" : "#555" }}>
+                                    {inquiry.answerContent}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ fontSize: "11px", color: isDarkMode ? "var(--text-tertiary)" : "#999", marginTop: "8px", display: "flex", gap: "12px" }}>
+                              <span>문의일: {inquiry.createdDate ? new Date(inquiry.createdDate).toLocaleDateString('ko-KR') : "-"}</span>
+                              {inquiry.answeredDate && (
+                                <span>답변일: {new Date(inquiry.answeredDate).toLocaleDateString('ko-KR')}</span>
+                              )}
+                            </div>
+                          </div>
+                          ))}
+                        </div>
+                        
+                        {/* 페이징 버튼 */}
+                        {totalInquiryPages > 1 && (
+                          <div style={getDarkModeStyle({ 
+                            display: "flex", 
+                            justifyContent: "center", 
+                            alignItems: "center", 
+                            gap: "10px", 
+                            marginTop: "20px",
+                            paddingTop: "15px",
+                            borderTop: "1px solid #eee"
+                          })}>
+                            <button
+                              onClick={() => setInquiryPage(prev => Math.max(1, prev - 1))}
+                              disabled={inquiryPage === 1}
+                              style={getDarkModeStyle({
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: inquiryPage === 1 ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: inquiryPage === 1 ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
+                                borderRadius: "4px",
+                                cursor: inquiryPage === 1 ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              })}
+                            >
+                              이전
+                            </button>
+                            <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
+                              {inquiryPage} / {totalInquiryPages}
+                            </span>
+                            <button
+                              onClick={() => setInquiryPage(prev => Math.min(totalInquiryPages, prev + 1))}
+                              disabled={inquiryPage === totalInquiryPages}
+                              style={getDarkModeStyle({
+                                padding: "6px 12px",
+                                border: "1px solid #ddd",
+                                background: inquiryPage === totalInquiryPages ? (isDarkMode ? "var(--bg-tertiary)" : "#f5f5f5") : (isDarkMode ? "var(--bg-secondary)" : "#fff"),
+                                color: inquiryPage === totalInquiryPages ? (isDarkMode ? "var(--text-tertiary)" : "#999") : (isDarkMode ? "var(--text-primary)" : "#333"),
+                                borderRadius: "4px",
+                                cursor: inquiryPage === totalInquiryPages ? "not-allowed" : "pointer",
+                                fontSize: "13px"
+                              })}
+                            >
+                              다음
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+            </div>
+          )}
+
           {/* 로그아웃 버튼 */}
           {mode === "view" && (
             <button onClick={handleLogout} className="logout-button">

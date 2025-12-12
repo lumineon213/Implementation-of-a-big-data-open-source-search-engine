@@ -207,3 +207,101 @@
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .marine-list-page,
+body.dark-mode .marine-list-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .marine-list-container,
+body.dark-mode .marine-list-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .marine-list-title,
+body.dark-mode .marine-list-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .marine-list-sub,
+body.dark-mode .marine-list-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .marine-list-search-input,
+body.dark-mode .marine-list-search-input {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .marine-list-search-input:focus,
+body.dark-mode .marine-list-search-input:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .marine-list-info-bar,
+body.dark-mode .marine-list-info-bar {
+  color: var(--text-secondary);
+}
+
+.dark-mode .marine-list-total,
+body.dark-mode .marine-list-total {
+  color: #64b5f6;
+}
+
+.dark-mode .marine-list-card,
+body.dark-mode .marine-list-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .marine-list-card:hover,
+body.dark-mode .marine-list-card:hover {
+  box-shadow: 0 10px 25px rgba(100, 181, 246, 0.3);
+  border-color: #64b5f6;
+}
+
+.dark-mode .marine-list-card-title,
+body.dark-mode .marine-list-card-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .marine-list-card-sub,
+body.dark-mode .marine-list-card-sub {
+  color: #64b5f6;
+}
+
+.dark-mode .marine-address,
+body.dark-mode .marine-address {
+  color: var(--text-secondary);
+}
+
+.dark-mode .marine-list-empty,
+body.dark-mode .marine-list-empty {
+  color: var(--text-secondary);
+}
+
+.dark-mode .marine-list-page-btn,
+body.dark-mode .marine-list-page-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .marine-list-page-btn:hover,
+body.dark-mode .marine-list-page-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .marine-list-page-btn.active,
+body.dark-mode .marine-list-page-btn.active {
+  background: #64b5f6;
+  border-color: #64b5f6;
+  color: white;
+}
