@@ -72,7 +72,7 @@ const TourPage: React.FC = () => {
 
   // 상세 페이지 이동
   const handleCardClick = (spotId: number) => {
-    navigate(`/theme/view/${spotId}`);
+    navigate(`/tour/view/${spotId}`);
   };
 
   // 페이지네이션 계산

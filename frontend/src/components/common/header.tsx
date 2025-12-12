@@ -117,7 +117,7 @@ const Header: React.FC = () => {
                 </div>
               )}
             </div>
-            <Link to="/theme" className="menu-item">명소</Link>
+            <Link to="/tour" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
             
