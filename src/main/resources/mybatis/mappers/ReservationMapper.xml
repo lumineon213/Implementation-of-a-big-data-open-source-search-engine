@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.reservation.dao.ReservationDAO">
+
+    <insert id="insertReservation" parameterType="com.boot.reservation.dto.ReservationDTO">
+        INSERT INTO RESERVATION_TBL (
+            RESERVATION_ID, 
+            ACCOUNT_ID, 
+            CONTENT_ID, 
+            CHECK_IN_DATE, 
+            CHECK_OUT_DATE, 
+            AMOUNT, 
+            PAYMENT_KEY, 
+            STATUS, 
+            CREATED_AT
+        ) VALUES (
+            -- 트리거(BI_RESERVATION_TBL)가 ID를 자동으로 부여하므로, ID 필드를 비우거나 NEXTVAL을 사용합니다.
+            RESERVATION_SEQ.NEXTVAL, 
+            #{accountId}, 
+            #{contentId}, 
+            #{checkInDate}, 
+            #{checkOutDate}, 
+            #{amount}, 
+            #{paymentKey}, 
+            'PAID',
+            SYSDATE
+        )
+    </insert>
+    
+    <select id="selectReservationHistoryByAccountId" 
+            parameterType="String" 
+            resultType="com.boot.reservation.dto.ReservationHistoryDTO">
+        
+    SELECT
+        T1.RESERVATION_ID AS reservationId,
+        T1.CONTENT_ID AS contentId,           
+        T1.CHECK_IN_DATE AS checkInDate,      
+        T1.CHECK_OUT_DATE AS checkOutDate,    
+        T1.AMOUNT AS amount,                  
+        T2.TITLE AS title                     
+    FROM
+        RESERVATION_TBL T1
+    INNER JOIN
+        STAY_DETAIL T2 ON T1.CONTENT_ID = T2.CONTENT_ID
+    WHERE
+        T1.ACCOUNT_ID = #{accountId} 
+    ORDER BY
+        T1.CHECK_IN_DATE DESC
+    </select>
+
+</mapper>
