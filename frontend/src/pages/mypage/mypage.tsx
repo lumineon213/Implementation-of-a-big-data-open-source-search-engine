@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./MyPage.css";
 import { api } from "../../api/axios";
 import { useDarkMode } from "../../contexts/DarkModeContext";
+import ReservationHistory from '../reservation/reservationHistory';
 
 interface MyPageDTO {
   accountId: string;
@@ -147,7 +148,7 @@ const MyPage: React.FC = () => {
       console.error("리뷰 내역 로딩 실패:", e);
     }
   };
-
+  
   // 내 문의 내역 로드
   const loadMyInquiries = async () => {
     try {
@@ -766,7 +767,14 @@ const MyPage: React.FC = () => {
                   </div>
             </div>
           )}
-          
+
+          {/* 예약 내역 패널 */}
+          {mode === "view" && (
+                <section className="benefit-card" style={{ marginBottom: "20px" }}>
+                    {/* ReservationHistory 컴포넌트 호출 */}
+                    <ReservationHistory /> 
+                </section>
+            )}
           {/* 리뷰 내역 패널 */}
           {mode === "view" && (
             <div className="benefit-card" style={{ marginBottom: "20px" }}>

@@ -2,27 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.boot.stay.dao.stayDAO">
 
-<select id="selectStayDetailById" parameterType="string" resultType="com.boot.stay.dto.stayDTO">
-   SELECT
-        CONTENT_ID,
-        TITLE,
-        NVL(ADDRESS, '주소 정보 없음') AS address,  
-        NVL(FIRSTIMAGE, '') AS firstimage,    
-        NVL(LONGITUDE, 0) AS longitude,          
-        NVL(LATITUDE, 0) AS latitude,           
-        NVL(OVERVIEW, '상세 설명이 준비되지 않았습니다.') AS overview,    
-        NVL(VIEW_COUNT, 0) AS view_count    
-    FROM
-        STAY_DETAIL
-    WHERE
-        CONTENT_ID = #{id}
-</select>
+    <resultMap id="stayDetailMap" type="com.boot.stay.dto.stayDTO">
+        <result property="content_id" column="CONTENT_ID" />
+        <result property="title" column="TITLE" />
+        <result property="address" column="ADDRESS" />
+        <result property="firstimage" column="FIRSTIMAGE" />
+        <result property="overview" column="OVERVIEW" />
+        <result property="longitude" column="LONGITUDE" />
+        <result property="latitude" column="LATITUDE" />
+        <result property="view_count" column="VIEW_COUNT" />
+    </resultMap>
+
+    <select id="selectStayDetailById" parameterType="string" resultMap="stayDetailMap">
+        SELECT 
+            CONTENT_ID,         TITLE,
+            NVL(ADDRESS, '주소 정보 없음') AS ADDRESS,  NVL(FIRSTIMAGE, '') AS FIRSTIMAGE,    
+            NVL(LONGITUDE, 0) AS LONGITUDE,          
+            NVL(LATITUDE, 0) AS LATITUDE,           
+            NVL(OVERVIEW, '상세 설명이 준비되지 않았습니다.') AS OVERVIEW,    
+            NVL(VIEW_COUNT, 0) AS VIEW_COUNT
+        FROM
+            STAY_DETAIL
+        WHERE
+            CONTENT_ID = #{id}
+    </select>
     
     <update id="increaseDbViewCount" parameterType="string">
         UPDATE STAY_DETAIL
         SET VIEW_COUNT = NVL(VIEW_COUNT, 0) + 1
         WHERE CONTENT_ID = #{id}
     </update>
+    
     <select id="selectAllStayDataForSync" resultType="com.boot.stay.dto.stayDTO"> 
         SELECT 
             content_id, 

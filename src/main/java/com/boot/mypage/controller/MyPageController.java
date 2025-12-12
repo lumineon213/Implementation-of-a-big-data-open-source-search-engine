@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boot.mypage.dto.MyPageDTO;
 import com.boot.mypage.service.MyPageService;
+import com.boot.reservation.dao.ReservationDAO;
 import com.boot.reservation.dto.ReservationHistoryDTO;
 import com.boot.security.JwtUtil;
 
