@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.course.dao.CourseDAO">
+
+    <!-- 1) 코스 생성 -->
+    <insert id="insertCourse" parameterType="com.boot.course.entity.Course">
+        INSERT INTO COURSE_TBL (
+            COURSE_ID,
+            ACCOUNT_ID,
+            TITLE,
+            DESCRIPTION,
+            IS_PUBLIC,
+            TAGS,
+            CREATED_AT
+        ) VALUES (
+            SEQ_COURSE_ID.NEXTVAL,
+            #{accountId},
+            #{title},
+            #{description},
+            #{isPublic},
+            #{tags},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 2) 단일 코스 조회 -->
+    <select id="selectCourseById" resultType="com.boot.course.entity.Course">
+        SELECT
+            COURSE_ID,
+            ACCOUNT_ID,
+            TITLE,
+            DESCRIPTION,
+            IS_PUBLIC,
+            TAGS,
+            CREATED_AT,
+            UPDATED_AT
+        FROM COURSE_TBL
+        WHERE COURSE_ID = #{courseId}
+    </select>
+
+    <!-- 3) 유저별 코스 목록 조회 -->
+    <select id="selectCoursesByAccountId" resultType="com.boot.course.entity.Course">
+        SELECT
+            COURSE_ID,
+            ACCOUNT_ID,
+            TITLE,
+            DESCRIPTION,
+            IS_PUBLIC,
+            TAGS,
+            CREATED_AT,
+            UPDATED_AT
+        FROM COURSE_TBL
+        WHERE ACCOUNT_ID = #{accountId}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 4) 코스 삭제 -->
+    <delete id="deleteCourse">
+        DELETE FROM COURSE_TBL
+        WHERE COURSE_ID = #{courseId}
+    </delete>
+
+</mapper>
