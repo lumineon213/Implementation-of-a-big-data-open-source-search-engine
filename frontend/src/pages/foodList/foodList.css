@@ -330,3 +330,169 @@
   color: #333;
   font-weight: bold;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .food-list-container,
+body.dark-mode .food-list-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .page-title,
+body.dark-mode .page-title {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .food-card,
+body.dark-mode .food-card {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .food-card:hover,
+body.dark-mode .food-card:hover {
+  background-color: var(--bg-secondary);
+}
+
+.dark-mode .food-title,
+body.dark-mode .food-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .food-address,
+body.dark-mode .food-address {
+  color: var(--text-secondary);
+}
+
+.dark-mode .food-desc,
+body.dark-mode .food-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .tag,
+body.dark-mode .tag {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.dark-mode .more-btn,
+body.dark-mode .more-btn {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .pagination,
+body.dark-mode .pagination {
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .pagination button,
+body.dark-mode .pagination button {
+  background-color: #0066ff;
+}
+
+.dark-mode .pagination button:disabled,
+body.dark-mode .pagination button:disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}
+
+.dark-mode .page-info,
+body.dark-mode .page-info {
+  color: var(--text-primary);
+}
+
+.dark-mode .page-btn,
+body.dark-mode .page-btn {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .page-btn:hover:not(:disabled),
+body.dark-mode .page-btn:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .page-btn.active,
+body.dark-mode .page-btn.active {
+  background-color: #0066ff;
+  color: white;
+  border-color: #0066ff;
+}
+
+.dark-mode .page-btn.prev-next,
+body.dark-mode .page-btn.prev-next {
+  background-color: var(--bg-secondary);
+}
+
+.dark-mode .page-btn:disabled,
+body.dark-mode .page-btn:disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .jump-input,
+body.dark-mode .jump-input {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .jump-btn,
+body.dark-mode .jump-btn {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .jump-btn:hover,
+body.dark-mode .jump-btn:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .search-filter-container,
+body.dark-mode .search-filter-container {
+  background-color: var(--bg-secondary);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .search-title,
+body.dark-mode .search-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .main-search-input,
+body.dark-mode .main-search-input {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .main-search-input::placeholder,
+body.dark-mode .main-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .list-info-bar,
+body.dark-mode .list-info-bar {
+  border-bottom-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .total-count b,
+body.dark-mode .total-count b {
+  color: #0066ff;
+}
+
+.dark-mode .sort-buttons button,
+body.dark-mode .sort-buttons button {
+  color: var(--text-secondary);
+}
+
+.dark-mode .sort-buttons button.active,
+body.dark-mode .sort-buttons button.active {
+  color: var(--text-primary);
+}

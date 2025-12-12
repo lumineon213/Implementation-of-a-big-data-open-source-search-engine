@@ -16,6 +16,7 @@ interface SolrPlace {
   description?: string;
   place?: string;
   address?: string;
+  imageUrl?: string;
   [key: string]: any;
 }
 
@@ -89,33 +90,39 @@ const Home: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // --- Solr에서 인기 여행지 데이터 가져오기 ---
+  // --- Solr Search core에서 인기 여행지 데이터 가져오기 ---
   useEffect(() => {
     const fetchPopularPlaces = async () => {
       try {
         setLoadingPlaces(true);
 
-        // Solr에서 부산 관련 인기 장소 검색
-        const keywords = ['해운대', '광안리', '감천문화마을', '태종대', '용두산공원', '부산타워'];
-        const randomKeywords = keywords.sort(() => 0.5 - Math.random()).slice(0, 3);
+        // Solr Search core에서 인기 장소 가져오기
+        const response = await axios.get('/api/search', {
+          params: {
+            keyword: '' // 키워드 없이 전체 조회
+          }
+        });
 
-        const promises = randomKeywords.map(keyword =>
-          axios.get(`/solr/${SOLR_CORE_NAME}/select`, {
-            params: {
-              q: keyword,
-              defType: 'edismax',
-              qf: 'title^3 place description',
-              rows: 1,
-              wt: 'json',
-              fl: 'id,title,description,place,address'
-            }
-          })
-        );
+        // TourDTO 배열로 반환되므로 변환
+        const tourData = response.data || [];
+        
+        // 이미지가 있는 것만 필터링하고 랜덤으로 섞기
+        const placesWithImage = tourData
+          .filter((item: any) => item.title && item.imageUrl) // 제목과 이미지가 있는 것만
+          .map((item: any) => ({
+            id: String(item.spotId || item.id || ''),
+            title: item.title || '',
+            description: item.description || '',
+            place: '부산',
+            address: item.address || '',
+            imageUrl: item.imageUrl || '' // 이미지 URL 추가
+          }));
 
-        const responses = await Promise.all(promises);
-        const places = responses
-          .map(res => res.data.response.docs[0])
-          .filter(doc => doc !== undefined);
+        // 랜덤으로 섞기
+        const shuffled = placesWithImage.sort(() => Math.random() - 0.5);
+        
+        // 최대 3개만 선택
+        const places: SolrPlace[] = shuffled.slice(0, 3);
 
         setPopularPlaces(places);
       } catch (error) {
@@ -237,9 +244,16 @@ const Home: React.FC = () => {
                 <div
                   key={place.id}
                   className="popular-card"
-                  onClick={() => navigate(`/detail/${place.id}`)}
+                  onClick={() => navigate(`/tour/view/${place.id}`)}
                 >
-                  <div className="card-image" style={{ backgroundImage: `url(${getImageByTitle(place.title)})` }}>
+                  <div 
+                    className="card-image" 
+                    style={{ 
+                      backgroundImage: `url(${place.imageUrl || getImageByTitle(place.title)})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  >
                     <div className="card-badge">
                       {getCategoryIcon(place.title)}
                       <span>{place.place || '부산'}</span>

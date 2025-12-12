@@ -210,3 +210,86 @@
   cursor: not-allowed;
   border-color: #eee;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .info-container,
+body.dark-mode .info-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .page-title,
+body.dark-mode .page-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .search-box,
+body.dark-mode .search-box {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .search-box input,
+body.dark-mode .search-box input {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.dark-mode .search-box input::placeholder,
+body.dark-mode .search-box input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .tour-card,
+body.dark-mode .tour-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .tour-card:hover,
+body.dark-mode .tour-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .card-content h3,
+body.dark-mode .card-content h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .card-content p,
+body.dark-mode .card-content p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .no-image,
+body.dark-mode .no-image {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}
+
+.dark-mode .no-result,
+body.dark-mode .no-result {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.dark-mode .page-btn,
+body.dark-mode .page-btn {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .page-btn:hover:not(:disabled),
+body.dark-mode .page-btn:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .page-btn:disabled,
+body.dark-mode .page-btn:disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border-color: var(--border-color);
+}

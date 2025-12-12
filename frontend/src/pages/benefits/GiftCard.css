@@ -77,3 +77,46 @@
   margin-top: 10px;
   text-align: center;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .giftcard-container,
+body.dark-mode .giftcard-container {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .giftcard-title,
+body.dark-mode .giftcard-title {
+  color: #ff9800;
+}
+
+.dark-mode .giftcard-item,
+body.dark-mode .giftcard-item {
+  background: var(--bg-tertiary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .giftcard-img,
+body.dark-mode .giftcard-img {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .giftcard-title2,
+body.dark-mode .giftcard-title2 {
+  color: #4A90E2;
+}
+
+.dark-mode .giftcard-desc,
+body.dark-mode .giftcard-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .giftcard-valid,
+body.dark-mode .giftcard-valid {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .giftcard-tip,
+body.dark-mode .giftcard-tip {
+  color: var(--text-tertiary);
+}

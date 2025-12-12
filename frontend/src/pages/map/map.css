@@ -153,3 +153,51 @@
   cursor: pointer;
   font-size: 14px;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .map-page,
+body.dark-mode .map-page {
+  background-color: var(--bg-primary);
+}
+
+.dark-mode .btn-search-area,
+body.dark-mode .btn-search-area {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .search-top-bar,
+body.dark-mode .search-top-bar {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .search-input-wrapper,
+body.dark-mode .search-input-wrapper {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .search-input,
+body.dark-mode .search-input {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.dark-mode .search-input::placeholder,
+body.dark-mode .search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .btn-my-location-top,
+body.dark-mode .btn-my-location-top {
+  background: #4CAF50;
+}
+
+.dark-mode .sidebar-toggle-btn,
+body.dark-mode .sidebar-toggle-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}

@@ -308,3 +308,133 @@
     max-height: 400px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .ai-planner-container,
+body.dark-mode .ai-planner-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .ai-planner-header,
+body.dark-mode .ai-planner-header {
+  background: linear-gradient(135deg, #2d4a6b 0%, #1e3a5f 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .quick-questions button,
+body.dark-mode .quick-questions button {
+  background: var(--bg-secondary);
+  border-color: #4A90E2;
+  color: var(--text-primary);
+}
+
+.dark-mode .quick-questions button:hover,
+body.dark-mode .quick-questions button:hover {
+  background: #4A90E2;
+  color: white;
+}
+
+.dark-mode .chat-messages,
+body.dark-mode .chat-messages {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .message.model .message-content,
+body.dark-mode .message.model .message-content {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .message-content h1,
+.dark-mode .message-content h2,
+.dark-mode .message-content h3,
+body.dark-mode .message-content h1,
+body.dark-mode .message-content h2,
+body.dark-mode .message-content h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .message-content h1,
+body.dark-mode .message-content h1 {
+  border-bottom-color: #4A90E2;
+}
+
+.dark-mode .message-content code,
+body.dark-mode .message-content code {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark-mode .message-content strong,
+body.dark-mode .message-content strong {
+  color: #4A90E2;
+}
+
+.dark-mode .chat-input-form,
+body.dark-mode .chat-input-form {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .chat-input-form input,
+body.dark-mode .chat-input-form input {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .chat-input-form input::placeholder,
+body.dark-mode .chat-input-form input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .chat-input-form input:focus,
+body.dark-mode .chat-input-form input:focus {
+  border-color: #4A90E2;
+}
+
+.dark-mode .chat-input-form input:disabled,
+body.dark-mode .chat-input-form input:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}
+
+.dark-mode .chat-input-form button:disabled,
+body.dark-mode .chat-input-form button:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}
+
+/* 마크다운 스타일 다크모드 */
+.dark-mode .message-content a,
+body.dark-mode .message-content a {
+  color: #4A90E2;
+}
+
+.dark-mode .message-content blockquote,
+body.dark-mode .message-content blockquote {
+  border-left-color: #4A90E2;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.dark-mode .message-content table,
+body.dark-mode .message-content table {
+  border-color: var(--border-color);
+}
+
+.dark-mode .message-content th,
+.dark-mode .message-content td,
+body.dark-mode .message-content th,
+body.dark-mode .message-content td {
+  border-color: var(--border-color);
+}
+
+.dark-mode .message-content pre,
+body.dark-mode .message-content pre {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}

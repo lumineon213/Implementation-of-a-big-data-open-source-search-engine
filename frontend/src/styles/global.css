@@ -1,0 +1,99 @@
+/* 다크모드 전역 스타일 */
+
+/* 기본 변수 */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #f8f9fa;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* 다크모드 변수 */
+.dark-mode {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* 전체 배경 및 텍스트 */
+body.dark-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* 카드 스타일 */
+.dark-mode .benefit-card,
+.dark-mode .activity-card,
+.dark-mode .profile-card {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* 입력 필드 */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 버튼 */
+.dark-mode button {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode button:hover {
+  background: var(--bg-tertiary);
+}
+
+/* 링크 */
+.dark-mode a {
+  color: var(--text-primary);
+}
+
+.dark-mode a:hover {
+  color: #0066ff;
+}
+
+/* 테이블 */
+.dark-mode table {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark-mode th,
+.dark-mode td {
+  border-color: var(--border-color);
+}
+
+/* 스크롤바 */
+.dark-mode ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+

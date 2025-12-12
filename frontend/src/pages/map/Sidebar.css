@@ -312,3 +312,123 @@ footer {
 .restaurant-list::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .sidebar,
+body.dark-mode .sidebar {
+  background: var(--bg-secondary);
+  border-right-color: var(--border-color);
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .location-title,
+body.dark-mode .location-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .history-toggle-button,
+body.dark-mode .history-toggle-button {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .history-toggle-button:hover,
+body.dark-mode .history-toggle-button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .weather-box,
+body.dark-mode .weather-box {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .weather-label,
+body.dark-mode .weather-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .weather-temp,
+body.dark-mode .weather-temp {
+  color: var(--text-primary);
+}
+
+.dark-mode .weather-sky,
+body.dark-mode .weather-sky {
+  color: var(--text-secondary);
+}
+
+.dark-mode .weather-extra,
+body.dark-mode .weather-extra {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .category-label,
+body.dark-mode .category-label {
+  color: var(--text-primary);
+}
+
+.dark-mode .category-item.active .category-label,
+body.dark-mode .category-item.active .category-label {
+  color: var(--text-primary);
+}
+
+.dark-mode .sidebar-arrow-btn,
+body.dark-mode .sidebar-arrow-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .restaurant-list,
+body.dark-mode .restaurant-list {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .restaurant-header,
+body.dark-mode .restaurant-header {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .restaurant-header h3,
+body.dark-mode .restaurant-header h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .restaurant-card,
+body.dark-mode .restaurant-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .restaurant-card:hover,
+body.dark-mode .restaurant-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .restaurant-title,
+body.dark-mode .restaurant-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .restaurant-distance,
+body.dark-mode .restaurant-distance {
+  color: var(--text-secondary);
+}
+
+.dark-mode .restaurant-list::-webkit-scrollbar-track,
+body.dark-mode .restaurant-list::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .restaurant-list::-webkit-scrollbar-thumb,
+body.dark-mode .restaurant-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode .restaurant-list::-webkit-scrollbar-thumb:hover,
+body.dark-mode .restaurant-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

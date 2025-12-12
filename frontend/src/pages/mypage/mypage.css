@@ -450,3 +450,540 @@
 
 
 }
+
+/* 다크모드 스타일 */
+.dark-mode .mypage-layout,
+body.dark-mode .mypage-layout {
+  background: var(--bg-primary);
+}
+
+.dark-mode .mypage-title,
+body.dark-mode .mypage-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .mypage-title::before,
+body.dark-mode .mypage-title::before {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .profile-card,
+body.dark-mode .profile-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.dark-mode .calendar-box,
+body.dark-mode .calendar-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-track,
+body.dark-mode .calendar-box::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-thumb,
+body.dark-mode .calendar-box::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-thumb:hover,
+body.dark-mode .calendar-box::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+.dark-mode .calendar-title,
+body.dark-mode .calendar-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-weekday,
+body.dark-mode .calendar-weekday {
+  color: var(--text-secondary);
+}
+
+.dark-mode .calendar-weekday.saturday,
+body.dark-mode .calendar-weekday.saturday {
+  color: #64b5f6;
+}
+
+.dark-mode .calendar-date,
+body.dark-mode .calendar-date {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-date:hover,
+body.dark-mode .calendar-date:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-date.today,
+body.dark-mode .calendar-date.today {
+  background: #64b5f6;
+  color: white;
+}
+
+.dark-mode .calendar-date.saturday,
+body.dark-mode .calendar-date.saturday {
+  color: #64b5f6;
+}
+
+.dark-mode .calendar-date.other-month,
+body.dark-mode .calendar-date.other-month {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .benefit-card,
+body.dark-mode .benefit-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .benefit-card h3,
+body.dark-mode .benefit-card h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .benefit-card li,
+body.dark-mode .benefit-card li {
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .activity-card,
+body.dark-mode .activity-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .activity-title-row h3,
+body.dark-mode .activity-title-row h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-profile-btn,
+body.dark-mode .edit-profile-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .edit-profile-btn:hover,
+body.dark-mode .edit-profile-btn:hover {
+  background: var(--bg-secondary);
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .activity-item,
+body.dark-mode .activity-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .activity-item:hover,
+body.dark-mode .activity-item:hover {
+  border-color: #64b5f6;
+  box-shadow: 0 2px 8px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .activity-item::before,
+body.dark-mode .activity-item::before {
+  background: #64b5f6;
+}
+
+.dark-mode .logout-button,
+body.dark-mode .logout-button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .logout-button:hover,
+body.dark-mode .logout-button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box,
+body.dark-mode .profile-edit-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .profile-edit-box h4,
+body.dark-mode .profile-edit-box h4 {
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box label,
+body.dark-mode .profile-edit-box label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .profile-edit-box input,
+body.dark-mode .profile-edit-box input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box input:focus,
+body.dark-mode .profile-edit-box input:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .edit-btn-row button:first-child,
+body.dark-mode .edit-btn-row button:first-child {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .edit-btn-row button:first-child:hover,
+body.dark-mode .edit-btn-row button:first-child:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-btn-row button:last-child,
+body.dark-mode .edit-btn-row button:last-child {
+  background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
+  border-color: #64b5f6;
+}
+
+.dark-mode .edit-btn-row button:last-child:hover,
+body.dark-mode .edit-btn-row button:last-child:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  border-color: #1976d2;
+}
+
+.dark-mode .edit-btn-row button:disabled,
+body.dark-mode .edit-btn-row button:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border-color: var(--border-color);
+}
+
+/* 다크모드 스타일 */
+.dark-mode .mypage-layout,
+body.dark-mode .mypage-layout {
+  background: #0f0f0f;
+  color: var(--text-primary);
+}
+
+.dark-mode .mypage-title,
+body.dark-mode .mypage-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .mypage-title::before,
+body.dark-mode .mypage-title::before {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .calendar-box,
+body.dark-mode .calendar-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-track,
+body.dark-mode .calendar-box::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-box::-webkit-scrollbar-thumb,
+body.dark-mode .calendar-box::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dark-mode .calendar-title,
+body.dark-mode .calendar-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-weekday,
+body.dark-mode .calendar-weekday {
+  color: var(--text-secondary);
+}
+
+.dark-mode .calendar-date,
+body.dark-mode .calendar-date {
+  color: var(--text-primary);
+}
+
+.dark-mode .calendar-date:hover,
+body.dark-mode .calendar-date:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .calendar-date.today,
+body.dark-mode .calendar-date.today {
+  background: #0066ff;
+  color: white;
+}
+
+.dark-mode .calendar-date.other-month,
+body.dark-mode .calendar-date.other-month {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .benefit-card,
+body.dark-mode .benefit-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .benefit-card h3,
+body.dark-mode .benefit-card h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .benefit-card li,
+body.dark-mode .benefit-card li {
+  color: var(--text-secondary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .activity-card,
+body.dark-mode .activity-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .activity-title-row h3,
+body.dark-mode .activity-title-row h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-profile-btn,
+body.dark-mode .edit-profile-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-profile-btn:hover,
+body.dark-mode .edit-profile-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .activity-item,
+body.dark-mode .activity-item {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .activity-item:hover,
+body.dark-mode .activity-item:hover {
+  border-color: var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .logout-button,
+body.dark-mode .logout-button {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .logout-button:hover,
+body.dark-mode .logout-button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .profile-edit-box,
+body.dark-mode .profile-edit-box {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .profile-edit-box h4,
+body.dark-mode .profile-edit-box h4 {
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box label,
+body.dark-mode .profile-edit-box label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .profile-edit-box input,
+body.dark-mode .profile-edit-box input {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .profile-edit-box input:focus,
+body.dark-mode .profile-edit-box input:focus {
+  border-color: #0066ff;
+}
+
+.dark-mode .edit-btn-row button:first-child,
+body.dark-mode .edit-btn-row button:first-child {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .edit-btn-row button:first-child:hover,
+body.dark-mode .edit-btn-row button:first-child:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .profile-card,
+body.dark-mode .profile-card {
+  background: linear-gradient(135deg, #1a2d4a 0%, #0f1e33 100%);
+  color: white;
+}
+
+.dark-mode .mypage-nologin,
+body.dark-mode .mypage-nologin {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* 인라인 스타일이 있는 요소들에 대한 다크모드 지원 - 더 구체적으로 */
+.dark-mode .benefit-card [style*="background: #f9f9f9"],
+body.dark-mode .benefit-card [style*="background: #f9f9f9"] {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="background: #f0f7ff"],
+body.dark-mode .benefit-card [style*="background: #f0f7ff"] {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="background: #e3f2fd"],
+body.dark-mode .benefit-card [style*="background: #e3f2fd"] {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .benefit-card button[style*="background: #f5f5f5"],
+body.dark-mode .benefit-card button[style*="background: #f5f5f5"] {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .benefit-card button[style*="background: #fff"],
+body.dark-mode .benefit-card button[style*="background: #fff"] {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .benefit-card [style*="color: #333"],
+body.dark-mode .benefit-card [style*="color: #333"] {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .benefit-card [style*="color: #666"],
+body.dark-mode .benefit-card [style*="color: #666"] {
+  color: var(--text-secondary) !important;
+}
+
+.dark-mode .benefit-card [style*="color: #999"],
+body.dark-mode .benefit-card [style*="color: #999"] {
+  color: var(--text-tertiary) !important;
+}
+
+.dark-mode .benefit-card [style*="border: 1px solid #ddd"],
+body.dark-mode .benefit-card [style*="border: 1px solid #ddd"] {
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border: 1px solid #eee"],
+body.dark-mode .benefit-card [style*="border: 1px solid #eee"] {
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border: 1px solid #b3d9ff"],
+body.dark-mode .benefit-card [style*="border: 1px solid #b3d9ff"] {
+  border-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border-bottom: 2px solid #eee"],
+body.dark-mode .benefit-card [style*="border-bottom: 2px solid #eee"] {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border-top: 1px solid"],
+body.dark-mode .benefit-card [style*="border-top: 1px solid"] {
+  border-top-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border-top: 2px solid"],
+body.dark-mode .benefit-card [style*="border-top: 2px solid"] {
+  border-top-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border-top: 3px solid"],
+body.dark-mode .benefit-card [style*="border-top: 3px solid"] {
+  border-top-color: var(--border-color) !important;
+}
+
+.dark-mode .benefit-card [style*="border-top: 1px solid #d0e5ff"],
+body.dark-mode .benefit-card [style*="border-top: 1px solid #d0e5ff"] {
+  border-top-color: var(--border-color) !important;
+}
+
+/* 탭 버튼 다크모드 */
+.dark-mode .benefit-card button[style*="background: #f5f5f5"]:not([style*="#2196f3"]):not([style*="#ffc107"]):not([style*="#dc3545"]):not([style*="#17a2b8"]),
+body.dark-mode .benefit-card button[style*="background: #f5f5f5"]:not([style*="#2196f3"]):not([style*="#ffc107"]):not([style*="#dc3545"]):not([style*="#17a2b8"]) {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 강조 색상은 유지하되 텍스트 색상만 조정 */
+.dark-mode .benefit-card button[style*="color: #666"],
+body.dark-mode .benefit-card button[style*="color: #666"] {
+  color: var(--text-primary) !important;
+}
+
+/* 리뷰, 문의사항 아이템 내부 텍스트 */
+.dark-mode .benefit-card [style*="font-weight: bold"],
+body.dark-mode .benefit-card [style*="font-weight: bold"] {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .benefit-card [style*="font-weight: 600"],
+body.dark-mode .benefit-card [style*="font-weight: 600"] {
+  color: var(--text-primary) !important;
+}
+
+/* 리뷰 아이템 hover 상태 다크모드 */
+.dark-mode .benefit-card > div > div[style*="background: #f9f9f9"]:hover,
+body.dark-mode .benefit-card > div > div[style*="background: #f9f9f9"]:hover {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* 이미지 더보기 배지 */
+.dark-mode .benefit-card [style*="background: #f0f0f0"],
+body.dark-mode .benefit-card [style*="background: #f0f0f0"] {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 이미지 테두리 */
+.dark-mode .benefit-card img[style*="border: 1px solid #ddd"],
+body.dark-mode .benefit-card img[style*="border: 1px solid #ddd"] {
+  border-color: var(--border-color) !important;
+}

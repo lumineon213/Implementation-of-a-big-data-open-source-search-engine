@@ -6,6 +6,11 @@
   font-family: "Segoe UI", sans-serif;
   position: relative;
   z-index: 999;
+  transition: background 0.3s ease;
+}
+
+.dark-mode .footer {
+  background: linear-gradient(135deg, #0f1a2e 0%, #1a2332 100%);
 }
 
 .footer-container {

@@ -174,6 +174,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<AdminInquiryDTO> getInquiriesByWriter(String writerId) {
+        return adminDAO.selectInquiriesByWriter(writerId);
+    }
+
+    @Override
     @Transactional
     public void answerInquiry(Long inquiryId, String answerContent, String answererId) {
         adminDAO.updateInquiryAnswer(inquiryId, answerContent, answererId);

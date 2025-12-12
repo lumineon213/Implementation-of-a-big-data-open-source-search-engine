@@ -139,3 +139,65 @@
   color: #2ddf6c;
   font-weight: 700;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .stamp-event-container,
+body.dark-mode .stamp-event-container {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .stamp-title,
+body.dark-mode .stamp-title {
+  color: #4A90E2;
+}
+
+.dark-mode .stamp-desc,
+body.dark-mode .stamp-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .stamp-card,
+body.dark-mode .stamp-card {
+  background: var(--bg-tertiary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .stamp-card.collected,
+body.dark-mode .stamp-card.collected {
+  background: rgba(45, 223, 108, 0.2);
+  box-shadow: 0 2px 12px rgba(45, 223, 108, 0.2);
+}
+
+.dark-mode .stamp-name,
+body.dark-mode .stamp-name {
+  color: #4A90E2;
+}
+
+.dark-mode .stamp-status,
+body.dark-mode .stamp-status {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .stamp-status-item,
+body.dark-mode .stamp-status-item {
+  background: var(--bg-secondary);
+  color: #4A90E2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .stamp-status-item.done,
+body.dark-mode .stamp-status-item.done {
+  background: #2ddf6c;
+  color: white;
+}
+
+.dark-mode .stamp-progress,
+body.dark-mode .stamp-progress {
+  color: var(--text-secondary);
+}
+
+.dark-mode .stamp-check-msg,
+body.dark-mode .stamp-check-msg {
+  color: #ff9800;
+}

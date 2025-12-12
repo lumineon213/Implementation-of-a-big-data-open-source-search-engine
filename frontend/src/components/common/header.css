@@ -406,6 +406,28 @@
   border-color: transparent;
 }
 
+/* 다크모드 토글 버튼 스타일 */
+.dark-mode-toggle-btn {
+  position: relative;
+  font-size: 20px;
+}
+
+.dark-mode-toggle-btn:hover {
+  transform: translateY(-2px) scale(1.1) rotate(15deg);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+}
+
+.dark-mode .dark-mode-toggle-btn {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+.dark-mode .dark-mode-toggle-btn:hover {
+  background: #3a3a3a;
+  border-color: #0066ff;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+}
+
 .header-welcome {
   font-size: 14px;
   font-weight: 600;
@@ -876,4 +898,51 @@
   .header-inner {
     padding: 12px 14px;
   }
+}
+
+/* 여행코스 드롭다운 전용 스타일 */
+.course-dropdown {
+  width: 240px; /* 드롭다운 전체 너비 */
+  padding: 12px 12px;
+}
+
+.course-dropdown .course-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.course-dropdown .course-card:hover {
+  background: #f5f8ff;
+  transform: translateX(3px);
+}
+
+.course-dropdown .course-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.course-dropdown .course-info-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.course-dropdown .course-info-desc {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.course-dropdown .course-card:hover .course-info-title {
+  color: #0066ff;
 }

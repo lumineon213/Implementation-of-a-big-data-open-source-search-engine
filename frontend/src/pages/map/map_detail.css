@@ -652,3 +652,206 @@
     padding-top: 20px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .map-detail-container,
+body.dark-mode .map-detail-container {
+  background: var(--bg-secondary);
+  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.3);
+  border-left-color: var(--border-color);
+}
+
+.dark-mode .map-detail-close,
+body.dark-mode .map-detail-close {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .map-detail-close:hover,
+body.dark-mode .map-detail-close:hover {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .map-detail-title-wrapper,
+body.dark-mode .map-detail-title-wrapper {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .map-detail-title,
+body.dark-mode .map-detail-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .map-detail-favorite,
+body.dark-mode .map-detail-favorite {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .map-detail-label,
+body.dark-mode .map-detail-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .map-detail-value,
+body.dark-mode .map-detail-value {
+  color: var(--text-primary);
+}
+
+.dark-mode .map-detail-description,
+body.dark-mode .map-detail-description {
+  color: var(--text-secondary);
+}
+
+.dark-mode .map-detail-actions,
+body.dark-mode .map-detail-actions {
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .map-detail-button.secondary,
+body.dark-mode .map-detail-button.secondary {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .map-detail-button.secondary:hover,
+body.dark-mode .map-detail-button.secondary:hover {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .map-detail-share-section,
+body.dark-mode .map-detail-share-section {
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .map-detail-share-button,
+body.dark-mode .map-detail-share-button {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .map-detail-share-button:hover,
+body.dark-mode .map-detail-share-button:hover {
+  background: var(--bg-tertiary);
+  border-color: #2196F3;
+}
+
+.dark-mode .share-menu,
+body.dark-mode .share-menu {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .share-menu-item,
+body.dark-mode .share-menu-item {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .share-menu-item:hover,
+body.dark-mode .share-menu-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .review-section,
+body.dark-mode .review-section {
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .review-title,
+body.dark-mode .review-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .review-form,
+body.dark-mode .review-form {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .review-textarea,
+body.dark-mode .review-textarea {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .review-textarea::placeholder,
+body.dark-mode .review-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .image-upload-label,
+body.dark-mode .image-upload-label {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .image-upload-label:hover,
+body.dark-mode .image-upload-label:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .review-cancel-button,
+body.dark-mode .review-cancel-button {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .review-cancel-button:hover,
+body.dark-mode .review-cancel-button:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .review-login-notice,
+body.dark-mode .review-login-notice {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .review-login-notice p,
+body.dark-mode .review-login-notice p {
+  color: #0066ff;
+}
+
+.dark-mode .review-item,
+body.dark-mode .review-item {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .review-item:hover,
+body.dark-mode .review-item:hover {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .review-user-name,
+body.dark-mode .review-user-name {
+  color: var(--text-primary);
+}
+
+.dark-mode .review-date,
+body.dark-mode .review-date {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .review-delete-button,
+body.dark-mode .review-delete-button {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .review-content,
+body.dark-mode .review-content {
+  color: var(--text-secondary);
+}
+
+.dark-mode .empty-reviews,
+body.dark-mode .empty-reviews {
+  color: var(--text-tertiary);
+}

@@ -35,6 +35,7 @@ public interface AdminService {
     // ============== 문의 관리 ==============
     List<AdminInquiryDTO> getAllInquiries(int page, int size, String status);
     AdminInquiryDTO getInquiryById(Long inquiryId);
+    List<AdminInquiryDTO> getInquiriesByWriter(String writerId);
     void answerInquiry(Long inquiryId, String answerContent, String answererId);
     int countInquiries(String status);
     void createInquiry(String writerId, String title, String content);

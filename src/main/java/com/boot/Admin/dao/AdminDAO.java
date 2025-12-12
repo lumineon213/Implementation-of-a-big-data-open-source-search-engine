@@ -39,6 +39,7 @@ public interface AdminDAO {
     // ============== 문의 관리 ==============
     List<AdminInquiryDTO> selectAllInquiries(@Param("page") int page, @Param("size") int size, @Param("status") String status);
     AdminInquiryDTO selectInquiryById(@Param("inquiryId") Long inquiryId);
+    List<AdminInquiryDTO> selectInquiriesByWriter(@Param("writerId") String writerId);
     int updateInquiryAnswer(@Param("inquiryId") Long inquiryId, @Param("answerContent") String answerContent, 
                            @Param("answererId") String answererId);
     int countInquiries(@Param("status") String status);

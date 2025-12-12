@@ -109,3 +109,63 @@
 .badgepad-modal-close:hover {
   background: #174a8b;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .badgepad-container,
+body.dark-mode .badgepad-container {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .badgepad-title,
+body.dark-mode .badgepad-title {
+  color: #4A90E2;
+}
+
+.dark-mode .badgepad-badge,
+body.dark-mode .badgepad-badge {
+  background: var(--bg-tertiary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .badgepad-badge.achieved,
+body.dark-mode .badgepad-badge.achieved {
+  background: rgba(45, 223, 108, 0.2);
+  box-shadow: 0 2px 12px rgba(45, 223, 108, 0.2);
+}
+
+.dark-mode .badgepad-name,
+body.dark-mode .badgepad-name {
+  color: #4A90E2;
+}
+
+.dark-mode .badgepad-badge.achieved .badgepad-name,
+body.dark-mode .badgepad-badge.achieved .badgepad-name {
+  color: #2ddf6c;
+}
+
+.dark-mode .badgepad-count,
+body.dark-mode .badgepad-count {
+  color: var(--text-secondary);
+}
+
+.dark-mode .badgepad-modal-bg,
+body.dark-mode .badgepad-modal-bg {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .badgepad-modal,
+body.dark-mode .badgepad-modal {
+  background: var(--bg-secondary);
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .badgepad-modal-title,
+body.dark-mode .badgepad-modal-title {
+  color: #4A90E2;
+}
+
+.dark-mode .badgepad-modal-desc,
+body.dark-mode .badgepad-modal-desc {
+  color: var(--text-secondary);
+}

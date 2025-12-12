@@ -587,3 +587,143 @@
     font-size: 1.8rem;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .home-layout,
+body.dark-mode .home-layout {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode .hero-split-section,
+body.dark-mode .hero-split-section {
+  background-color: var(--bg-primary);
+}
+
+.dark-mode .hero-title,
+body.dark-mode .hero-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .hero-desc,
+body.dark-mode .hero-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .hero-search-bar,
+body.dark-mode .hero-search-bar {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .hero-search-input,
+body.dark-mode .hero-search-input {
+  color: var(--text-primary);
+}
+
+.dark-mode .hero-search-input::placeholder,
+body.dark-mode .hero-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .category-pill,
+body.dark-mode .category-pill {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .popular-section,
+body.dark-mode .popular-section {
+  background-color: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .section-title,
+body.dark-mode .section-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .section-subtitle,
+body.dark-mode .section-subtitle {
+  color: var(--text-secondary);
+}
+
+.dark-mode .popular-card,
+body.dark-mode .popular-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .card-title,
+body.dark-mode .card-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .card-address,
+body.dark-mode .card-address {
+  color: var(--text-secondary);
+}
+
+.dark-mode .card-description,
+body.dark-mode .card-description {
+  color: var(--text-secondary);
+}
+
+.dark-mode .rating-score,
+body.dark-mode .rating-score {
+  color: var(--text-primary);
+}
+
+.dark-mode .rating-reviews,
+body.dark-mode .rating-reviews {
+  color: var(--text-secondary);
+}
+
+.dark-mode .activities-section,
+body.dark-mode .activities-section {
+  background-color: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .activity-card,
+body.dark-mode .activity-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .activity-title,
+body.dark-mode .activity-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .activity-desc,
+body.dark-mode .activity-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .cta-section,
+body.dark-mode .cta-section {
+  background-color: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .cta-title,
+body.dark-mode .cta-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .cta-desc,
+body.dark-mode .cta-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .loading-places p,
+body.dark-mode .loading-places p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .no-places,
+body.dark-mode .no-places {
+  color: var(--text-secondary);
+}
