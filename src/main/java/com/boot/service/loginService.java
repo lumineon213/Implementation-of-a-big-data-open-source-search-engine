@@ -55,6 +55,14 @@ public interface loginService {
 
     // 인증번호 검증
     boolean verifyEmailCode(String email, String code);
+    
+    
+
+    loginDTO findById(String accountId);
+
+    void saveOtpSecret(String accountId, String secret);
+
+    void enableOtp(String accountId);
 
 
 }

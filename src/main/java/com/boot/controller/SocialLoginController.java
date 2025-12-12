@@ -34,8 +34,7 @@ public class SocialLoginController {
     @Autowired
     private KakaoOAuthService kakaoOAuthService;
 
-
-
+    /* ================= NAVER ================= */
     @GetMapping("/login/oauth2/code/naver")
     public void naverCallback(@RequestParam("code") String code,
                               @RequestParam("state") String state,
@@ -51,13 +50,17 @@ public class SocialLoginController {
                 naverUser.getName()
         );
 
-        String token = jwtUtil.createToken(user.getAccountId());
+  
+        String token = jwtUtil.createToken(
+                user.getAccountId(),
+                "USER",
+                true
+        );
 
         response.sendRedirect("http://localhost:5173?token=" + token);
     }
 
-
-
+    /* ================= GOOGLE ================= */
     @GetMapping("/login/oauth2/code/google")
     public void googleCallback(@RequestParam("code") String code,
                                HttpServletResponse response) throws IOException {
@@ -72,13 +75,16 @@ public class SocialLoginController {
                 googleUser.getName()
         );
 
-        String token = jwtUtil.createToken(user.getAccountId());
+        String token = jwtUtil.createToken(
+                user.getAccountId(),
+                "USER",
+                true
+        );
 
         response.sendRedirect("http://localhost:5173?token=" + token);
     }
 
-
-
+    /* ================= KAKAO ================= */
     @GetMapping("/oauth2/callback/kakao")
     public void kakaoCallback(@RequestParam("code") String code,
                               HttpServletResponse response) throws IOException {
@@ -93,7 +99,12 @@ public class SocialLoginController {
                 kakaoUser.getName()
         );
 
-        String token = jwtUtil.createToken(user.getAccountId());
+        // ✅ 변경
+        String token = jwtUtil.createToken(
+                user.getAccountId(),
+                "USER",
+                true
+        );
 
         response.sendRedirect("http://localhost:5173?token=" + token);
     }
