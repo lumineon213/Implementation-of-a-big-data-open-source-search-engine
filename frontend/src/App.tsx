@@ -16,7 +16,7 @@ import FoodDetail from "pages/foodList/foodDetail";
 import StayList from "pages/stayList/stayList";
 import StayDetail from "pages/stayList/stayDetail";
 
-import CourseHome from "pages/course/CourseHome";
+
 import WalkCourseList from "pages/course/WalkCourseList";
 import WalkDetail from "pages/course/WalkDetail";
 import ThemeCourseList from "pages/course/ThemeCourseList";
@@ -121,7 +121,6 @@ function App() {
                   {/* 상세보기 */}
                   <Route path="/food/:id" element={<FoodDetail />} />
                   {/* 여행 코스 */}
-                  <Route path="/course" element={<CourseHome />} />
                   <Route path="/course/walk" element={<WalkCourseList />} />
                   <Route path="/course/walk/:id" element={<WalkDetail />} />
                   <Route path="/walk/:id" element={<WalkDetail />} />

@@ -11,6 +11,7 @@
 
 /* === HERO SECTION === */
 .hero-split-section {
+  top: 50px;
   width: 100%;
   background-color: #ffffff;
   padding: 60px 40px 80px;
