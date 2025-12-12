@@ -493,6 +493,13 @@ const MyPage: React.FC = () => {
         {/* LEFT - 프로필 */}
         <div className="mypage-left">
           <div className="profile-card">
+            <button
+    className="profile-logout-btn"
+    onClick={handleLogout}
+    title="로그아웃"
+  >
+    로그아웃
+  </button>
             {/* 프로필 이미지 */}
             <img
               key={profilePreview || user.profileImage}
@@ -502,14 +509,14 @@ const MyPage: React.FC = () => {
               crossOrigin="anonymous"
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
-                console.error('❌ 이미지 로딩 실패:', img.src);
+                console.error(' 이미지 로딩 실패:', img.src);
                 // 만약 상대 경로였다면 절대 경로로 변경 시도
                 if (!img.src.includes('://')) {
                   img.src = `http://localhost:8484${img.src}`;
                 }
               }}
               onLoad={(e) => {
-                console.log('✅ 이미지 로딩 성공:', (e.target as HTMLImageElement).src);
+                console.log(' 이미지 로딩 성공:', (e.target as HTMLImageElement).src);
               }}
             />
 
@@ -1026,12 +1033,7 @@ const MyPage: React.FC = () => {
             </div>
           )}
 
-          {/* 로그아웃 버튼 */}
-          {mode === "view" && (
-            <button onClick={handleLogout} className="logout-button">
-              로그아웃
-            </button>
-          )}
+       
         </div>
       </div>
     </div>

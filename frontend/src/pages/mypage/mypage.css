@@ -1,14 +1,17 @@
 
+
+
 .mypage-layout {
   width: 100%;
   min-height: 100vh;
-  padding: 80px 20px 60px;
+  padding: 120px 20px 60px; 
   background: #f5f5f5;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
 }
+
 
 .mypage-title {
   width: 100%;
@@ -51,6 +54,27 @@
   background: #003d82;
   color: white;
   text-align: center;
+   position: relative;
+}
+
+.profile-logout-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  padding: 6px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.15);
+  color: white;
+
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-logout-btn:hover {
+  background: rgba(255,255,255,0.25);
 }
 
 .profile-image {
