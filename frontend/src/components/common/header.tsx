@@ -5,6 +5,11 @@ import React, { useState, useEffect } from "react";
 import "./header.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import walk from '../../components/common/img/walk.png'; 
+import theme from '../../components/common/img/theme.png';
+import marine from '../../components/common/img/marine.png';
+import urban from '../../components/common/img/urban.png';
+
 
 interface User {
   accountId: string;
@@ -129,7 +134,63 @@ const Header: React.FC = () => {
             
             <Link to="/tour" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
-            <Link to="/course" className="menu-item">여행코스</Link>
+            <div 
+              className="dropdown-container"
+              onMouseEnter={() => setExpandedMenu("course")}
+              onMouseLeave={() => setExpandedMenu(null)}
+            >
+              <span className="menu-item dropdown-trigger">
+                여행코스
+                <svg 
+                  className={`dropdown-arrow ${expandedMenu === "course" ? "open" : ""}`}
+                  width="10" 
+                  height="6"
+                  viewBox="0 0 10 6"
+                >
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </span>
+
+              {expandedMenu === "course" && (
+                <div className="dropdown-menu course-dropdown">
+
+                  <Link to="/course/walk" className="course-card">
+                    <img src={walk} alt="도보 여행" className="course-icon" />
+                    <div className="course-info">
+                      <div className="course-info-title">도보 여행</div>
+                      <div className="course-info-desc">부산을 걸으며 즐기는 여행 코스</div>
+                    </div>
+                  </Link>
+
+                  <Link to="/course/theme" className="course-card">
+                    <img src={theme} alt="테마 여행" className="course-icon" />
+                    <div className="course-info">
+                      <div className="course-info-title">테마 여행</div>
+                      <div className="course-info-desc">힐링 · 바다 · 감성 루트</div>
+                    </div>
+                  </Link>
+
+                  <Link to="/course/marine" className="course-card">
+                    <img src={marine} alt="해양 여행" className="course-icon" />
+                    <div className="course-info">
+                      <div className="course-info-title">해양 여행</div>
+                      <div className="course-info-desc">바다를 즐기는 특별한 코스</div>
+                    </div>
+                  </Link>
+
+                  <Link to="/course/urban" className="course-card">
+                    <img src={urban} alt="도시 여행" className="course-icon" />
+                    <div className="course-info">
+                      <div className="course-info-title">도시 여행</div>
+                      <div className="course-info-desc">도시를 즐기는 특별한 코스</div>
+                    </div>
+                  </Link>
+
+                </div>
+              )}
+              </div>
+
+
             
             {/* 여행정보 드롭다운 */}
             <div 
@@ -394,6 +455,21 @@ const Header: React.FC = () => {
 
             {expandedMenu === "course" && (
               <div className="mobile-sub-nav">
+                <Link to="/course/walk" onClick={handleMenuClose}>
+                  도보 여행
+                </Link>
+
+                <Link to="/course/theme" onClick={handleMenuClose}>
+                  테마 여행
+                </Link>
+
+                <Link to="/course/marine" onClick={handleMenuClose}>
+                  해양 여행
+                </Link>
+
+                <Link to="/course/urban" onClick={handleMenuClose}>
+                  도시 여행
+                </Link>
                 <Link to="/course/recommended" onClick={handleMenuClose}>
                   추천코스
                 </Link>
