@@ -3,15 +3,17 @@
   width: 100%;
   position: fixed;
   top: 0;
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .header-inner {
   max-width: 1400px;
   margin: auto;
-  padding: 12px 24px;
+  padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,55 +22,91 @@
 
 /* 로고 */
 .header-logo {
-  font-size: 22px;
-  font-weight: 700;
-  color: #222;
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
+  transition: all 0.3s ease;
+  letter-spacing: -0.5px;
+}
+
+.header-logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
 }
 
 .header-logo-round {
-  border: 2px solid #222;
-  padding: 2px 8px;
+  border: 2.5px solid;
+  border-image: linear-gradient(135deg, #0066ff, #00ccff) 1;
+  padding: 3px 12px;
   border-radius: 30px;
-  margin-left: 4px;
+  margin-left: 6px;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-logo-round::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s;
+}
+
+.header-logo:hover .header-logo-round::before {
+  left: 100%;
 }
 
 /* 데스크톱 메뉴 */
 .header-desktop-menu {
   display: flex;
-  gap: 38px;
+  gap: 42px;
   flex: 1;
   justify-content: center;
   align-items: center;
 }
 
 .header-desktop-menu .menu-item {
-  color: #333;
+  color: #2c3e50;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
-  padding: 6px 0;
+  padding: 8px 4px;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   cursor: pointer;
+  letter-spacing: -0.2px;
 }
 
 .header-desktop-menu .menu-item:hover {
-  color: black;
+  color: #0066ff;
+  transform: translateY(-2px);
 }
 
 .header-desktop-menu .menu-item::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 0;
-  height: 2px;
-  background: black;
-  transition: width 0.3s ease;
+  height: 3px;
+  background: linear-gradient(90deg, #0066ff, #00ccff);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .header-desktop-menu .menu-item:hover::after {
@@ -78,7 +116,8 @@
 /* 드롭다운 컨테이너 */
 .dropdown-container {
   position: relative;
-  padding-bottom: 20px;
+  display: inline-block;
+  padding-bottom: 16px;
 }
 
 .dropdown-trigger {
@@ -89,39 +128,42 @@
 
 /* 드롭다운 화살표 */
 .dropdown-arrow {
-  transition: transform 0.3s ease;
-  color: #666;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #7f8c8d;
   margin-left: 2px;
 }
 
 .dropdown-arrow.open {
   transform: rotate(180deg);
-  color: black;
+  color: #0066ff;
 }
 
 /* 드롭다운 메뉴 */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% - 20px);
-  left: 0;
-  transform: none;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
-  min-width: 180px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 8px 0;
+  min-width: 240px;
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(0, 102, 255, 0.18), 
+              0 0 0 1px rgba(0, 102, 255, 0.08);
+  padding: 16px 12px;
   z-index: 1001;
-  animation: dropdownFadeIn 0.2s ease;
+  animation: dropdownFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  margin-top: 12px;
 }
 
 @keyframes dropdownFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-5px);
+    transform: translateX(-50%) translateY(-15px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
 
@@ -129,64 +171,104 @@
 .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 8px;
+  gap: 16px;
+  padding: 16px 18px;
+  margin: 6px 0;
+  border-radius: 14px;
   text-decoration: none;
-  color: #333;
-  transition: all 0.2s ease;
+  color: #2c3e50;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 0;
+  background: linear-gradient(180deg, #0066ff, #00ccff);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-item:hover::before {
+  height: 100%;
 }
 
 .dropdown-item:hover {
-  background: #f5f8ff;
-  transform: translateX(2px);
+  background: linear-gradient(135deg, 
+    rgba(0, 102, 255, 0.08) 0%, 
+    rgba(0, 204, 255, 0.05) 100%);
+  transform: translateX(6px);
+  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.12);
 }
 
 .dropdown-icon {
-  font-size: 20px;
-  width: 32px;
-  height: 32px;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f4ff;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 12px;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  border: 2px solid transparent;
 }
 
 .dropdown-item:hover .dropdown-icon {
-  background: #e0ebff;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  transform: scale(1.15) rotate(-5deg);
+  box-shadow: 0 8px 20px rgba(0, 102, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .dropdown-content {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .dropdown-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 2px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  transition: all 0.3s;
+  letter-spacing: -0.2px;
 }
 
 .dropdown-desc {
-  font-size: 12px;
-  color: #666;
-  line-height: 1.3;
+  font-size: 13px;
+  color: #7f8c8d;
+  line-height: 1.5;
+  transition: all 0.3s;
+  font-weight: 500;
 }
 
 .dropdown-item:hover .dropdown-title {
   color: #0066ff;
+  transform: translateX(2px);
+}
+
+.dropdown-item:hover .dropdown-desc {
+  color: #5a6c7d;
+  transform: translateX(2px);
 }
 
 /* 오른쪽 영역 */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
   flex-shrink: 0;
 }
 
@@ -195,7 +277,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  animation: slideIn 0.3s ease-out;
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideIn {
@@ -210,116 +292,190 @@
 }
 
 .header-search {
-  border: 1px solid #ddd;
+  border: 2px solid #e8eef5;
   border-radius: 30px;
-  padding: 8px 40px 8px 16px;
-  width: 320px;
+  padding: 10px 45px 10px 20px;
+  width: 340px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .header-search:focus {
-  border-color: #888;
+  border-color: #0066ff;
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .header-search::placeholder {
-  color: #999;
+  color: #95a5a6;
 }
 
 .header-search-close {
   position: absolute;
-  right: 12px;
-  background: none;
+  right: 14px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  padding: 5px;
-  color: #666;
-  transition: color 0.2s;
+  padding: 6px;
+  color: #7f8c8d;
+  transition: all 0.3s;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-search-close:hover {
-  color: #000;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+  color: white;
+  transform: rotate(90deg);
 }
 
 /* 아이콘 버튼들 */
 .header-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .icon-btn {
-  background: none;
-  border: none;
+  background: white;
+  border: 2px solid #f0f4f8;
   font-size: 20px;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px;
   border-radius: 50%;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   text-decoration: none;
   color: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.1;
+}
+
+.icon-btn:hover::before {
+  width: 100%;
+  height: 100%;
 }
 
 .icon-btn:hover {
-  background: #f0f0f0;
+  border-color: #0066ff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.2);
 }
 
 .language-btn {
   width: auto;
-  border-radius: 20px;
-  padding: 6px 12px;
+  border-radius: 25px;
+  padding: 8px 16px;
   font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  gap: 4px;
+  font-weight: 600;
+  color: #2c3e50;
+  gap: 6px;
+  background: linear-gradient(135deg, white 0%, #f8f9fa 100%);
+}
+
+.language-btn:hover {
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  color: white;
+  border-color: transparent;
 }
 
 .header-welcome {
   font-size: 14px;
-  color: #444;
+  font-weight: 600;
+  color: #2c3e50;
   white-space: nowrap;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 20px;
+  border: 2px solid rgba(0, 102, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.header-welcome:hover {
+  border-color: rgba(0, 102, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 /*************** 모바일 검색창 (헤더 아래) ***************/
 .header-mobile-search-wrapper {
   display: none;
-  padding: 10px 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-bottom: 1px solid rgba(0, 102, 255, 0.1);
   position: relative;
 }
 
 .header-mobile-search {
   width: 100%;
-  border: 1px solid #ddd;
+  border: 2px solid #e8eef5;
   border-radius: 25px;
-  padding: 10px 45px 10px 16px;
+  padding: 12px 50px 12px 18px;
   font-size: 14px;
   outline: none;
   background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+}
+
+.header-mobile-search:focus {
+  border-color: #0066ff;
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.15);
 }
 
 .header-mobile-search::placeholder {
-  color: #999;
+  color: #95a5a6;
 }
 
 .header-mobile-search-btn {
   position: absolute;
-  right: 26px;
+  right: 28px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
   border: none;
   font-size: 18px;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+  transition: all 0.3s;
+}
+
+.header-mobile-search-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.4);
 }
 
 /*************** 모바일 탭 메뉴 (검색창 아래) ***************/
@@ -328,7 +484,7 @@
   overflow-x: auto;
   white-space: nowrap;
   background: white;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 2px solid #f0f4f8;
   padding: 0 5vw;
   -webkit-overflow-scrolling: touch;
 }
@@ -339,31 +495,48 @@
 
 .mobile-tab-item {
   display: inline-block;
-  padding: 14px 20px;
-  color: #666;
+  padding: 16px 24px;
+  color: #7f8c8d;
   text-decoration: none;
   font-size: 15px;
-  font-weight: 500;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .mobile-tab-item:hover,
 .mobile-tab-item.active {
-  color: #222;
-  border-bottom-color: #222;
+  color: #0066ff;
+  border-bottom-color: #0066ff;
 }
 
 /*************** 모바일 햄버거 버튼 ***************/
 .header-ham {
   display: none;
   font-size: 28px;
-  background: none;
-  border: none;
+  background: linear-gradient(135deg, white 0%, #f8f9fa 100%);
+  border: 2px solid #f0f4f8;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
   line-height: 1;
-  color: #333;
+  color: #2c3e50;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.header-ham:hover {
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.2);
 }
 
 /*************** 모바일 하단 네비게이션 ***************/
@@ -374,9 +547,9 @@
   left: 0;
   right: 0;
   background: white;
-  border-top: 1px solid #e0e0e0;
+  border-top: 2px solid #f0f4f8;
   z-index: 999;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .bottom-nav-item {
@@ -384,15 +557,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 0;
+  padding: 10px 0;
   text-decoration: none;
-  color: #666;
-  transition: color 0.2s;
+  color: #7f8c8d;
+  transition: all 0.3s;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 4px;
 }
 
 .bottom-nav-item:hover,
 .bottom-nav-item.active {
-  color: #0066cc;
+  color: #0066ff;
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 204, 255, 0.05) 100%);
 }
 
 /* 모바일 메뉴 슬라이드 */
@@ -403,10 +580,10 @@
   width: 100%;
   max-width: 400px;
   height: 100%;
-  background: white;
-  box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   z-index: 2000;
-  transition: right 0.3s ease-in-out;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
 }
 
@@ -423,66 +600,102 @@
 /* 사용자 정보 영역 */
 .mobile-user-section {
   display: flex;
-  gap: 15px;
-  padding: 24px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #eee;
+  gap: 16px;
+  padding: 28px 24px;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-user-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
 }
 
 .mobile-user-icon {
-  width: 50px;
-  height: 50px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: #ddd;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 28px;
   flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .mobile-user-link {
   text-decoration: none;
-  color: inherit;
+  color: white;
   display: block;
+  position: relative;
+  z-index: 1;
 }
 
 .user-greeting {
-  font-size: 16px;
-  font-weight: 600;
-  color: #222;
-  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 6px 0;
 }
 
 .user-subtitle {
-  font-size: 12px;
-  color: #666;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* 모바일 네비게이션 */
 .mobile-nav {
   flex: 1;
-  padding: 8px 0;
+  padding: 12px 0;
   overflow-y: auto;
 }
 
 .mobile-nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: 14px;
+  padding: 16px 24px;
   text-decoration: none;
-  color: #222;
+  color: #2c3e50;
   font-size: 16px;
-  font-weight: 500;
-  transition: background 0.2s;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 102, 255, 0.1), transparent);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-nav-item:hover::before {
+  width: 100%;
 }
 
 .mobile-nav-item:hover {
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #0066ff;
 }
 
 .mobile-nav-item.expandable {
@@ -492,21 +705,22 @@
 .nav-arrow {
   margin-left: auto;
   font-size: 20px;
-  color: #999;
-  transition: transform 0.3s;
+  color: #95a5a6;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-arrow.expanded {
   transform: rotate(90deg);
+  color: #0066ff;
 }
 
 /* 서브 메뉴 */
 .mobile-sub-nav {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4f8 100%);
   padding: 8px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  animation: slideDown 0.3s ease-out;
+  border-top: 1px solid rgba(0, 102, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideDown {
@@ -522,46 +736,88 @@
 
 .mobile-sub-nav a {
   display: block;
-  padding: 10px 20px 10px 56px;
-  color: #555;
+  padding: 12px 24px 12px 60px;
+  color: #5a6c7d;
   text-decoration: none;
   font-size: 14px;
-  transition: background 0.2s;
+  font-weight: 500;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.mobile-sub-nav a::before {
+  content: '→';
+  position: absolute;
+  left: 40px;
+  opacity: 0;
+  transition: all 0.3s;
 }
 
 .mobile-sub-nav a:hover {
-  background: #f0f0f0;
+  background: rgba(0, 102, 255, 0.05);
+  color: #0066ff;
+  padding-left: 65px;
+}
+
+.mobile-sub-nav a:hover::before {
+  opacity: 1;
 }
 
 /* 로그인/로그아웃 버튼 */
 .mobile-auth-btn {
-  margin: 16px 20px 24px;
-  padding: 14px;
-  background: #333;
+  margin: 16px 24px 28px;
+  padding: 16px;
+  background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
   display: block;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-auth-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.mobile-auth-btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .mobile-auth-btn:hover {
-  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 102, 255, 0.4);
+}
+
+.mobile-auth-btn:active {
+  transform: translateY(0);
 }
 
 /* 반응형 - 태블릿 */
 @media (max-width: 1100px) {
   .header-search {
-    width: 200px;
+    width: 220px;
   }
   
   .header-desktop-menu {
-    gap: 24px;
+    gap: 28px;
   }
   
   .header-desktop-menu .menu-item {
@@ -579,7 +835,7 @@
   }
 
   .header-ham {
-    display: block;
+    display: flex;
   }
   
   .header-mobile-search-wrapper {
@@ -596,7 +852,7 @@
   }
   
   .header-inner {
-    padding: 12px 16px;
+    padding: 14px 16px;
   }
   
   .header-logo {
@@ -614,6 +870,10 @@
   }
   
   .header-logo-round {
-    padding: 1px 6px;
+    padding: 2px 8px;
+  }
+  
+  .header-inner {
+    padding: 12px 14px;
   }
 }

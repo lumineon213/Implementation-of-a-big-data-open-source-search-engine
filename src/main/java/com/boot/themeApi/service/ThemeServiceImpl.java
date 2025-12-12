@@ -145,6 +145,25 @@ public class ThemeServiceImpl implements ThemeService {
             m.put("place", doc.get("place"));
             m.put("image_url", doc.get("image_url"));
             m.put("type", doc.get("type"));
+            
+            // 좌표 처리 (Collection인 경우 첫 번째 요소 추출)
+            Object latObj = doc.getFieldValue("latitude");
+            Object lngObj = doc.getFieldValue("longitude");
+            
+            if (latObj instanceof Collection) {
+                Collection<?> latCol = (Collection<?>) latObj;
+                m.put("latitude", latCol.isEmpty() ? null : latCol.iterator().next());
+            } else {
+                m.put("latitude", latObj);
+            }
+            
+            if (lngObj instanceof Collection) {
+                Collection<?> lngCol = (Collection<?>) lngObj;
+                m.put("longitude", lngCol.isEmpty() ? null : lngCol.iterator().next());
+            } else {
+                m.put("longitude", lngObj);
+            }
+            
             out.add(m);
         }
 

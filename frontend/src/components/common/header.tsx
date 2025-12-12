@@ -41,9 +41,18 @@ const Header: React.FC = () => {
         },
       });
 
-      setUser(res.data);
+      console.log("API 응답 데이터:", res.data); // 디버깅용
+      
+      // userInfo 객체에서 사용자 정보 가져오기
+      if (res.data && res.data.userInfo) {
+        setUser(res.data.userInfo);
+      }
     } catch (err) {
       console.error("JWT 인증 실패:", err);
+      if (axios.isAxiosError(err)) {
+        console.error("응답 상태:", err.response?.status);
+        console.error("응답 데이터:", err.response?.data);
+      }
       localStorage.removeItem("token");
       setUser(null);
     } finally {
@@ -87,9 +96,10 @@ const Header: React.FC = () => {
 
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
-            <div className="dropdown-container" style={{display: 'inline-block', position: 'relative'}}>
+            
+            <div className="dropdown-wrapper">
               <span
-                className="menu-item dropdown-trigger"
+                className="menu-item"
                 onMouseEnter={() => setExpandedMenu('sns')}
                 onMouseLeave={() => setExpandedMenu(null)}
               >
@@ -108,7 +118,6 @@ const Header: React.FC = () => {
               {expandedMenu === 'sns' && (
                 <div
                   className="dropdown-menu"
-                  style={{position: 'absolute', left: 0, top: '100%', zIndex: 10}}
                   onMouseEnter={() => setExpandedMenu('sns')}
                   onMouseLeave={() => setExpandedMenu(null)}
                 >
@@ -117,17 +126,18 @@ const Header: React.FC = () => {
                 </div>
               )}
             </div>
+            
             <Link to="/tour" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <Link to="/course" className="menu-item">여행코스</Link>
             
             {/* 여행정보 드롭다운 */}
-            <div className="dropdown-container">
-              <span 
-                className="menu-item dropdown-trigger"
-                onMouseEnter={() => setIsInfoDropdownOpen(true)}
-                onMouseLeave={() => setIsInfoDropdownOpen(false)}
-              >
+            <div 
+              className="dropdown-wrapper"
+              onMouseEnter={() => setIsInfoDropdownOpen(true)}
+              onMouseLeave={() => setIsInfoDropdownOpen(false)}
+            >
+              <span className="menu-item">
                 여행정보
                 <svg 
                   className={`dropdown-arrow ${isInfoDropdownOpen ? 'open' : ''}`}
@@ -142,11 +152,7 @@ const Header: React.FC = () => {
               </span>
 
               {isInfoDropdownOpen && (
-                <div 
-                  className="dropdown-menu"
-                  onMouseEnter={() => setIsInfoDropdownOpen(true)}
-                  onMouseLeave={() => setIsInfoDropdownOpen(false)}
-                >
+                <div className="dropdown-menu">
                   <Link to="/info/regions" className="dropdown-item">
                     <span className="dropdown-icon">🗺️</span>
                     <div className="dropdown-content">
@@ -193,15 +199,32 @@ const Header: React.FC = () => {
               )}
             </div>
 
-            <div
-              className="menu-item dropdown"
-              onMouseEnter={() => setExpandedMenu("benefits")}
-              onMouseLeave={() => setExpandedMenu(null)}
-            >
-              <span>여행혜택</span>
+            {/* 여행혜택 드롭다운 */}
+            <div className="dropdown-wrapper">
+              <span 
+                className="menu-item"
+                onMouseEnter={() => setExpandedMenu("benefits")}
+                onMouseLeave={() => setExpandedMenu(null)}
+              >
+                여행혜택
+                <svg
+                  className={`dropdown-arrow ${expandedMenu === "benefits" ? "open" : ""}`}
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
               {expandedMenu === "benefits" && (
-                <div className="dropdown-menu">
-                  <Link to="/benefits/event" className="dropdown-item" onClick={handleMenuClose}>
+                <div 
+                  className="dropdown-menu"
+                  onMouseEnter={() => setExpandedMenu("benefits")}
+                  onMouseLeave={() => setExpandedMenu(null)}
+                >
+                  <Link to="/footer_details/event" className="dropdown-item" onClick={handleMenuClose}>
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">이벤트</div>
@@ -442,8 +465,3 @@ const Header: React.FC = () => {
 
 export default Header;
 
-// 아래는 App.tsx 또는 라우터 설정 파일에 추가해야 정상 연결됩니다.
-// <Routes>
-//   ...existing code...
-//   <Route path="/benefits/stamp" element={<StampEvent />} />
-// </Routes>
