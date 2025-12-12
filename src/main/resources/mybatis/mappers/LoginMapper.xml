@@ -15,6 +15,8 @@
         <result property="regDate" column="reg_date"/>
         <result property="resetToken" column="reset_token"/>
         <result property="resetTokenExpire" column="reset_token_expire"/>
+            <result property="otpSecret" column="otp_secret"/>
+    <result property="otpEnabled" column="otp_enabled"/>
     </resultMap>
 
 
@@ -95,7 +97,7 @@
         VALUES (
             #{accountId},
             #{accountName},
-            #{email},
+             #{email, jdbcType=VARCHAR},
             #{socialType},
             #{socialId},
             'USER',
@@ -196,5 +198,16 @@
         WHERE email = #{email}
     </delete>
 
+<!--   OTP 추가-->
+<update id="saveOtpSecret">
+    UPDATE account_tbl
+    SET otp_secret = #{secret}
+    WHERE account_id = #{accountId}
+</update>
 
+<update id="enableOtp">
+    UPDATE account_tbl
+    SET otp_enabled = 'Y'
+    WHERE account_id = #{accountId}
+</update>
 </mapper>

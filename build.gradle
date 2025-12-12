@@ -58,6 +58,10 @@ dependencies {
      // 이메일 인증
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     
+    // OTP 
+    implementation 'com.warrenstrange:googleauth:1.5.0'
+    implementation 'commons-codec:commons-codec:1.16.1'
+    
 }
 
 tasks.named('test') {

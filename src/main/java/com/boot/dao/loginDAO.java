@@ -59,4 +59,13 @@ public interface loginDAO {
     void clearEmailVerifyCode(String email);
 
     void verifyEmailRecord(String email);
+    
+    // ===== OTP 관련 =====
+    void saveOtpSecret(
+        @Param("accountId") String accountId,
+        @Param("secret") String secret
+    );
+
+    void enableOtp(@Param("accountId") String accountId);
+
 }

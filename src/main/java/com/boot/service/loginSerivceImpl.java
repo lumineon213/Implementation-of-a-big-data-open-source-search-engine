@@ -152,6 +152,22 @@ public class loginSerivceImpl implements loginService {
         return user;
     }
 
+    @Override
+    public loginDTO findById(String accountId) {
+        return dao.findById(accountId);
+    }
+    // OTP
+
+    @Override
+    public void saveOtpSecret(String accountId, String secret) {
+        dao.saveOtpSecret(accountId, secret);
+    }
+
+    @Override
+    public void enableOtp(String accountId) {
+        dao.enableOtp(accountId);
+    }
+    
 
     /** ================= 아이디 찾기 ================= */
     @Override

@@ -16,7 +16,8 @@ public class loginDTO {
 	    
 	    private String socialType;  
 	    private String socialId;
-	    
+	    private String otpSecret;
+	    private String otpEnabled;
 	
 	    private String status;                // WAIT or ACTIVE
 
