@@ -1,7 +1,5 @@
 package com.boot.parking.service;
 
-
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -12,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.boot.parking.dto.ParkingDTO;
 
@@ -25,10 +24,12 @@ public class ParkingServiceImpl implements ParkingService {
     @Autowired
     private SolrClient solrClient;
 
+    // secret.properties에 있는 키 (Decoding된 키를 권장하지만, Encoding된 키라면 아래 주석 참고)
     @Value("${busan.parking.api.key}") 
     private String serviceKey;
 
     private final String API_URL = "http://apis.data.go.kr/6260000/BusanPblcPrkngInfoService/getPblcPrkngInfo";
+    private final String CORE_NAME = "parking_core"; // Solr 코어 이름 상수화
 
     // 1. 데이터 가져와서 Solr에 저장
     @Override
@@ -36,11 +37,16 @@ public class ParkingServiceImpl implements ParkingService {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
-            // [핵심 1] 401 오류 방지: URL 문자열 직접 조립
-            String urlString = API_URL + "?serviceKey=" + serviceKey 
-                             + "&numOfRows=3000&pageNo=1&resultType=json";
-            
-            URI uri = new URI(urlString);
+            // [핵심 1] URI 생성 (공공데이터 포털 인코딩 문제 해결)
+            // numOfRows를 크게(3000) 설정하여 한 번에 모든 데이터를 가져옵니다.
+            URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
+                    .queryParam("serviceKey", serviceKey) 
+                    .queryParam("numOfRows", "3000") // 10개 대신 전체 데이터를 위해 3000개 요청
+                    .queryParam("pageNo", "1")
+                    .queryParam("resultType", "json") // JSON 요청 필수
+                    .build(true) // true: 인코딩 된 상태로 빌드 (키가 이미 인코딩된 경우 이중 인코딩 방지)
+                    .toUri();
+
             System.out.println("🚗 데이터 요청 URL: " + uri.toString());
 
             ParkingDTO response = restTemplate.getForObject(uri, ParkingDTO.class);
@@ -48,28 +54,34 @@ public class ParkingServiceImpl implements ParkingService {
             if (response == null || response.getResponse() == null || 
                 response.getResponse().getBody() == null || 
                 response.getResponse().getBody().getItems() == null) {
-                return "실패: 데이터를 가져오지 못했습니다.";
+                return "실패: 데이터를 가져오지 못했습니다. (API 키 혹은 URL 확인 필요)";
             }
 
             List<ParkingDTO.Item> items = response.getResponse().getBody().getItems().getItem();
+            
+            // 데이터가 없거나 null인 경우 방지
+            if (items == null) {
+                return "실패: 가져온 데이터 목록이 비어있습니다.";
+            }
+            
             int successCount = 0;
 
             for (ParkingDTO.Item item : items) {
                 
-                // [핵심 2] 좌표가 이상하면(- 또는 빈값) 저장하지 않고 건너뜀
+                // [핵심 2] 좌표 유효성 검사
                 if (!isValidCoordinate(item.getLatitude()) || !isValidCoordinate(item.getLongitude())) {
                     continue; 
                 }
 
                 SolrInputDocument doc = new SolrInputDocument();
 
-                // [핵심 3] 주소 보정: 도로명주소가 '-'면 지번주소 사용
+                // [핵심 3] 주소 보정
                 String realAddress = item.getAddress();
                 if (realAddress == null || realAddress.equals("-") || realAddress.trim().isEmpty()) {
                     realAddress = item.getJibunAddress();
                 }
 
-                // [핵심 4] 요금 보정: 요금이 '-'면 '0'으로 변경 (숫자 에러 방지)
+                // [핵심 4] 요금 보정
                 String realFee = item.getBasicFee();
                 if (realFee == null || realFee.equals("-") || realFee.trim().isEmpty()) {
                     realFee = "0";
@@ -78,22 +90,21 @@ public class ParkingServiceImpl implements ParkingService {
                 // Solr 필드 매핑
                 doc.addField("id", "parking_" + item.getMgntNum());
                 doc.addField("title", item.getName());
-                doc.addField("address", realAddress); // 보정된 주소
-                
-                // 전화번호가 '-'여도 string 필드라면 그대로 넣어도 무방 (필요시 빈값 처리 가능)
-                doc.addField("tel", item.getTel());   
-                
-                doc.addField("fee_basic", realFee);   // 보정된 요금 ("0")
+                doc.addField("address", realAddress); 
+                doc.addField("tel", getSafeString(item.getTel()));   
+                doc.addField("fee_basic", realFee);   
                 doc.addField("type", item.getType());
                 doc.addField("lat", item.getLatitude());  
                 doc.addField("lng", item.getLongitude());
                 doc.addField("category", "parking"); 
 
-                solrClient.add("parking_core", doc);
+                // 명시적으로 코어 이름 지정하여 추가
+                solrClient.add(CORE_NAME, doc);
                 successCount++;
             }
 
-            solrClient.commit("parking_cor");
+            // [오타 수정] parking_cor -> parking_core
+            solrClient.commit(CORE_NAME);
             return "성공! 총 " + successCount + "건의 주차장 데이터가 저장되었습니다.";
 
         } catch (Exception e) {
@@ -110,19 +121,21 @@ public class ParkingServiceImpl implements ParkingService {
             SolrQuery query = new SolrQuery();
 
             if (keyword == null || keyword.trim().isEmpty()) {
-                query.setQuery("category:parking");
+                query.setQuery("*:*"); // 전체 검색
+                query.addFilterQuery("category:parking");
             } else {
+                // 제목이나 주소에 키워드가 포함된 경우
                 query.setQuery("(title:*" + keyword + "* OR address:*" + keyword + "*) AND category:parking");
             }
             query.setRows(100);
 
-            QueryResponse response = solrClient.query("Search", query);
+            // [수정] "Search" -> CORE_NAME ("parking_core")
+            QueryResponse response = solrClient.query(CORE_NAME, query);
             SolrDocumentList results = response.getResults();
 
             for (SolrDocument doc : results) {
                 ParkingDTO.Item item = new ParkingDTO.Item();
                 
-                // 안전하게 꺼내기 헬퍼 사용
                 item.setMgntNum(getSafeString(doc.getFieldValue("id")).replace("parking_", ""));
                 item.setName(getSafeString(doc.getFieldValue("title")));
                 item.setAddress(getSafeString(doc.getFieldValue("address")));
@@ -142,7 +155,6 @@ public class ParkingServiceImpl implements ParkingService {
 
     // --- 헬퍼 메소드 ---
 
-    // 좌표 유효성 검사
     private boolean isValidCoordinate(String coord) {
         if (coord == null || coord.trim().isEmpty() || coord.equals("-")) {
             return false;
@@ -155,7 +167,6 @@ public class ParkingServiceImpl implements ParkingService {
         }
     }
 
-    // Solr 데이터 안전 변환
     private String getSafeString(Object obj) {
         if (obj == null) return "-";
         if (obj instanceof List) {

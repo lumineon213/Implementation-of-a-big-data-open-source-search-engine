@@ -101,12 +101,11 @@ public class ParkingDTO {
 
         // ★ 위도 (제공된 데이터 기준 35.xxx)
         // 만약 지도 위치가 이상하면 yCdnt와 바꿔야 함
-        @JsonAlias("xCdnt") 
+        @JsonAlias("yCdnt") // 보통 Y가 위도
         private String latitude;  
 
-        // ★ 경도 (제공된 데이터 기준 128.xxx)
-        @JsonAlias("yCdnt")
-        private String longitude; 
+        @JsonAlias("xCdnt") // 보통 X가 경도
+        private String longitude;
 
         // 결제 방법 (현금/카드 등)
         @JsonAlias("payMtd")
