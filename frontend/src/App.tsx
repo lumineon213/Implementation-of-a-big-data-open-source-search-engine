@@ -42,6 +42,7 @@ import BadgePad from "pages/benefits/BadgePad";
 import GiftCard from "pages/benefits/GiftCard";
 import BlogPage from "pages/blog";
 import CafePage from "pages/cafe";
+import SearchPage from "pages/search_Page/search_page";
 
 import Festival from "pages/tourdata/festival";
 import FestivalDetail from 'pages/tourdata/festivalDetail';
@@ -88,9 +89,11 @@ function App() {
           <div className={`app-wrapper ${isMapPage ? 'map-page-mode' : ''}`}>
 
           <Header />
-                <Routes>                
+                <Routes>
                   {/* 새로운 메인 페이지 */}
-                  <Route path="/" element={<MainPage/>} />                   
+                  <Route path="/" element={<MainPage/>} />
+                  {/* 검색 페이지 */}
+                  <Route path="/search" element={<SearchPage />} />
                   {/* 로그인 */}
                   <Route path="/login" element={<Login />} />
 
