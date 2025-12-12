@@ -514,3 +514,195 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .shopping-container,
+body.dark-mode .shopping-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .shopping-header h1,
+body.dark-mode .shopping-header h1 {
+  color: var(--text-primary);
+}
+
+.dark-mode .shopping-header p,
+body.dark-mode .shopping-header p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .shopping-search input,
+body.dark-mode .shopping-search input {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .shopping-search input:focus,
+body.dark-mode .shopping-search input:focus {
+  border-color: #64b5f6;
+}
+
+.dark-mode .gugun-filter,
+body.dark-mode .gugun-filter {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .gugun-filter button,
+body.dark-mode .gugun-filter button {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .gugun-filter button:hover,
+body.dark-mode .gugun-filter button:hover {
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .gugun-filter button.active,
+body.dark-mode .gugun-filter button.active {
+  background: #64b5f6;
+  border-color: #64b5f6;
+  color: white;
+}
+
+.dark-mode .shopping-count,
+body.dark-mode .shopping-count {
+  color: var(--text-secondary);
+}
+
+.dark-mode .shopping-count strong,
+body.dark-mode .shopping-count strong {
+  color: #64b5f6;
+}
+
+.dark-mode .spinner,
+body.dark-mode .spinner {
+  border: 5px solid var(--bg-tertiary);
+  border-top: 5px solid #64b5f6;
+}
+
+.dark-mode .shopping-card,
+body.dark-mode .shopping-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .shopping-card:hover,
+body.dark-mode .shopping-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border-color: #64b5f6;
+}
+
+.dark-mode .shopping-content,
+body.dark-mode .shopping-content {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .shopping-title,
+body.dark-mode .shopping-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .shopping-place,
+body.dark-mode .shopping-place {
+  color: var(--text-secondary);
+}
+
+.dark-mode .shopping-tel,
+body.dark-mode .shopping-tel {
+  color: #64b5f6;
+}
+
+.dark-mode .shopping-desc,
+body.dark-mode .shopping-desc {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .shopping-empty,
+body.dark-mode .shopping-empty {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .notice-pagination .page-btn,
+body.dark-mode .notice-pagination .page-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .notice-pagination .page-btn.active,
+body.dark-mode .notice-pagination .page-btn.active {
+  background: #64b5f6;
+  border-color: #64b5f6;
+  color: white;
+}
+
+.dark-mode .shopping-modal-overlay,
+body.dark-mode .shopping-modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .shopping-modal-content,
+body.dark-mode .shopping-modal-content {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .modal-close,
+body.dark-mode .modal-close {
+  background: rgba(26, 26, 26, 0.8);
+}
+
+.dark-mode .modal-body,
+body.dark-mode .modal-body {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .modal-title,
+body.dark-mode .modal-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-subtitle,
+body.dark-mode .modal-subtitle {
+  color: var(--text-secondary);
+}
+
+.dark-mode .modal-info-item,
+body.dark-mode .modal-info-item {
+  background: var(--bg-tertiary);
+  border-left-color: #64b5f6;
+}
+
+.dark-mode .modal-info-item strong,
+body.dark-mode .modal-info-item strong {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .modal-info-item p,
+body.dark-mode .modal-info-item p {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-info-item a,
+body.dark-mode .modal-info-item a {
+  color: #64b5f6;
+}
+
+.dark-mode .modal-description,
+body.dark-mode .modal-description {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .modal-description h3,
+body.dark-mode .modal-description h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-description p,
+body.dark-mode .modal-description p {
+  color: var(--text-secondary);
+}

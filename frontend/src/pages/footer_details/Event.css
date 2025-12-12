@@ -405,3 +405,138 @@
     height: 250px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .event-page,
+body.dark-mode .event-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .event-header h1,
+body.dark-mode .event-header h1 {
+  color: var(--text-primary);
+}
+
+.dark-mode .event-header p,
+body.dark-mode .event-header p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .category-tab,
+body.dark-mode .category-tab {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .category-tab:hover,
+body.dark-mode .category-tab:hover {
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .category-tab.active,
+body.dark-mode .category-tab.active {
+  background: linear-gradient(135deg, #64b5f6 0%, #1976D2 100%);
+  border-color: #64b5f6;
+  color: white;
+}
+
+.dark-mode .event-card,
+body.dark-mode .event-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .event-card:hover,
+body.dark-mode .event-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .event-title,
+body.dark-mode .event-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .event-description,
+body.dark-mode .event-description {
+  color: var(--text-secondary);
+}
+
+.dark-mode .event-period,
+body.dark-mode .event-period {
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-color);
+}
+
+.dark-mode .no-events,
+body.dark-mode .no-events {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .event-modal-overlay,
+body.dark-mode .event-modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .event-modal,
+body.dark-mode .event-modal {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .modal-close,
+body.dark-mode .modal-close {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-close:hover,
+body.dark-mode .modal-close:hover {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .modal-title,
+body.dark-mode .modal-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-period strong,
+.dark-mode .modal-description strong,
+.dark-mode .modal-benefit strong,
+body.dark-mode .modal-period strong,
+body.dark-mode .modal-description strong,
+body.dark-mode .modal-benefit strong {
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-period p,
+.dark-mode .modal-description p,
+.dark-mode .modal-benefit p,
+body.dark-mode .modal-period p,
+body.dark-mode .modal-description p,
+body.dark-mode .modal-benefit p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .modal-benefit p,
+body.dark-mode .modal-benefit p {
+  background: var(--bg-tertiary);
+  border-left: 4px solid #64b5f6;
+}
+
+.dark-mode .modal-actions,
+body.dark-mode .modal-actions {
+  border-top: 2px solid var(--border-color);
+}
+
+.dark-mode .btn-share,
+body.dark-mode .btn-share {
+  background: var(--bg-tertiary);
+  color: #64b5f6;
+  border: 2px solid #64b5f6;
+}
+
+.dark-mode .btn-share:hover,
+body.dark-mode .btn-share:hover {
+  background: var(--bg-secondary);
+}

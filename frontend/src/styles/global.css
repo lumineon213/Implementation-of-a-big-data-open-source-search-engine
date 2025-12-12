@@ -1,0 +1,26 @@
+/* 라이트모드 변수 (기본) */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #f9f9f9;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* 다크모드 변수 */
+.dark-mode,
+body.dark-mode {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}

@@ -350,3 +350,135 @@
     padding: 12px 25px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .inquiry-page,
+body.dark-mode .inquiry-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .inquiry-header,
+body.dark-mode .inquiry-header {
+  color: var(--text-primary);
+}
+
+.dark-mode .inquiry-header h1,
+body.dark-mode .inquiry-header h1 {
+  color: var(--text-primary);
+}
+
+.dark-mode .inquiry-header p,
+body.dark-mode .inquiry-header p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .info-card,
+body.dark-mode .info-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .info-card:hover,
+body.dark-mode .info-card:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .info-card h3,
+body.dark-mode .info-card h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .info-card p,
+body.dark-mode .info-card p {
+  color: #64b5f6;
+}
+
+.dark-mode .info-time,
+body.dark-mode .info-time {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .info-notice,
+body.dark-mode .info-notice {
+  background: var(--bg-tertiary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .info-notice h4,
+body.dark-mode .info-notice h4 {
+  color: var(--text-primary);
+}
+
+.dark-mode .info-notice li,
+body.dark-mode .info-notice li {
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .info-notice li::before,
+body.dark-mode .info-notice li::before {
+  color: #64b5f6;
+}
+
+.dark-mode .inquiry-form-wrapper,
+body.dark-mode .inquiry-form-wrapper {
+  background: var(--bg-secondary);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .form-group label,
+body.dark-mode .form-group label {
+  color: var(--text-primary);
+}
+
+.dark-mode .form-group input,
+.dark-mode .form-group select,
+.dark-mode .form-group textarea,
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .form-group input:focus,
+.dark-mode .form-group select:focus,
+.dark-mode .form-group textarea:focus,
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .form-privacy,
+body.dark-mode .form-privacy {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .checkbox-label,
+body.dark-mode .checkbox-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .privacy-link,
+body.dark-mode .privacy-link {
+  color: #64b5f6;
+}
+
+.dark-mode .privacy-link:hover,
+body.dark-mode .privacy-link:hover {
+  color: #90caf9;
+}
+
+.dark-mode .success-message,
+body.dark-mode .success-message {
+  background: rgba(45, 223, 108, 0.2);
+  border: 2px solid #2ddf6c;
+}
+
+.dark-mode .success-message p,
+body.dark-mode .success-message p {
+  color: #2ddf6c;
+}

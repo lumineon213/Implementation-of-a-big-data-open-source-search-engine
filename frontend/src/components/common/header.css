@@ -924,3 +924,97 @@
 .course-dropdown .course-card:hover .course-info-title {
   color: #0066ff;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .header-container,
+body.dark-mode .header-container {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .header-logo,
+body.dark-mode .header-logo {
+  background: linear-gradient(135deg, #64b5f6 0%, #90caf9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .menu-item,
+body.dark-mode .menu-item {
+  color: var(--text-primary);
+}
+
+.dark-mode .menu-item:hover,
+body.dark-mode .menu-item:hover {
+  color: #64b5f6;
+}
+
+.dark-mode .icon-btn,
+body.dark-mode .icon-btn {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .icon-btn:hover,
+body.dark-mode .icon-btn:hover {
+  border-color: #64b5f6;
+  background: var(--bg-secondary);
+}
+
+.dark-mode .header-welcome,
+body.dark-mode .header-welcome {
+  color: var(--text-primary);
+}
+
+.dark-mode .dropdown-menu,
+body.dark-mode .dropdown-menu {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .dropdown-item,
+body.dark-mode .dropdown-item {
+  color: var(--text-primary);
+}
+
+.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:hover {
+  background: var(--bg-tertiary);
+  color: #64b5f6;
+}
+
+.dark-mode .course-dropdown .course-card,
+body.dark-mode .course-dropdown .course-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .course-dropdown .course-card:hover,
+body.dark-mode .course-dropdown .course-card:hover {
+  background: var(--bg-secondary);
+  border-color: #64b5f6;
+}
+
+.dark-mode .course-dropdown .course-info-title,
+body.dark-mode .course-dropdown .course-info-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .course-dropdown .course-info-desc,
+body.dark-mode .course-dropdown .course-info-desc {
+  color: var(--text-secondary);
+}
+
+.dark-mode .dark-mode-toggle,
+body.dark-mode .dark-mode-toggle {
+  transition: transform 0.3s ease;
+}
+
+.dark-mode .dark-mode-toggle:hover,
+body.dark-mode .dark-mode-toggle:hover {
+  transform: rotate(15deg) scale(1.1);
+}

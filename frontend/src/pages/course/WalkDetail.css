@@ -318,3 +318,104 @@
   font-size: 18px;
   color: #065f46;
 }
+
+/* 다크모드 스타일 */
+.dark-mode .walk-detail,
+body.dark-mode .walk-detail {
+  background: var(--bg-primary);
+}
+
+.dark-mode .walk-header,
+body.dark-mode .walk-header {
+  background: var(--bg-primary);
+}
+
+.dark-mode .walk-thumb-box,
+body.dark-mode .walk-thumb-box {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .walk-title-wrap h1,
+body.dark-mode .walk-title-wrap h1 {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-subtitle,
+body.dark-mode .walk-subtitle {
+  color: #81c784;
+}
+
+.dark-mode .walk-title-location,
+body.dark-mode .walk-title-location {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-side-card,
+body.dark-mode .walk-side-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .walk-back-btn,
+body.dark-mode .walk-back-btn {
+  background: var(--bg-tertiary);
+  color: #66bb6a;
+}
+
+.dark-mode .walk-back-btn:hover,
+body.dark-mode .walk-back-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.dark-mode .walk-section-title,
+body.dark-mode .walk-section-title {
+  color: #66bb6a;
+  border-left-color: #66bb6a;
+}
+
+.dark-mode .walk-info-list strong,
+body.dark-mode .walk-info-list strong {
+  color: #66bb6a;
+}
+
+.dark-mode .walk-main-card,
+body.dark-mode .walk-main-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .walk-main-card h2,
+body.dark-mode .walk-main-card h2 {
+  color: #66bb6a;
+  border-left-color: #66bb6a;
+}
+
+.dark-mode .walk-paragraphs p,
+body.dark-mode .walk-paragraphs p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .walk-map-fallback,
+body.dark-mode .walk-map-fallback {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.dark-mode .walk-html-content,
+body.dark-mode .walk-html-content {
+  color: var(--text-secondary);
+}
+
+.dark-mode .walk-html-content .short-title,
+body.dark-mode .walk-html-content .short-title {
+  color: #66bb6a;
+  border-left-color: #66bb6a;
+}
+
+.dark-mode .loading,
+body.dark-mode .loading {
+  color: #66bb6a;
+}

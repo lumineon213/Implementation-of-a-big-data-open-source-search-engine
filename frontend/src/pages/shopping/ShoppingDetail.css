@@ -231,3 +231,83 @@
     padding: 20px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .shopping-detail-container,
+body.dark-mode .shopping-detail-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .back-button,
+body.dark-mode .back-button {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.dark-mode .back-button:hover,
+body.dark-mode .back-button:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.dark-mode .shopping-detail-content,
+body.dark-mode .shopping-detail-content {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .detail-title,
+body.dark-mode .detail-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .detail-subtitle,
+body.dark-mode .detail-subtitle {
+  color: var(--text-secondary);
+}
+
+.dark-mode .info-item,
+body.dark-mode .info-item {
+  background: var(--bg-tertiary);
+  border-left-color: #64b5f6;
+}
+
+.dark-mode .info-item strong,
+body.dark-mode .info-item strong {
+  color: var(--text-tertiary);
+}
+
+.dark-mode .info-item p,
+body.dark-mode .info-item p {
+  color: var(--text-primary);
+}
+
+.dark-mode .info-item a,
+body.dark-mode .info-item a {
+  color: #64b5f6;
+}
+
+.dark-mode .addr2,
+body.dark-mode .addr2 {
+  color: var(--text-secondary) !important;
+}
+
+.dark-mode .detail-description,
+body.dark-mode .detail-description {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .detail-description h3,
+body.dark-mode .detail-description h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .detail-description p,
+body.dark-mode .detail-description p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .shopping-detail-error h2,
+body.dark-mode .shopping-detail-error h2 {
+  color: var(--text-secondary);
+}

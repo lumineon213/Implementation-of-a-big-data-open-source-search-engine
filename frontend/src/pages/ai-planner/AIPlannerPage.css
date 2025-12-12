@@ -308,3 +308,98 @@
     max-height: 400px;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .ai-planner-container,
+body.dark-mode .ai-planner-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .ai-planner-header,
+body.dark-mode .ai-planner-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.dark-mode .quick-questions button,
+body.dark-mode .quick-questions button {
+  background: var(--bg-secondary);
+  border: 2px solid #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .quick-questions button:hover,
+body.dark-mode .quick-questions button:hover {
+  background: #64b5f6;
+  color: white;
+}
+
+.dark-mode .chat-messages,
+body.dark-mode .chat-messages {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .message.model .message-content,
+body.dark-mode .message.model .message-content {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .message-content h1,
+.dark-mode .message-content h2,
+.dark-mode .message-content h3,
+body.dark-mode .message-content h1,
+body.dark-mode .message-content h2,
+body.dark-mode .message-content h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .message-content h1,
+body.dark-mode .message-content h1 {
+  border-bottom-color: #64b5f6;
+}
+
+.dark-mode .message-content strong,
+body.dark-mode .message-content strong {
+  color: #64b5f6;
+}
+
+.dark-mode .message-content code,
+body.dark-mode .message-content code {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.dark-mode .typing-indicator span,
+body.dark-mode .typing-indicator span {
+  background: #64b5f6;
+}
+
+.dark-mode .chat-input-form,
+body.dark-mode .chat-input-form {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .chat-input-form input,
+body.dark-mode .chat-input-form input {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .chat-input-form input:focus,
+body.dark-mode .chat-input-form input:focus {
+  border-color: #64b5f6;
+}
+
+.dark-mode .chat-input-form input:disabled,
+body.dark-mode .chat-input-form input:disabled {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .chat-input-form button:disabled,
+body.dark-mode .chat-input-form button:disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}

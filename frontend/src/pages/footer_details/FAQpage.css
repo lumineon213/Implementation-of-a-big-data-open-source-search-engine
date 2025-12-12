@@ -282,3 +282,102 @@
     width: 100%;
   }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .faq-page,
+body.dark-mode .faq-page {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+}
+
+.dark-mode .faq-header h1,
+body.dark-mode .faq-header h1 {
+  color: var(--text-primary);
+}
+
+.dark-mode .faq-header p,
+body.dark-mode .faq-header p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .category-tab,
+body.dark-mode .category-tab {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .category-tab:hover,
+body.dark-mode .category-tab:hover {
+  border-color: #64b5f6;
+  color: #64b5f6;
+}
+
+.dark-mode .category-tab.active,
+body.dark-mode .category-tab.active {
+  background: linear-gradient(135deg, #64b5f6 0%, #1976D2 100%);
+  border-color: #64b5f6;
+  color: white;
+}
+
+.dark-mode .faq-item,
+body.dark-mode .faq-item {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .faq-item:hover,
+body.dark-mode .faq-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .faq-item.active,
+body.dark-mode .faq-item.active {
+  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.3);
+  border: 2px solid #64b5f6;
+}
+
+.dark-mode .faq-question:hover,
+body.dark-mode .faq-question:hover {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .question-content h3,
+body.dark-mode .question-content h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .toggle-icon,
+body.dark-mode .toggle-icon {
+  background: var(--bg-tertiary);
+  color: #64b5f6;
+}
+
+.dark-mode .faq-item.active .toggle-icon,
+body.dark-mode .faq-item.active .toggle-icon {
+  background: #64b5f6;
+  color: white;
+}
+
+.dark-mode .faq-answer p,
+body.dark-mode .faq-answer p {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border-left-color: #64b5f6;
+}
+
+.dark-mode .faq-contact,
+body.dark-mode .faq-contact {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .faq-contact h3,
+body.dark-mode .faq-contact h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .faq-contact p,
+body.dark-mode .faq-contact p {
+  color: var(--text-secondary);
+}
