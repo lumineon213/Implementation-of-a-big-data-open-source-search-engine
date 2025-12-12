@@ -192,6 +192,12 @@ public class AdminServiceImpl implements AdminService {
         adminDAO.insertInquiry(writerId, title, content);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdminInquiryDTO> getInquiriesByWriter(String writerId) {
+        return adminDAO.selectInquiriesByWriter(writerId);
+    }
+
     // ============== 로그 관리 ==============
     @Override
     @Transactional(readOnly = true)

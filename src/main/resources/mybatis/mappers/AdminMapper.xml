@@ -281,6 +281,26 @@
         WHERE i.INQUIRY_ID = #{inquiryId}
     </select>
 
+    <select id="selectInquiriesByWriter" resultMap="adminInquiryResultMap">
+        SELECT 
+            i.INQUIRY_ID,
+            i.WRITER_ID,
+            w.ACCOUNT_NAME AS WRITER_NAME,
+            i.TITLE,
+            i.CONTENT,
+            i.ANSWER_CONTENT,
+            i.ANSWERER_ID,
+            a.ACCOUNT_NAME AS ANSWERER_NAME,
+            i.STATUS,
+            i.CREATED_DATE,
+            i.ANSWERED_DATE
+        FROM INQUIRIES i
+        LEFT JOIN ACCOUNT_TBL w ON i.WRITER_ID = w.ACCOUNT_ID
+        LEFT JOIN ACCOUNT_TBL a ON i.ANSWERER_ID = a.ACCOUNT_ID
+        WHERE i.WRITER_ID = #{writerId}
+        ORDER BY i.CREATED_DATE DESC
+    </select>
+
     <update id="updateInquiryAnswer">
         UPDATE INQUIRIES
         SET ANSWER_CONTENT = #{answerContent},

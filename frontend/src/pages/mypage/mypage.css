@@ -545,10 +545,20 @@ body.dark-mode .benefit-card h3 {
   color: var(--text-primary);
 }
 
+.dark-mode .benefit-card ul,
+body.dark-mode .benefit-card ul {
+  color: var(--text-primary);
+}
+
 .dark-mode .benefit-card li,
 body.dark-mode .benefit-card li {
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .benefit-card li strong,
+body.dark-mode .benefit-card li strong {
+  color: var(--text-primary);
 }
 
 .dark-mode .activity-card,

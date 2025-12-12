@@ -3,14 +3,25 @@ package com.boot.Tour.controller;
 import com.boot.Tour.dao.TourDAO;
 import com.boot.Tour.dto.TourDTO;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173") // 리액트 주소 허용
 public class SolrDataController {
 
     @Autowired
@@ -64,5 +75,83 @@ public class SolrDataController {
             e.printStackTrace();
             return "실패: " + e.getMessage();
         }
+    }
+
+    // Solr에서 모든 데이터를 가져오는 엔드포인트
+    @GetMapping("/api/solr/all")
+    public ResponseEntity<?> getAllData() {
+        List<TourDTO> list = new ArrayList<>();
+        try {
+            SolrQuery query = new SolrQuery();
+            query.setQuery("*:*");
+            query.setRows(1000); // 충분한 데이터 가져오기
+            
+            QueryResponse response = solrClient.query("Search", query);
+            SolrDocumentList results = response.getResults();
+
+            System.out.println("Solr 쿼리 결과 개수: " + results.getNumFound());
+
+            for (SolrDocument doc : results) {
+                try {
+                    TourDTO dto = new TourDTO();
+                    
+                    String idStr = getSafeString(doc.getFieldValue("id"));
+                    if(idStr != null && !idStr.isEmpty()) {
+                        try {
+                            dto.setSpotId(Long.parseLong(idStr));
+                        } catch (NumberFormatException e) {
+                            System.err.println("ID 파싱 실패: " + idStr);
+                            continue; // 이 문서는 건너뛰기
+                        }
+                    }
+
+                    dto.setTitle(getSafeString(doc.getFieldValue("title")));
+                    dto.setAddress(getSafeString(doc.getFieldValue("address")));
+                    dto.setImageUrl(getSafeString(doc.getFieldValue("image_url")));
+                    dto.setDescription(getSafeString(doc.getFieldValue("description")));
+                    
+                    String themeIdStr = getSafeString(doc.getFieldValue("theme_id"));
+                    if (themeIdStr != null && !themeIdStr.isEmpty()) {
+                        try {
+                            dto.setThemeId(Integer.parseInt(themeIdStr));
+                        } catch (NumberFormatException e) {
+                            System.err.println("ThemeId 파싱 실패: " + themeIdStr);
+                        }
+                    }
+                    
+                    dto.setLatitude(getSafeString(doc.getFieldValue("latitude")));
+                    dto.setLongitude(getSafeString(doc.getFieldValue("longitude")));
+                    dto.setTel(getSafeString(doc.getFieldValue("tel")));
+                    dto.setHomepage(getSafeString(doc.getFieldValue("homepage")));
+                    
+                    list.add(dto);
+                } catch (Exception e) {
+                    System.err.println("문서 변환 중 에러: " + e.getMessage());
+                    e.printStackTrace();
+                    // 개별 문서 에러는 건너뛰고 계속 진행
+                }
+            }
+            
+            System.out.println("변환된 DTO 개수: " + list.size());
+            return ResponseEntity.ok(list);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "데이터 조회 실패");
+            errorResponse.put("message", e.getMessage());
+            errorResponse.put("data", new ArrayList<>());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // 안전한 문자열 변환 헬퍼
+    private String getSafeString(Object obj) {
+        if (obj == null) return null;
+        if (obj instanceof List) {
+            List<?> list = (List<?>) obj;
+            return list.isEmpty() ? null : list.get(0).toString();
+        }
+        return obj.toString();
     }
 }

@@ -207,3 +207,101 @@
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* 다크모드 스타일 */
+.dark-mode .theme-list-page,
+body.dark-mode .theme-list-page {
+  background: var(--bg-primary);
+}
+
+.dark-mode .theme-list-container,
+body.dark-mode .theme-list-container {
+  background: var(--bg-primary);
+}
+
+.dark-mode .theme-list-title,
+body.dark-mode .theme-list-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .theme-list-sub,
+body.dark-mode .theme-list-sub {
+  color: var(--text-secondary);
+}
+
+.dark-mode .theme-list-search-input,
+body.dark-mode .theme-list-search-input {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .theme-list-search-input:focus,
+body.dark-mode .theme-list-search-input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.dark-mode .theme-list-info-bar,
+body.dark-mode .theme-list-info-bar {
+  color: var(--text-secondary);
+}
+
+.dark-mode .theme-list-total,
+body.dark-mode .theme-list-total {
+  color: #8b5cf6;
+}
+
+.dark-mode .theme-list-card,
+body.dark-mode .theme-list-card {
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .theme-list-card:hover,
+body.dark-mode .theme-list-card:hover {
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+  border-color: #8b5cf6;
+}
+
+.dark-mode .theme-list-card-title,
+body.dark-mode .theme-list-card-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .theme-list-card-sub,
+body.dark-mode .theme-list-card-sub {
+  color: #8b5cf6;
+}
+
+.dark-mode .theme-address,
+body.dark-mode .theme-address {
+  color: var(--text-secondary);
+}
+
+.dark-mode .theme-list-empty,
+body.dark-mode .theme-list-empty {
+  color: var(--text-secondary);
+}
+
+.dark-mode .theme-list-page-btn,
+body.dark-mode .theme-list-page-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .theme-list-page-btn:hover,
+body.dark-mode .theme-list-page-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: #8b5cf6;
+  color: #8b5cf6;
+}
+
+.dark-mode .theme-list-page-btn.active,
+body.dark-mode .theme-list-page-btn.active {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: white;
+}
