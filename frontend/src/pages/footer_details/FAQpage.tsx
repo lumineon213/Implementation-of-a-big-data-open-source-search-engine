@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import "./FAQpage.css";
 
 interface FAQItem {
@@ -9,8 +10,9 @@ interface FAQItem {
 }
 
 const FAQpage: React.FC = () => {
+  const { t } = useTranslation();
   const [activeId, setActiveId] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const [selectedCategory, setSelectedCategory] = useState<string>(t('faq.categories.all'));
 
   const faqData: FAQItem[] = [
     {
@@ -105,11 +107,32 @@ const FAQpage: React.FC = () => {
     }
   ];
 
-  const categories = ["전체", "일반", "검색/이용", "기술지원", "계정/기능", "공지/이벤트"];
+  const categories = [
+    t('faq.categories.all'),
+    t('faq.categories.general'),
+    t('faq.categories.search'),
+    t('faq.categories.technical'),
+    t('faq.categories.account'),
+    t('faq.categories.notice')
+  ];
 
-  const filteredFAQs = selectedCategory === "전체" 
+  // 카테고리 매핑 (하드코딩된 한국어 카테고리를 번역 키와 매칭)
+  const categoryMap: {[key: string]: string} = {
+    '일반': 'general',
+    '검색/이용': 'search',
+    '기술지원': 'technical',
+    '계정/기능': 'account',
+    '공지/이벤트': 'notice'
+  };
+
+  const filteredFAQs = selectedCategory === t('faq.categories.all')
     ? faqData 
-    : faqData.filter(faq => faq.category === selectedCategory);
+    : faqData.filter(faq => {
+        const categoryKey = categoryMap[faq.category];
+        if (!categoryKey) return false;
+        const translatedCategory = t(`faq.categories.${categoryKey}`);
+        return selectedCategory === translatedCategory;
+      });
 
   const toggleFAQ = (id: number) => {
     setActiveId(activeId === id ? null : id);
@@ -119,8 +142,8 @@ const FAQpage: React.FC = () => {
     <div className="faq-page">
       <div className="faq-container">
         <div className="faq-header">
-          <h1>자주 묻는 질문</h1>
-          <p>궁금하신 내용을 빠르게 찾아보세요</p>
+          <h1>{t('faq.title')}</h1>
+          <p>{t('faq.subtitle')}</p>
         </div>
 
         <div className="faq-category-tabs">
@@ -146,7 +169,10 @@ const FAQpage: React.FC = () => {
                 onClick={() => toggleFAQ(faq.id)}
               >
                 <div className="question-content">
-                  <span className="category-badge">{faq.category}</span>
+                  <span className="category-badge">{(() => {
+                    const categoryKey = categoryMap[faq.category];
+                    return categoryKey ? t(`faq.categories.${categoryKey}`) : faq.category;
+                  })()}</span>
                   <h3>{faq.question}</h3>
                 </div>
                 <span className="toggle-icon">
@@ -164,14 +190,14 @@ const FAQpage: React.FC = () => {
         </div>
 
         <div className="faq-contact">
-          <h3>더 궁금하신 내용이 있으신가요?</h3>
-          <p>찾으시는 답변이 없다면 고객센터로 문의해주세요.</p>
+          <h3>{t('faq.contact.title')}</h3>
+          <p>{t('faq.contact.subtitle')}</p>
           <div className="contact-buttons">
             <a href="tel:1588-0000" className="contact-btn">
-              📞 고객센터: 1588-0000
+              📞 {t('faq.contact.customerCenter')}
             </a>
             <a href="mailto:info@busango.kr" className="contact-btn">
-              ✉️ 이메일 문의
+              ✉️ {t('faq.contact.email')}
             </a>
           </div>
         </div>

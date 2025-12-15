@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "./Sidebar.css";
 import History from "./history";
 import { api } from "../../api/axios";
@@ -60,6 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   shoppings,
   onShoppingClick
 }) => {
+  const { t } = useTranslation();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -149,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <>
       <div className={`sidebar ${open ? "open" : ""}`}>
         {!info ? (
-          <p>현재 위치를 눌러보세요.</p>
+          <p>{t('map.sidebar.clickLocation')}</p>
         ) : (
           <>
             <div className="location-title">
@@ -158,23 +160,43 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <button 
                   className="history-toggle-button"
                   onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                  title="최근 본 장소"
+                  title={t('map.sidebar.recentPlaces')}
                 >
                   🕐
                 </button>
               )}
             </div>          <div className="weather-box">
-            <div className="weather-label">현재 날씨</div>
+            <div className="weather-label">{t('map.sidebar.weather.label')}</div>
             <div className="weather-temp">{info.temp}°</div>
             <div className="weather-sky">{info.sky}</div>
             <div className="weather-extra">
-              최고 {info.temp + 1}° | 최저 {info.temp - 1}°
+              {t('map.sidebar.weather.high')} {info.temp + 1}° | {t('map.sidebar.weather.low')} {info.temp - 1}°
             </div>
           </div>
 
           {/* 날씨 기반 추천 */}
           {(() => {
             const recommendation = getWeatherRecommendations(info.sky, info.temp);
+            // reason을 번역 키로 매핑
+            const reasonKeyMap: { [key: string]: string } = {
+              '비/눈이 오는 날씨입니다. 실내 활동을 추천합니다!': 'map.weather.rainRecommendation',
+              '더운 날씨입니다. 시원한 곳을 추천합니다!': 'map.weather.hotRecommendation',
+              '추운 날씨입니다. 따뜻한 실내를 추천합니다!': 'map.weather.coldRecommendation',
+              '맑고 좋은 날씨입니다. 야외 활동을 즐기세요!': 'map.weather.sunnyRecommendation',
+              '흐린 날씨입니다. 가벼운 야외 활동이 좋습니다!': 'map.weather.cloudyRecommendation',
+              '오늘도 부산을 즐겨보세요!': 'map.weather.defaultRecommendation'
+            };
+            const reasonKey = reasonKeyMap[recommendation.reason] || 'map.weather.defaultRecommendation';
+            
+            // 카테고리 이름을 번역
+            const categoryNameMap: { [key: string]: string } = {
+              '음식점': t('map.sidebar.categories.restaurant'),
+              '산책로': t('map.sidebar.categories.walking'),
+              '테마관광지': t('map.sidebar.categories.theme'),
+              '해양레저': t('map.sidebar.categories.marine'),
+              '도심관광코스': t('map.sidebar.categories.urban')
+            };
+            
             return (
               <div className="weather-recommendation" style={{
                 margin: '0 0 20px 0',
@@ -191,53 +213,56 @@ const Sidebar: React.FC<SidebarProps> = ({
                   marginBottom: '8px'
                 }}>
                   <span style={{ fontSize: '22px' }}>{recommendation.icon}</span>
-                  <span style={{ fontWeight: 'bold', fontSize: '14px' }}>오늘의 추천</span>
+                  <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{t('map.sidebar.weather.todayRecommendation')}</span>
                 </div>
                 <div style={{ fontSize: '13px', lineHeight: '1.5', marginBottom: '10px' }}>
-                  {recommendation.reason}
+                  {t(reasonKey)}
                 </div>
                 <div style={{ 
                   display: 'flex', 
                   flexWrap: 'wrap', 
                   gap: '6px' 
                 }}>
-                  {recommendation.categories.map((cat) => (
-                    <span 
-                      key={cat}
-                      onClick={() => {
-                        const mapping: { [key: string]: string } = {
-                          '음식점': '음식점',
-                          '산책로': '도보여행',
-                          '테마관광지': '테마여행',
-                          '해양레저': '해양여행',
-                          '도심관광코스': '도시여행'
-                        };
-                        onCategoryClick(mapping[cat] || cat);
-                      }}
-                      style={{
-                        padding: '5px 12px',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: '14px',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        border: '1px solid rgba(255, 255, 255, 0.35)',
-                        fontWeight: '500'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.35)';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      {cat}
-                    </span>
-                  ))}
+                  {recommendation.categories.map((cat) => {
+                    const categoryName = categoryNameMap[cat] || cat;
+                    return (
+                      <span 
+                        key={cat}
+                        onClick={() => {
+                          const mapping: { [key: string]: string } = {
+                            '음식점': '음식점',
+                            '산책로': '도보여행',
+                            '테마관광지': '테마여행',
+                            '해양레저': '해양여행',
+                            '도심관광코스': '도시여행'
+                          };
+                          onCategoryClick(mapping[cat] || cat);
+                        }}
+                        style={{
+                          padding: '5px 12px',
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          borderRadius: '14px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          border: '1px solid rgba(255, 255, 255, 0.35)',
+                          fontWeight: '500'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.35)';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      >
+                        {categoryName}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -255,7 +280,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🏛️
                 </div>
-                <div className="category-label">명소</div>
+                <div className="category-label">{t('map.sidebar.categories.attraction')}</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('음식점') ? 'active' : ''}`}
@@ -267,7 +292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🍴
                 </div>
-                <div className="category-label">음식점</div>
+                <div className="category-label">{t('map.sidebar.categories.restaurant')}</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('카페') ? 'active' : ''}`}
@@ -279,7 +304,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   ☕
                 </div>
-                <div className="category-label">카페</div>
+                <div className="category-label">{t('map.sidebar.categories.cafe')}</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('숙소') ? 'active' : ''}`}
@@ -291,7 +316,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🏨
                 </div>
-                <div className="category-label">숙소</div>
+                <div className="category-label">{t('map.sidebar.categories.accommodation')}</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('주차장') ? 'active' : ''}`}
@@ -303,7 +328,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🅿️
                 </div>
-                <div className="category-label">주차장</div>
+                <div className="category-label">{t('map.sidebar.categories.parking')}</div>
               </div>
             </div>
             <div className="category-row">
@@ -317,7 +342,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🛍️
                 </div>
-                <div className="category-label">여행코스<br/>기념품</div>
+                <div className="category-label" dangerouslySetInnerHTML={{ __html: t('map.sidebar.categories.souvenir').replace(/<br\/>/g, '<br/>') }} />
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('도보여행') ? 'active' : ''}`}
@@ -329,7 +354,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🚶
                 </div>
-                <div className="category-label">여행코스<br/>도보여행</div>
+                <div className="category-label" dangerouslySetInnerHTML={{ __html: t('map.sidebar.categories.walking').replace(/<br\/>/g, '<br/>') }} />
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('테마여행') ? 'active' : ''}`}
@@ -341,7 +366,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🎭
                 </div>
-                <div className="category-label">여행코스<br/>테마여행</div>
+                <div className="category-label" dangerouslySetInnerHTML={{ __html: t('map.sidebar.categories.theme').replace(/<br\/>/g, '<br/>') }} />
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('해양여행') ? 'active' : ''}`}
@@ -353,7 +378,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🌊
                 </div>
-                <div className="category-label">여행코스<br/>해양여행</div>
+                <div className="category-label" dangerouslySetInnerHTML={{ __html: t('map.sidebar.categories.marine').replace(/<br\/>/g, '<br/>') }} />
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('도시여행') ? 'active' : ''}`}
@@ -365,7 +390,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   🏙️
                 </div>
-                <div className="category-label">여행코스<br/>도시여행</div>
+                <div className="category-label" dangerouslySetInnerHTML={{ __html: t('map.sidebar.categories.urban').replace(/<br\/>/g, '<br/>') }} />
               </div>
             </div>
           </div>
@@ -380,7 +405,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🍴 주변 맛집 ({restaurants.length}개)
+                  🍴 {t('map.sidebar.lists.nearbyRestaurants')} ({restaurants.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -473,7 +498,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🏨 주변 숙소 ({stays.length}개)
+                  🏨 {t('map.sidebar.lists.nearbyAccommodations')} ({stays.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -572,7 +597,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🚶 도보여행 코스 ({walks.length}개)
+                  🚶 {t('map.sidebar.lists.walkingCourse')} ({walks.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -669,7 +694,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🎭 테마여행 코스 ({themes.length}개)
+                  🎭 {t('map.sidebar.lists.themeCourse')} ({themes.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -766,7 +791,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🌊 해양여행 코스 ({marines.length}개)
+                  🌊 {t('map.sidebar.lists.marineCourse')} ({marines.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -863,7 +888,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🏙️ 도시여행 코스 ({urbans.length}개)
+                  🏙️ {t('map.sidebar.lists.urbanCourse')} ({urbans.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -960,7 +985,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🏛️ 주변 명소 ({tours.length}개)
+                  🏛️ {t('map.sidebar.lists.nearbyAttractions')} ({tours.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -1059,7 +1084,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🛍️ 주변 기념품 ({shoppings.length}개)
+                  🛍️ {t('map.sidebar.lists.nearbySouvenirs')} ({shoppings.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -1167,7 +1192,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 marginBottom: '10px'
               }}>
                 <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
-                  🅿️ 주변 주차장 ({parkings.length}개)
+                  🅿️ {t('map.sidebar.lists.nearbyParking')} ({parkings.length}{t('map.sidebar.lists.items')})
                 </h3>
               </div>
               
@@ -1261,7 +1286,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                             background: '#B0BEC5',
                             color: '#263238',
                             borderRadius: '12px'
-                          }}>기본요금: {Array.isArray(parking.fee_basic) ? parking.fee_basic[0] : parking.fee_basic}원</span>
+                          }}>{t('map.sidebar.parking.basicFee')}: {Array.isArray(parking.fee_basic) ? parking.fee_basic[0] : parking.fee_basic}원</span>
                         )}
                       </div>
                     </div>

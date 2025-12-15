@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import "./Event.css";
 
 interface EventData {
@@ -14,7 +15,8 @@ interface EventData {
 }
 
 const Event: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState<string>(t('event.categories.all'));
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
 
   const eventData: EventData[] = [
@@ -108,27 +110,51 @@ const Event: React.FC = () => {
     }
   ];
 
-  const categories = ["전체", "이벤트", "혜택", "프로모션", "시즌"];
+  const categories = [
+    t('event.categories.all'),
+    t('event.categories.event'),
+    t('event.categories.benefit'),
+    t('event.categories.promotion'),
+    t('event.categories.season')
+  ];
 
-  const filteredEvents = selectedCategory === "전체" 
+  // 카테고리 매핑 (하드코딩된 한국어 카테고리를 번역 키와 매칭)
+  const categoryMap: {[key: string]: string} = {
+    '이벤트': 'event',
+    '혜택': 'benefit',
+    '프로모션': 'promotion',
+    '시즌': 'season'
+  };
+  
+  const filteredEvents = selectedCategory === t('event.categories.all')
     ? eventData 
-    : eventData.filter(event => event.category === selectedCategory);
+    : eventData.filter(event => {
+        const categoryKey = categoryMap[event.category];
+        if (!categoryKey) return false;
+        const translatedCategory = t(`event.categories.${categoryKey}`);
+        return selectedCategory === translatedCategory;
+      });
 
   const getStatusColor = (status: string) => {
-    switch(status) {
-      case "진행중": return "#2ecc71";
-      case "예정": return "#3498db";
-      case "종료": return "#95a5a6";
-      default: return "#95a5a6";
-    }
+    const statusKo = t('event.status.ongoing', { lng: 'ko' });
+    const statusEn = t('event.status.ongoing', { lng: 'en' });
+    const scheduledKo = t('event.status.scheduled', { lng: 'ko' });
+    const scheduledEn = t('event.status.scheduled', { lng: 'en' });
+    const endedKo = t('event.status.ended', { lng: 'ko' });
+    const endedEn = t('event.status.ended', { lng: 'en' });
+    
+    if (status === statusKo || status === statusEn || status === "진행중") return "#2ecc71";
+    if (status === scheduledKo || status === scheduledEn || status === "예정") return "#3498db";
+    if (status === endedKo || status === endedEn || status === "종료") return "#95a5a6";
+    return "#95a5a6";
   };
 
   return (
     <div className="event-page">
       <div className="event-container">
         <div className="event-header">
-          <h1>🎉 진행중인 이벤트</h1>
-          <p>다양한 혜택과 이벤트를 놓치지 마세요!</p>
+          <h1>🎉 {t('event.title')}</h1>
+          <p>{t('event.subtitle')}</p>
         </div>
 
         <div className="event-category-tabs">
@@ -174,7 +200,7 @@ const Event: React.FC = () => {
 
         {filteredEvents.length === 0 && (
           <div className="no-events">
-            <p>해당 카테고리의 이벤트가 없습니다.</p>
+            <p>{t('event.noEvents')}</p>
           </div>
         )}
       </div>
@@ -202,23 +228,23 @@ const Event: React.FC = () => {
               <h2 className="modal-title">{selectedEvent.title}</h2>
               
               <div className="modal-period">
-                <strong>이벤트 기간</strong>
+                <strong>{t('event.modal.period')}</strong>
                 <p>📅 {selectedEvent.startDate} ~ {selectedEvent.endDate}</p>
               </div>
 
               <div className="modal-description">
-                <strong>이벤트 소개</strong>
+                <strong>{t('event.modal.description')}</strong>
                 <p>{selectedEvent.description}</p>
               </div>
 
               <div className="modal-benefit">
-                <strong>혜택 안내</strong>
+                <strong>{t('event.modal.benefit')}</strong>
                 <p style={{ whiteSpace: 'pre-line' }}>{selectedEvent.benefit}</p>
               </div>
 
               <div className="modal-actions">
-                <button className="btn-participate">참여하기</button>
-                <button className="btn-share">공유하기</button>
+                <button className="btn-participate">{t('event.modal.participate')}</button>
+                <button className="btn-share">{t('event.modal.share')}</button>
               </div>
             </div>
           </div>

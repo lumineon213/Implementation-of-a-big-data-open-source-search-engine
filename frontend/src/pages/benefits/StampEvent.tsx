@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './StampEvent.css';
 import { api } from '../../api/axios';
 
@@ -19,20 +20,26 @@ interface EventDTO {
 }
 
 const StampEvent: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [myStamps, setMyStamps] = useState<string[]>([]);
   const [checkingId, setCheckingId] = useState<string | null>(null);
   const [checkMsg, setCheckMsg] = useState<string>("");
+  
+  const STAMP_LIST_TRANSLATED = STAMP_LIST.map(stamp => ({
+    ...stamp,
+    name: t(`benefits.stamps.${stamp.id}.name`)
+  }));
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('로그인 후 이용 가능합니다.');
+      alert(t('benefits.loginRequired'));
       navigate('/login');
       return;
     }
     loadMyStamps();
-  }, [navigate]);
+  }, [navigate, t]);
 
   // 내가 보유한 스탬프 조회
   const loadMyStamps = async () => {
@@ -41,8 +48,12 @@ const StampEvent: React.FC = () => {
       if (response.data.success && response.data.events) {
         const stampIds: string[] = [];
         response.data.events.forEach((stamp: EventDTO) => {
-          // 스탬프 이름으로 매칭
-          const stampItem = STAMP_LIST.find(s => s.name === stamp.eventName);
+          // 스탬프 이름으로 매칭 (한국어/영어 모두 확인)
+          const stampItem = STAMP_LIST.find(s => {
+            const koName = t(`benefits.stamps.${s.id}.name`, { lng: 'ko' });
+            const enName = t(`benefits.stamps.${s.id}.name`, { lng: 'en' });
+            return stamp.eventName === koName || stamp.eventName === enName || stamp.eventName === s.name;
+          });
           if (stampItem && stamp.count > 0) {
             stampIds.push(stampItem.id);
           }
@@ -72,10 +83,10 @@ const StampEvent: React.FC = () => {
     if (myStamps.includes(id)) return;
     
     setCheckingId(id);
-    setCheckMsg('위치 확인 중...');
+    setCheckMsg(t('benefits.stampEvent.checkingLocation'));
     
     if (!navigator.geolocation) {
-      setCheckMsg('이 브라우저는 위치 정보를 지원하지 않습니다.');
+      setCheckMsg(t('benefits.stampEvent.browserNotSupported'));
       setCheckingId(null);
       return;
     }
@@ -83,10 +94,10 @@ const StampEvent: React.FC = () => {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
-        const stamp = STAMP_LIST.find(s => s.id === id);
+        const stamp = STAMP_LIST_TRANSLATED.find(s => s.id === id);
         
         if (!stamp) {
-          setCheckMsg('명소 정보를 찾을 수 없습니다.');
+          setCheckMsg(t('benefits.stampEvent.placeNotFound'));
           setCheckingId(null);
           return;
         }
@@ -94,53 +105,55 @@ const StampEvent: React.FC = () => {
         const dist = getDistance(latitude, longitude, stamp.lat, stamp.lng);
         
         if (dist <= 100) {
-          // 백엔드에 스탬프 저장
+          // 백엔드에 스탬프 저장 (한국어 이름으로 저장)
           try {
+            const koName = t(`benefits.stamps.${id}.name`, { lng: 'ko' });
             const response = await api.post('/events/stamp', {
-              eventName: stamp.name,
+              eventName: koName,
               actionType: 'VISIT',
-              description: `${stamp.name} 방문 인증`
+              description: `${koName} ${t('benefits.stampEvent.visitCertification')}`
             });
             
             if (response.data.success) {
               setMyStamps([...myStamps, id]);
-              setCheckMsg('인증 성공! 스탬프가 발급되었습니다.');
+              setCheckMsg(t('benefits.stampEvent.certificationSuccess'));
               
               // 모든 스탬프를 모았는지 확인
               if (myStamps.length + 1 === STAMP_LIST.length) {
                 // 배지 발급
                 try {
+                  const badgeKoName = t('benefits.badges.stamp.name', { lng: 'ko' });
                   await api.post('/events/badge', {
-                    eventName: '스탬프 투어 완주',
+                    eventName: badgeKoName,
                     actionType: 'STAMP_COMPLETE',
-                    description: '모든 명소 스탬프를 모았습니다!'
+                    description: t('benefits.stampEvent.allStampsCollected', { lng: 'ko' })
                   });
                   setTimeout(() => {
-                    alert('🎉 축하합니다! 모든 스탬프를 모으셨습니다. 배지가 발급되었습니다!');
+                    alert(t('benefits.stampEvent.allStampsComplete'));
                   }, 500);
                 } catch (error) {
                   console.error('배지 발급 실패:', error);
                 }
               }
             } else {
-              setCheckMsg(response.data.msg || '스탬프 발급에 실패했습니다.');
+              setCheckMsg(response.data.msg || t('benefits.stampEvent.issuanceFailed'));
             }
           } catch (error: any) {
             console.error('스탬프 발급 실패:', error);
             if (error.response?.data?.msg) {
               setCheckMsg(error.response.data.msg);
             } else {
-              setCheckMsg('스탬프 발급에 실패했습니다. 다시 시도해주세요.');
+              setCheckMsg(t('benefits.stampEvent.issuanceFailedRetry'));
             }
           }
         } else {
-          setCheckMsg(`현재 위치와 명소가 ${Math.round(dist)}m 떨어져 있습니다. 100m 이내에서 인증 가능합니다.`);
+          setCheckMsg(t('benefits.stampEvent.distanceMessage', { distance: Math.round(dist) }));
         }
         
         setCheckingId(null);
       },
       () => {
-        setCheckMsg('위치 정보 확인에 실패했습니다. 권한을 허용해 주세요.');
+        setCheckMsg(t('benefits.stampEvent.permissionDenied'));
         setCheckingId(null);
       }
     );
@@ -148,11 +161,10 @@ const StampEvent: React.FC = () => {
 
   return (
     <div className="stamp-event-container">
-      <h1 className="stamp-title">🎉 부산 명소 스탬프 투어 이벤트</h1>
-      <p className="stamp-desc">부산의 대표 명소를 방문하고 스탬프를 모아보세요!<br />
-        모든 스탬프를 모으면 특별 뱃지와 기념품을 드립니다.</p>
+      <h1 className="stamp-title">🎉 {t('benefits.stampEvent.title')}</h1>
+      <p className="stamp-desc">{t('benefits.stampEvent.description')}</p>
       <div className="stamp-list">
-        {STAMP_LIST.map(stamp => (
+        {STAMP_LIST_TRANSLATED.map(stamp => (
           <div key={stamp.id} className={`stamp-card${myStamps.includes(stamp.id) ? ' collected' : ''}`}> 
             <img src={stamp.img} alt={stamp.name} className="stamp-img" />
             <div className="stamp-name">{stamp.name}</div>
@@ -161,7 +173,7 @@ const StampEvent: React.FC = () => {
               disabled={myStamps.includes(stamp.id) || checkingId === stamp.id}
               onClick={() => handleCheckIn(stamp.id)}
             >
-              {myStamps.includes(stamp.id) ? '인증 완료!' : (checkingId === stamp.id ? '확인 중...' : '방문 인증하기')}
+              {myStamps.includes(stamp.id) ? t('benefits.stampEvent.certificationComplete') : (checkingId === stamp.id ? t('benefits.stampEvent.checking') : t('benefits.stampEvent.certifyVisit'))}
             </button>
           </div>
         ))}
@@ -170,18 +182,18 @@ const StampEvent: React.FC = () => {
         <div className="stamp-check-msg">{checkMsg}</div>
       )}
       <div className="stamp-status">
-        <h2>내 스탬프 현황</h2>
+        <h2>{t('benefits.stampEvent.myStatus')}</h2>
         <div className="stamp-status-list">
-          {STAMP_LIST.map(stamp => (
+          {STAMP_LIST_TRANSLATED.map(stamp => (
             <div key={stamp.id} className={`stamp-status-item${myStamps.includes(stamp.id) ? ' done' : ''}`}>{stamp.name}</div>
           ))}
         </div>
         <div className="stamp-progress">
-          <span>획득: {myStamps.length} / {STAMP_LIST.length}</span>
+          <span>{t('benefits.stampEvent.achieved')}: {myStamps.length} / {STAMP_LIST.length}</span>
           {myStamps.length === STAMP_LIST.length && (
-            <div className="stamp-reward">🎁 모든 스탬프를 모았습니다! 기념품을 신청하세요.</div>
+            <div className="stamp-reward">🎁 {t('benefits.stampEvent.allStampsMessage')}</div>
           )}
-          <div className="stamp-reward-small">🎁 성공 시 숙소 3,000원 할인권 증정!</div>
+          <div className="stamp-reward-small">🎁 {t('benefits.stampEvent.rewardMessage')}</div>
         </div>
       </div>
     </div>

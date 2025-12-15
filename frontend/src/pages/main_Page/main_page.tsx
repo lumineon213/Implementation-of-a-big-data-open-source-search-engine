@@ -1,6 +1,7 @@
 import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { Search, ArrowRight, MapPin, Calendar, Star, Compass, Palmtree, Camera, UtensilsCrossed, PartyPopper } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import './main_page.css';
 
@@ -46,15 +47,7 @@ const SLIDE_DATA = [
   }
 ];
 
-const CATEGORIES = ["전체", "가족여행", "커플데이트", "맛집투어", "액티비티", "힐링", "문화예술"];
-
-// 추천 활동
-const ACTIVITIES = [
-  { icon: <UtensilsCrossed size={24} />, title: "맛집 탐방", desc: "부산 대표 먹거리", link: "/food" },
-  { icon: <MapPin size={24} />, title: "명소 투어", desc: "부산 필수 관광지", link: "/tour" },
-  { icon: <PartyPopper size={24} />, title: "축제 정보", desc: "부산 문화 축제", link: "/festival" },
-  { icon: <Palmtree size={24} />, title: "여행 코스", desc: "테마별 추천 코스", link: "/course" }
-];
+// 추천 활동은 컴포넌트 내부에서 번역 함수 사용
 
 // 이미지 매핑 (Solr 데이터의 제목에 따라 이미지 할당)
 const getImageByTitle = (title: string): string => {
@@ -75,7 +68,25 @@ const getCategoryIcon = (title: string) => {
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const SOLR_CORE_NAME = 'Search';
+
+  const CATEGORIES = [
+    t('main.hero.categories.all'),
+    t('main.hero.categories.family'),
+    t('main.hero.categories.couple'),
+    t('main.hero.categories.foodTour'),
+    t('main.hero.categories.activity'),
+    t('main.hero.categories.healing'),
+    t('main.hero.categories.culture')
+  ];
+
+  const ACTIVITIES = [
+    { icon: <UtensilsCrossed size={24} />, title: t('main.activities.foodTour'), desc: t('main.activities.foodTourDesc'), link: "/food" },
+    { icon: <MapPin size={24} />, title: t('main.activities.spotTour'), desc: t('main.activities.spotTourDesc'), link: "/tour" },
+    { icon: <PartyPopper size={24} />, title: t('main.activities.festivalInfo'), desc: t('main.activities.festivalInfoDesc'), link: "/festival" },
+    { icon: <Palmtree size={24} />, title: t('main.activities.travelCourse'), desc: t('main.activities.travelCourseDesc'), link: "/course" }
+  ];
 
   // --- UI 상태 관리 ---
   const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -170,7 +181,7 @@ const Home: React.FC = () => {
                 <Search size={20} className="search-icon-svg" />
                 <input
                   type="text"
-                  placeholder="부산 여행지를 검색해보세요..."
+                  placeholder={t('main.hero.searchPlaceholder')}
                   value={searchQuery}
                   onChange={handleInputChange}
                   className="hero-search-input"
@@ -225,14 +236,14 @@ const Home: React.FC = () => {
       {/* === 인기 여행지 섹션 === */}
       <section className="popular-section">
         <div className="section-header">
-          <h2 className="section-title">부산 인기 여행지</h2>
-          <p className="section-subtitle">지금 가장 HOT한 부산 명소</p>
+          <h2 className="section-title">{t('main.popular.title')}</h2>
+          <p className="section-subtitle">{t('main.popular.subtitle')}</p>
         </div>
 
         {loadingPlaces ? (
           <div className="loading-places">
             <div className="spinner"></div>
-            <p>인기 여행지를 불러오는 중...</p>
+            <p>{t('main.popular.loading')}</p>
           </div>
         ) : (
           <div className="popular-grid">
@@ -249,7 +260,7 @@ const Home: React.FC = () => {
                     <div className="card-image" style={{ backgroundImage: `url(${imageUrl})` }}>
                       <div className="card-badge">
                         {getCategoryIcon(place.title)}
-                        <span>{place.place || '부산'}</span>
+                        <span>{place.place || t('main.popular.defaultPlace')}</span>
                       </div>
                     </div>
                     <div className="card-content">
@@ -265,7 +276,7 @@ const Home: React.FC = () => {
                           ? place.description.length > 80
                             ? place.description.substring(0, 80) + '...'
                             : place.description
-                          : '부산의 아름다운 명소를 만나보세요'}
+                          : t('main.popular.defaultDescription')}
                       </p>
                     </div>
                   </div>
@@ -273,7 +284,7 @@ const Home: React.FC = () => {
               })
             ) : (
               <div className="no-places">
-                <p>인기 여행지 정보를 불러올 수 없습니다.</p>
+                <p>{t('main.popular.error')}</p>
               </div>
             )}
           </div>
@@ -283,8 +294,8 @@ const Home: React.FC = () => {
       {/* === 추천 활동 섹션 === */}
       <section className="activities-section">
         <div className="section-header">
-          <h2 className="section-title">부산에서 뭐하지?</h2>
-          <p className="section-subtitle">취향대로 골라보는 부산 여행</p>
+          <h2 className="section-title">{t('main.activities.title')}</h2>
+          <p className="section-subtitle">{t('main.activities.subtitle')}</p>
         </div>
 
         <div className="activities-grid">
@@ -307,10 +318,10 @@ const Home: React.FC = () => {
       <section className="cta-section">
         <div className="cta-content">
           <Calendar size={48} className="cta-icon" />
-          <h2 className="cta-title">나만의 부산 여행 계획 세우기</h2>
-          <p className="cta-desc">AI가 추천하는 맞춤형 여행 코스를 만나보세요</p>
+          <h2 className="cta-title">{t('main.cta.title')}</h2>
+          <p className="cta-desc">{t('main.cta.description')}</p>
           <button className="cta-button" onClick={() => navigate('/ai-planner')}>
-            여행 계획 시작하기
+            {t('main.cta.button')}
             <ArrowRight size={20} style={{ marginLeft: '8px' }} />
           </button>
         </div>
