@@ -270,7 +270,6 @@ const Header: React.FC = () => {
               )}
               </div>
 
-
             
             {/* 여행정보 드롭다운 */}
             <div 
@@ -304,7 +303,7 @@ const Header: React.FC = () => {
                       <div className="dropdown-desc">{t('header.travelRegionDesc')}</div>
                     </div>
                   </Link>
-                  <Link to="/info/articles" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
+                  <Link to="/info/news" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}> {/* 💡 경로 수정 완료 */}
                     <span className="dropdown-icon">📰</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">{t('header.travelArticles')}</div>
@@ -662,7 +661,7 @@ const Header: React.FC = () => {
             {expandedMenu === "info" && (
               <div className="mobile-sub-nav">
                 <Link to="/info/regions" onClick={handleMenuClose}>{t('header.travelRegion')}</Link>
-                <Link to="/info/articles" onClick={handleMenuClose}>{t('header.travelArticles')}</Link>
+                <Link to="/info/news" onClick={handleMenuClose}>{t('header.travelArticles')}</Link> {/* 💡 경로 수정 완료 */}
                 <Link to="/festival" onClick={handleMenuClose}>{t('header.festival')}</Link>
                 <Link to="/shopping" onClick={handleMenuClose}>{t('header.shopping')}</Link>
                 <Link to="/info/accommodation" onClick={handleMenuClose}>{t('header.accommodation')}</Link>
@@ -710,4 +709,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-
