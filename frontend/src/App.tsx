@@ -13,9 +13,10 @@ import TourDetail from "pages/tourtheme/TourDetail";
 
 import MapPage from "pages/map/MapPage";
 import FoodDetail from "pages/foodList/foodDetail";
+
 import StayList from "pages/stayList/stayList";
 import StayDetail from "pages/stayList/stayDetail";
-
+import ReservationSuccess from 'pages/reservation/reservationSuccess';
 
 import WalkCourseList from "pages/course/WalkCourseList";
 import WalkDetail from "pages/course/WalkDetail";
@@ -56,6 +57,7 @@ import AdminReviews from "pages/admin/AdminReviews";
 import AdminInquiries from "pages/admin/AdminInquiries";
 import AdminNotices from "pages/admin/AdminNotices";
 import AdminEvents from "pages/admin/AdminEvents";
+
 
 // 타입 정의
 export interface SolrResultItem {
@@ -170,6 +172,9 @@ function App() {
                   <Route path="/admin/inquiries" element={<AdminInquiries />} />
                   <Route path="/admin/notices" element={<AdminNotices />} />
                   <Route path="/admin/events" element={<AdminEvents />} />
+
+                  {/* 예약 성공 페이지 */}
+                  <Route path="/reservation/success" element={<ReservationSuccess />} />
                 </Routes>
          
           {!isMapPage && <Footer />}
