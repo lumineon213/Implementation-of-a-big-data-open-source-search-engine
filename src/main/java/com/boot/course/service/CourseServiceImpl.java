@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
 
         // ※ MyBatis에서 keyProperty="courseId" 설정 시 자동으로 PK가 바인딩됨
         Long courseId = course.getCourseId();
-
+        
         // ------------------------------
         // 2) 스팟 목록 저장 (코스 상세 장소)
         // ------------------------------
@@ -63,6 +63,7 @@ public class CourseServiceImpl implements CourseService {
             courseSpotDAO.insertCourseSpot(spot);
         }
 
+        
         return courseId; // 프론트에서 "코스 상세로 이동" 시 필요
     }
 
@@ -115,6 +116,19 @@ public class CourseServiceImpl implements CourseService {
                     spot.getPlaceId(),
                     spot.getPlaceType()
             );
+            
+         // ✅ 디버그 로그 추가 (명소만 터지는지 확인)
+            if ("(정보 없음)".equals(place.get("title"))) {
+                System.out.println("[SOLR FAIL] courseId=" + courseId
+                    + " type=" + spot.getPlaceType()
+                    + " id=" + spot.getPlaceId()
+                    + " reason=" + place.get("_reason"));
+            } else {
+                // 필요하면 성공 케이스도 한 번 찍기
+                System.out.println("[SOLR OK] type=" + spot.getPlaceType()
+                    + " id=" + spot.getPlaceId()
+                    + " title=" + place.get("title"));
+            }
 
             // Solr 필드 매핑
             csd.setTitle((String) place.get("title"));
@@ -163,4 +177,39 @@ public class CourseServiceImpl implements CourseService {
         courseSpotDAO.deleteSpotsByCourseId(courseId);
         courseDAO.deleteCourse(courseId);
     }
+    
+    @Transactional
+    @Override
+    public void updateCourse(Long courseId, CourseCreateRequestDto request, String accountId) {
+
+        Course existing = courseDAO.selectCourseById(courseId);
+        if (existing == null) throw new RuntimeException("코스가 존재하지 않습니다.");
+        if (!existing.getAccountId().equals(accountId)) throw new RuntimeException("수정 권한이 없습니다.");
+
+        // 1) COURSE_TBL 업데이트
+        Course toUpdate = new Course();
+        toUpdate.setCourseId(courseId);
+        toUpdate.setTitle(request.getTitle());
+        toUpdate.setDescription(request.getDescription());
+        toUpdate.setIsPublic(request.getIsPublic());
+        toUpdate.setTags(request.getTags());
+        courseDAO.updateCourse(toUpdate);
+
+        // ✅ 여기: spots null 방어 (for문 돌리기 전에)
+        List<CourseSpotRequestDto> spots = request.getSpots();
+        if (spots == null) spots = java.util.Collections.emptyList();
+
+        // 2) 스팟은 단순하게: 전부 삭제 후 다시 insert
+        courseSpotDAO.deleteSpotsByCourseId(courseId);
+
+        for (CourseSpotRequestDto s : spots) {
+            CourseSpot spot = new CourseSpot();
+            spot.setCourseId(courseId);
+            spot.setOrderIndex(s.getOrderIndex());
+            spot.setPlaceId(s.getPlaceId());
+            spot.setPlaceType(s.getPlaceType());
+            courseSpotDAO.insertCourseSpot(spot);
+        }
+    }
+
 }

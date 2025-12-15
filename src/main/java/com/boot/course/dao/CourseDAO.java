@@ -15,4 +15,7 @@ public interface CourseDAO {
     List<Course> selectCoursesByAccountId(String accountId);
 
     int deleteCourse(Long courseId);
+    
+    int updateCourse(Course course);
+
 }

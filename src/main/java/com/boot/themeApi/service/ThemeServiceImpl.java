@@ -139,12 +139,25 @@ public class ThemeServiceImpl implements ThemeService {
 
         for (SolrDocument doc : list) {
             Map<String, Object> m = new HashMap<>();
-            m.put("id", doc.get("id"));
-            m.put("title", doc.get("title"));
-            m.put("subtitle", doc.getOrDefault("subtitle", ""));
-            m.put("place", doc.get("place"));
-            m.put("image_url", doc.get("image_url"));
-            m.put("type", doc.get("type"));
+
+            m.put("id", extractSingle(doc.get("id")));
+            m.put("title", extractSingle(doc.get("title")));
+            m.put("subtitle", extractSingle(doc.getOrDefault("subtitle", "")));
+            m.put("place", extractSingle(doc.get("place")));
+            m.put("image_url", extractSingle(doc.get("image_url")));
+            m.put("thumbnail", extractSingle(doc.getOrDefault("thumbnail", "")));
+            m.put("type", extractSingle(doc.get("type")));
+
+            // ✅ 핵심: 주소 내려주기
+            m.put("address", extractSingle(doc.getOrDefault("address", "")));
+            m.put("gugun", extractSingle(doc.getOrDefault("gugun", "")));
+            m.put("category", extractSingle(doc.getOrDefault("category", "")));
+
+            // 좌표
+            m.put("latitude", extractSingle(doc.get("latitude")));
+            m.put("longitude", extractSingle(doc.get("longitude")));
+
+
             
             // 좌표 처리 (Collection인 경우 첫 번째 요소 추출)
             Object latObj = doc.getFieldValue("latitude");

@@ -6,24 +6,17 @@
 
     <!-- 1) 코스 생성 -->
     <insert id="insertCourse" parameterType="com.boot.course.entity.Course">
-        INSERT INTO COURSE_TBL (
-            COURSE_ID,
-            ACCOUNT_ID,
-            TITLE,
-            DESCRIPTION,
-            IS_PUBLIC,
-            TAGS,
-            CREATED_AT
-        ) VALUES (
-            SEQ_COURSE_ID.NEXTVAL,
-            #{accountId},
-            #{title},
-            #{description},
-            #{isPublic},
-            #{tags},
-            SYSDATE
-        )
-    </insert>
+	  <selectKey keyProperty="courseId" resultType="long" order="BEFORE">
+	    SELECT SEQ_COURSE_ID.NEXTVAL FROM DUAL
+	  </selectKey>
+	
+	  INSERT INTO COURSE_TBL (
+	    COURSE_ID, ACCOUNT_ID, TITLE, DESCRIPTION, IS_PUBLIC, TAGS, CREATED_AT
+	  ) VALUES (
+	    #{courseId}, #{accountId}, #{title}, #{description}, #{isPublic}, #{tags}, SYSDATE
+	  )
+	</insert>
+
 
     <!-- 2) 단일 코스 조회 -->
     <select id="selectCourseById" resultType="com.boot.course.entity.Course">
@@ -61,5 +54,16 @@
         DELETE FROM COURSE_TBL
         WHERE COURSE_ID = #{courseId}
     </delete>
+
+	<update id="updateCourse" parameterType="com.boot.course.entity.Course">
+	  UPDATE COURSE_TBL
+	  SET
+	    TITLE = #{title},
+	    DESCRIPTION = #{description},
+	    IS_PUBLIC = #{isPublic},
+	    TAGS = #{tags},
+	    UPDATED_AT = SYSDATE
+	  WHERE COURSE_ID = #{courseId}
+	</update>
 
 </mapper>

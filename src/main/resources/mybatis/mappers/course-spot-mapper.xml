@@ -5,23 +5,18 @@
 <mapper namespace="com.boot.course.dao.CourseSpotDAO">
 
     <!-- 1) 코스 스팟 저장 -->
-    <insert id="insertCourseSpot" parameterType="com.boot.course.entity.CourseSpot">
-        INSERT INTO COURSE_SPOTS_TBL (
-            SPOT_ID,
-            COURSE_ID,
-            ORDER_INDEX,
-            PLACE_ID,
-            PLACE_TYPE,
-            CREATED_AT
-        ) VALUES (
-            SEQ_SPOT_ID.NEXTVAL,
-            #{courseId},
-            #{orderIndex},
-            #{placeId},
-            #{placeType},
-            SYSDATE
-        )
-    </insert>
+   <insert id="insertCourseSpot" parameterType="com.boot.course.entity.CourseSpot">
+	  <selectKey keyProperty="spotId" resultType="long" order="BEFORE">
+	    SELECT SEQ_SPOT_ID.NEXTVAL FROM DUAL
+	  </selectKey>
+	
+	  INSERT INTO COURSE_SPOTS_TBL (
+	    SPOT_ID, COURSE_ID, ORDER_INDEX, PLACE_ID, PLACE_TYPE, CREATED_AT
+	  ) VALUES (
+	    #{spotId}, #{courseId}, #{orderIndex}, #{placeId}, #{placeType}, SYSDATE
+	  )
+	</insert>
+
 
     <!-- 2) 코스 별 스팟 목록 조회 -->
     <select id="selectSpotsByCourseId" resultType="com.boot.course.entity.CourseSpot">

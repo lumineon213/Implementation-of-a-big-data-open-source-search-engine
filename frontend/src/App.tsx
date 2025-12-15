@@ -26,6 +26,10 @@ import MarineDetail from "pages/course/MarineDetail";
 import UrbanCourseList from "pages/course/UrbanCourseList";
 import UrbanDetail from "pages/course/UrbanDetail";
 
+import CourseDetailPage from "pages/courseBuilder/CourseDetailPage";
+import CourseBuilderPage from "pages/courseBuilder/CourseBuilderPage";
+import CourseListPage from "pages/courseBuilder/CourseListPage";
+
 import PrivacyPolicy from "pages/footer_details/PrivacyPolicy";
 import Terms from "pages/footer_details/Terms";
 import FAQpage from "pages/footer_details/FAQpage";
@@ -130,6 +134,11 @@ function App() {
                   <Route path="/course/marine/:id" element={<MarineDetail />} />
                   <Route path="/course/urban" element={<UrbanCourseList />} />
                   <Route path="/course/urban/:id" element={<UrbanDetail />} />
+
+                  <Route path="/course/builder" element={<CourseBuilderPage />} />
+                  <Route path="/course/list" element={<CourseListPage />} />
+                  <Route path="/course/view/:courseId" element={<CourseDetailPage />} />
+
 
                   {/* AI 여행 계획 */}
                   <Route path="/ai-planner" element={<AIPlannerPage />} />
