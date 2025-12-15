@@ -562,6 +562,17 @@ const MyPage: React.FC = () => {
                 {t('mypage.userInfo.edit')}
               </button>
             )}
+            
+            {/* 관리자 페이지 링크 - 관리자 권한이 있는 경우에만 표시 */}
+            {mode === "view" && user.accountRole === "ADMIN" && (
+              <button 
+                className="admin-page-btn" 
+                onClick={() => navigate('/admin')}
+                style={{ marginTop: "10px" }}
+              >
+                🔧 {t('mypage.adminPage') || '관리자 페이지'}
+              </button>
+            )}
           </div>
         </div>
 

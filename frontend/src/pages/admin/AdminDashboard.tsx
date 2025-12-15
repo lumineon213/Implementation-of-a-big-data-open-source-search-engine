@@ -40,6 +40,9 @@ const AdminDashboard: React.FC = () => {
         setDailyStats(res.data.dailyStatistics || []);
         setTopPlaces(res.data.topPlaces || []);
         setTopUsers(res.data.topUsers || []);
+        // 디버깅용 로그
+        console.log('Top Places:', res.data.topPlaces);
+        console.log('Top Users:', res.data.topUsers);
       } else {
         alert('관리자 권한이 필요합니다.');
         navigate('/');
@@ -109,8 +112,10 @@ const AdminDashboard: React.FC = () => {
               topPlaces.map((place, idx) => (
                 <div key={idx} className="top-item">
                   <span className="rank">{idx + 1}</span>
-                  <span className="name">{place.placeId}</span>
-                  <span className="count">{place.reviewCount}개</span>
+                  <span className="name">
+                    {place.PLACE_NAME || place.placeName || place.PLACE_ID || place.placeId || '알 수 없음'}
+                  </span>
+                  <span className="count">{(place.REVIEW_COUNT || place.reviewCount || 0)}개</span>
                 </div>
               ))
             ) : (
@@ -126,8 +131,8 @@ const AdminDashboard: React.FC = () => {
               topUsers.map((user, idx) => (
                 <div key={idx} className="top-item">
                   <span className="rank">{idx + 1}</span>
-                  <span className="name">{user.accountName}</span>
-                  <span className="count">{user.reviewCount}개</span>
+                  <span className="name">{user.ACCOUNT_NAME || user.accountName || '알 수 없음'}</span>
+                  <span className="count">{(user.REVIEW_COUNT || user.reviewCount || 0)}개</span>
                 </div>
               ))
             ) : (

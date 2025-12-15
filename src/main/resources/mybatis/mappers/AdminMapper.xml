@@ -196,11 +196,17 @@
     <select id="selectTopPlaces" resultType="map">
         SELECT * FROM (
             SELECT 
-                PLACE_ID,
-                PLACE_TYPE,
-                COUNT(*) AS REVIEW_COUNT
-            FROM REVIEWS
-            GROUP BY PLACE_ID, PLACE_TYPE
+                r.PLACE_ID,
+                r.PLACE_TYPE,
+                COUNT(*) AS REVIEW_COUNT,
+                CASE 
+                    WHEN r.PLACE_TYPE = 'FOOD' THEN (SELECT TITLE FROM RESTAURANTS_DETAIL WHERE ID = r.PLACE_ID)
+                    WHEN r.PLACE_TYPE = 'STAY' THEN (SELECT TITLE FROM STAY_DETAIL WHERE CONTENT_ID = r.PLACE_ID)
+                    WHEN r.PLACE_TYPE = 'TOUR' THEN (SELECT TITLE FROM TOUR_SPOTS WHERE SPOT_ID = TO_NUMBER(REGEXP_REPLACE(r.PLACE_ID, '[^0-9]', '')))
+                    ELSE r.PLACE_ID
+                END AS PLACE_NAME
+            FROM REVIEWS r
+            GROUP BY r.PLACE_ID, r.PLACE_TYPE
             ORDER BY REVIEW_COUNT DESC
         ) WHERE ROWNUM &lt;= #{limit}
     </select>
