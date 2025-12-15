@@ -331,4 +331,14 @@ http://localhost:8484/api/food/save-data
 접속 후 solr가서 확인하기
 
 
+* **뉴스 api키**
+1. 네이버 개발자 접속
+https://developers.naver.com/main/
+2. 좌측 상단 메뉴 선택-> Application -> 내 애플리케이션
+-> Application 등록 -> 이름 지정/사용 API는 검색 -> URL 등록
+3. 애플리케이션 정보에서 Client ID와 Client Secret를 복사
+secret.properties
+naver.news.client-id = 본인 Client ID
+naver.news.client-secret = 본인 Client Secret
+naver.news.api-url = https://openapi.naver.com/v1/search/news.json
 
