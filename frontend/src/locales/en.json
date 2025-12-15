@@ -1,0 +1,664 @@
+{
+  "mypage": {
+    "title": "My Page",
+    "loading": "Loading...",
+    "loginRequired": "Login required.",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": {
+      "title": "Profile",
+      "changeImage": "Change Profile Image",
+      "imageChanged": "Profile image has been successfully changed.",
+      "imageChangeError": "Failed to upload image",
+      "nameSuffix": ""
+    },
+    "userInfo": {
+      "title": "Member Information",
+      "userId": "User ID",
+      "userName": "Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "regDate": "Registration Date",
+      "notRegistered": "Not registered",
+      "edit": "Edit Information",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "editTitle": "Edit Member Information",
+      "saveSuccess": "Information has been updated.",
+      "saveError": "Failed to update information.",
+      "loadingError": "Unable to load my page information."
+    },
+    "eventHistory": {
+      "title": "📋 Event History",
+      "tabs": {
+        "all": "All",
+        "stamp": "✉️ Stamp",
+        "gift": "🎁 Coupon",
+        "badge": "🏅 Badge"
+      },
+      "empty": "No event history",
+      "previous": "Previous",
+      "next": "Next",
+      "items": ""
+    },
+    "reviews": {
+      "title": "✍️ My Reviews",
+      "empty": "No reviews written",
+      "previous": "Previous",
+      "next": "Next",
+      "imageAlt": "Review image"
+    },
+    "inquiries": {
+      "title": "💬 Inquiry Answers",
+      "empty": "No answered inquiries",
+      "answer": "Answer",
+      "inquiryDate": "Inquiry Date",
+      "answerDate": "Answer Date",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "date": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} minutes ago",
+      "hoursAgo": "{{count}} hours ago",
+      "yesterday": "Yesterday",
+      "daysAgo": "{{count}} days ago"
+    },
+    "messages": {
+      "tokenRequired": "Redirecting to login page due to missing token.",
+      "placeLoadError": "Unable to load place information."
+    }
+  },
+  "header": {
+    "logo": "Our",
+    "logoSub": "Busan GO?",
+    "home": "Home",
+    "sns": "SNS",
+    "blog": "Blog",
+    "cafe": "Cafe",
+    "tour": "Attractions",
+    "food": "Restaurants",
+    "travelCourse": "Travel Courses",
+    "walkTravel": "Walking Tour",
+    "walkTravelDesc": "Explore Busan on foot",
+    "themeTravel": "Theme Tour",
+    "themeTravelDesc": "Healing · Sea · Emotional Route",
+    "marineTravel": "Marine Tour",
+    "marineTravelDesc": "Special courses to enjoy the sea",
+    "urbanTravel": "Urban Tour",
+    "urbanTravelDesc": "Special courses to enjoy the city",
+    "travelInfo": "Travel Information",
+    "travelRegion": "Travel Regions",
+    "travelRegionDesc": "Explore Busan's main areas",
+    "travelArticles": "Travel Articles",
+    "travelArticlesDesc": "Latest travel news",
+    "festival": "Festivals",
+    "festivalDesc": "Various festival information",
+    "shopping": "Shopping & Souvenirs",
+    "shoppingDesc": "Busan specialties and shopping spots",
+    "accommodation": "Accommodation",
+    "accommodationDesc": "Recommended accommodations",
+    "aiPlanner": "AI Travel Planner",
+    "aiPlannerDesc": "AI-recommended customized travel",
+    "travelBenefits": "Travel Benefits",
+    "event": "Events",
+    "eventDesc": "Travel-related events",
+    "stampEvent": "Stamp Event",
+    "stampEventDesc": "Attraction visit certification/Stamp tour",
+    "giftCard": "Gift Card",
+    "giftCardDesc": "Travel coupons/cards",
+    "badgePad": "Badge Pad",
+    "badgePadDesc": "Special badges",
+    "searchPlaceholder": "Where are you planning to travel?",
+    "searchInput": "Enter search term",
+    "mypage": "My Page",
+    "login": "Login",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "korean": "Korean",
+    "english": "English",
+    "welcome": "",
+    "mobileHome": "Home",
+    "mobileTheme": "Recommended Spots",
+    "mobileFood": "Restaurants",
+    "mobileCourse": "Travel Courses",
+    "mobileInfo": "Travel Info",
+    "mobileBenefits": "Travel Benefits",
+    "mobileTravelMap": "Travel Map",
+    "mobileSearch": "Search",
+    "mobileLogout": "Please log in",
+    "mobileLogoutDesc": "Enjoy more services.",
+    "mobileGreeting": ", welcome",
+    "mobileSubtitle": "Check your member information in My Page."
+  },
+  "footer": {
+    "title": "Our Busan GO?",
+    "description": "All Busan travel information at a glance!",
+    "descriptionSub": "Attractions, restaurants, travel courses",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "travelInfo": "Travel Information",
+    "recommendedSpot": "Recommended Spots",
+    "foodInfo": "Restaurant Information",
+    "travelCourse": "Travel Courses",
+    "travelInformation": "Travel Information",
+    "customerSupport": "Customer Support",
+    "notice": "Notice",
+    "faq": "FAQ",
+    "inquiry": "Inquiry",
+    "event": "Events",
+    "contact": "Contact",
+    "customerCenter": "Customer Center: 1588-0000",
+    "email": "Email: info@busango.kr",
+    "hours": "Hours: Weekdays 09:00 - 18:00",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "sitemap": "Sitemap",
+    "copyright": "© {{year}} Our Busan GO? All rights reserved.",
+    "orgInfo": "This site provides Busan Metropolitan City tourism information."
+  },
+  "main": {
+    "search": {
+      "title": "KH.Solr AI Search",
+      "placeholder": "Fastest AI search",
+      "searching": "Searching...",
+      "noResults": "No search results.",
+      "dateUndecided": "Date TBD",
+      "noContent": "No content"
+    },
+    "favorite": {
+      "title": "Favorites",
+      "empty": "Save information",
+      "emptySub": "you're interested in.",
+      "loginPrompt": "Log in to save favorites",
+      "welcome": ", welcome 👋",
+      "syncPrompt": "Log in to sync your records"
+    },
+    "searchHistory": {
+      "title": "Recent Searches",
+      "empty": "No records yet.",
+      "emptySub": "Try a new search.",
+      "loginPrompt": "Log in to save search history",
+      "clearAll": "Clear All",
+      "delete": "Delete"
+    },
+    "chat": {
+      "title": "Festival AI Assistant",
+      "placeholder": "Enter your question...",
+      "send": "Send",
+      "thinking": "Generating response...",
+      "initialMessage": "Hello! Ask me anything about festivals. 🎪",
+      "error": "An error occurred.",
+      "loginRequired": "Login required.",
+      "favoriteSaveError": "Failed to save favorite.",
+      "favoriteDeleteError": "Failed to delete favorite."
+    },
+    "hero": {
+      "searchPlaceholder": "Search Busan travel destinations...",
+      "categories": {
+        "all": "All",
+        "family": "Family Trip",
+        "couple": "Couple Date",
+        "foodTour": "Food Tour",
+        "activity": "Activity",
+        "healing": "Healing",
+        "culture": "Culture & Arts"
+      }
+    },
+    "popular": {
+      "title": "Popular Busan Destinations",
+      "subtitle": "The HOTTEST Busan attractions right now",
+      "loading": "Loading popular destinations...",
+      "error": "Unable to load popular destination information.",
+      "defaultDescription": "Discover beautiful destinations in Busan",
+      "defaultPlace": "Busan"
+    },
+    "activities": {
+      "title": "What to do in Busan?",
+      "subtitle": "Choose your Busan travel style",
+      "foodTour": "Food Exploration",
+      "foodTourDesc": "Busan's representative foods",
+      "spotTour": "Attraction Tour",
+      "spotTourDesc": "Must-visit Busan attractions",
+      "festivalInfo": "Festival Information",
+      "festivalInfoDesc": "Busan cultural festivals",
+      "travelCourse": "Travel Courses",
+      "travelCourseDesc": "Theme-based recommended courses"
+    },
+    "cta": {
+      "title": "Create Your Busan Travel Plan",
+      "description": "Discover customized travel courses recommended by AI",
+      "button": "Start Planning"
+    }
+  },
+  "map": {
+    "sidebar": {
+      "clickLocation": "Click on the current location.",
+      "recentPlaces": "Recent Places",
+      "weather": {
+        "label": "Current Weather",
+        "high": "High",
+        "low": "Low",
+        "todayRecommendation": "Today's Recommendation"
+      },
+      "categories": {
+        "attraction": "Attractions",
+        "restaurant": "Restaurants",
+        "cafe": "Cafe",
+        "accommodation": "Accommodation",
+        "parking": "Parking",
+        "souvenir": "Travel Course<br/>Souvenirs",
+        "walking": "Travel Course<br/>Walking Tour",
+        "theme": "Travel Course<br/>Theme Tour",
+        "marine": "Travel Course<br/>Marine Tour",
+        "urban": "Travel Course<br/>Urban Tour"
+      },
+      "lists": {
+        "nearbyRestaurants": "Nearby Restaurants",
+        "nearbyAccommodations": "Nearby Accommodations",
+        "walkingCourse": "Walking Tour Course",
+        "themeCourse": "Theme Tour Course",
+        "marineCourse": "Marine Tour Course",
+        "urbanCourse": "Urban Tour Course",
+        "nearbyAttractions": "Nearby Attractions",
+        "nearbySouvenirs": "Nearby Souvenirs",
+        "nearbyParking": "Nearby Parking",
+        "items": ""
+      },
+      "parking": {
+        "basicFee": "Basic Fee"
+      }
+    },
+    "weather": {
+      "rainRecommendation": "It's rainy/snowy weather. We recommend indoor activities!",
+      "hotRecommendation": "It's hot weather. We recommend cool places!",
+      "coldRecommendation": "It's cold weather. We recommend warm indoor places!",
+      "sunnyRecommendation": "It's clear and pleasant weather. Enjoy outdoor activities!",
+      "cloudyRecommendation": "It's cloudy weather. Light outdoor activities are good!",
+      "defaultRecommendation": "Enjoy Busan today too!"
+    },
+    "search": {
+      "placeholder": "Search restaurants...",
+      "searchFromCurrentLocation": "Search from current location",
+      "browserNotSupported": "Your browser does not support geolocation.",
+      "permissionDenied": "Please allow location permission.",
+      "setLocationFirst": "Please set your current location first.",
+      "restaurantError": "Failed to load restaurant data.",
+      "accommodationError": "Failed to load accommodation data."
+    }
+  },
+  "aiPlanner": {
+    "title": "AI Travel Plan",
+    "subtitle": "Customized Busan travel plan recommended by AI",
+    "initialMessage": "Hello! I'm your Busan Travel AI Planner. 🏖️\n\nTell me your preferred travel style, duration, and interests, and I'll recommend a customized travel plan for you!\n\nExamples:\n- \"Create a 2-night 3-day Busan travel plan\"\n- \"Recommend restaurants near Haeundae\"\n- \"Tell me about Busan attractions suitable for families\"",
+    "systemPrompt": "You are an AI travel planner specializing in Busan.\nPlease kindly and detailedly recommend Busan travel plans based on the user's questions.\n\nWhen responding, please consider the following:\n- Recommend major tourist attractions, restaurants, beaches, cultural facilities, etc. in Busan\n- Practical plans considering travel itinerary, budget, and routes\n- Recommendations suitable for seasons and weather\n- Provide specific information such as transportation, travel time, expected costs\n- Communicate naturally and friendly in English\n- Format nicely using markdown\n\nUser question: {{userMsg}}",
+    "copy": "Copy",
+    "save": "Save",
+    "inputPlaceholder": "Ask about your travel plan...",
+    "send": "Send",
+    "user": "User",
+    "ai": "AI",
+    "conversationTitle": "Busan Travel AI Planner Conversation",
+    "createdAt": "Created at",
+    "downloadFileName": "BusanTravelPlan",
+    "copySuccess": "Conversation has been copied to clipboard!",
+    "copyFailed": "Copy failed. Please try again.",
+    "quickQuestions": {
+      "threeDays": {
+        "label": "2-night 3-day Trip",
+        "question": "Create a 2-night 3-day Busan travel plan"
+      },
+      "haeundaeRestaurant": {
+        "label": "Haeundae Restaurants",
+        "question": "Recommend restaurants near Haeundae"
+      },
+      "family": {
+        "label": "Family Trip",
+        "question": "Busan attractions suitable for families"
+      },
+      "nightView": {
+        "label": "Night View Spots",
+        "question": "Tell me about Busan night view spots"
+      },
+      "shopping": {
+        "label": "Shopping Course with AI",
+        "question": "Recommend a Busan travel course including shopping spots"
+      }
+    },
+    "errors": {
+      "default": "Sorry, an error occurred while generating the response.",
+      "apiKeyNotSet": "Gemini API key is not set.",
+      "invalidApiKey": "API key is invalid. Please contact the administrator.",
+      "quotaExceeded": "API quota exceeded. Please try again later.",
+      "safetyFilter": "Blocked by safety filter. Please try a different question.",
+      "technicalInfo": "Technical Information"
+    }
+  },
+  "benefits": {
+    "loginRequired": "Please log in to use this feature.",
+    "loading": "Loading...",
+    "close": "Close",
+    "badgePad": {
+      "title": "My Badge Pad",
+      "achieved": "Achieved"
+    },
+    "badges": {
+      "stamp": {
+        "name": "Stamp Tour Complete",
+        "desc": "Obtain by collecting all attraction stamps!"
+      },
+      "review": {
+        "name": "Write 3 Reviews",
+        "desc": "Obtain by writing 3 or more reviews!"
+      },
+      "first": {
+        "name": "First Visit",
+        "desc": "Obtain when certifying your first attraction visit!"
+      },
+      "event": {
+        "name": "Event Participation",
+        "desc": "Obtain by participating in events!"
+      },
+      "ai": {
+        "name": "AI Recommended Course",
+        "desc": "Obtain by using AI recommended courses!"
+      }
+    },
+    "giftCard": {
+      "title": "Travel Gift Card",
+      "validPeriod": "Valid Until",
+      "alreadyIssued": "This coupon has already been issued.",
+      "issuing": "Issuing...",
+      "received": "Received",
+      "getCoupon": "Get Coupon",
+      "tip": "※ Please register coupon images directly. Refer to detailed information for usage conditions and precautions",
+      "loginMessage": "Only logged-in members can receive coupons.",
+      "alreadyReceived": "You have already received this coupon.",
+      "couponIssuance": "Coupon Issuance",
+      "issuanceSuccess": "{{title}} coupon has been issued! Check it in My Page.",
+      "issuanceFailed": "Failed to issue coupon.",
+      "loginRequiredAgain": "Login required. Please log in again."
+    },
+    "coupons": {
+      "hotel": {
+        "title": "Busan Accommodation 5,000 KRW Discount",
+        "desc": "Available at partner hotels/guesthouses in Busan",
+        "valid": "Until 2025-12-31"
+      },
+      "cafe": {
+        "title": "Haeundae Cafe 20% Discount",
+        "desc": "Available at partner cafes near Haeundae Beach",
+        "valid": "Until 2025-12-31"
+      },
+      "drone": {
+        "title": "Gwangalli Drone Show VIP Seat Lottery",
+        "desc": "Automatic lottery when applying for event, individual notification for winners",
+        "valid": "Until event date 2025-12-31"
+      },
+      "tower": {
+        "title": "Busan Tower Admission 30% Discount",
+        "desc": "Available at Busan Tower ticket office",
+        "valid": "Until 2025-12-31"
+      },
+      "yacht": {
+        "title": "Yacht Tour 10,000 KRW Discount",
+        "desc": "Available at Busan yacht tour partners",
+        "valid": "Until 2025-12-31"
+      }
+    },
+    "stampEvent": {
+      "title": "Busan Attraction Stamp Tour Event",
+      "description": "Visit Busan's representative attractions and collect stamps!<br/>Collect all stamps to receive special badges and souvenirs.",
+      "checkingLocation": "Checking location...",
+      "browserNotSupported": "This browser does not support location services.",
+      "placeNotFound": "Attraction information not found.",
+      "visitCertification": "Visit Certification",
+      "certificationSuccess": "Certification successful! Stamp has been issued.",
+      "allStampsCollected": "Collected all attraction stamps!",
+      "allStampsComplete": "🎉 Congratulations! You've collected all stamps. Badge has been issued!",
+      "issuanceFailed": "Failed to issue stamp.",
+      "issuanceFailedRetry": "Failed to issue stamp. Please try again.",
+      "distanceMessage": "Current location is {{distance}}m away from the attraction. Certification is possible within 100m.",
+      "permissionDenied": "Failed to check location information. Please allow permission.",
+      "certificationComplete": "Certification Complete!",
+      "checking": "Checking...",
+      "certifyVisit": "Certify Visit",
+      "myStatus": "My Stamp Status",
+      "achieved": "Achieved",
+      "allStampsMessage": "You've collected all stamps! Please request souvenirs.",
+      "rewardMessage": "🎁 3,000 KRW accommodation discount coupon upon completion!"
+    },
+    "stamps": {
+      "jagalchi": {
+        "name": "Jagalchi Market"
+      },
+      "gukje": {
+        "name": "Gukje Market"
+      },
+      "haeundae": {
+        "name": "Haeundae"
+      },
+      "centum": {
+        "name": "Centum City"
+      },
+      "songdo": {
+        "name": "Songdo Beach"
+      }
+    }
+  },
+  "event": {
+    "title": "Ongoing Events",
+    "subtitle": "Don't miss out on various benefits and events!",
+    "categories": {
+      "all": "All",
+      "event": "Event",
+      "benefit": "Benefit",
+      "promotion": "Promotion",
+      "season": "Season"
+    },
+    "status": {
+      "ongoing": "Ongoing",
+      "scheduled": "Scheduled",
+      "ended": "Ended"
+    },
+    "noEvents": "There are no events in this category.",
+    "modal": {
+      "period": "Event Period",
+      "description": "Event Introduction",
+      "benefit": "Benefit Information",
+      "participate": "Participate",
+      "share": "Share"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Quickly find answers to your questions",
+    "categories": {
+      "all": "All",
+      "general": "General",
+      "search": "Search/Usage",
+      "technical": "Technical Support",
+      "account": "Account/Features",
+      "notice": "Notice/Events"
+    },
+    "contact": {
+      "title": "Still have questions?",
+      "subtitle": "If you can't find the answer, please contact our customer center.",
+      "customerCenter": "Customer Center: 1588-0000",
+      "email": "Email Inquiry"
+    }
+  },
+  "inquiry": {
+    "title": "Inquiry",
+    "subtitle": "Please leave your questions or suggestions. We will respond as soon as possible.",
+    "categories": {
+      "general": "General Inquiry",
+      "service": "Service Usage",
+      "technical": "Technical Support",
+      "partnership": "Partnership Inquiry",
+      "complaint": "Complaint",
+      "other": "Other"
+    },
+    "info": {
+      "phone": {
+        "title": "Phone Inquiry",
+        "hours": "Weekdays 09:00 - 18:00"
+      },
+      "email": {
+        "title": "Email",
+        "hours": "24/7 Available"
+      },
+      "visit": {
+        "title": "Visit Consultation",
+        "address": "Jung-gu, Busan",
+        "note": "Advance reservation required"
+      },
+      "notice": {
+        "title": "Before Inquiry",
+        "item1": "Please check FAQ first for answers",
+        "item2": "Inquiries submitted on weekdays will be answered within 1-2 days",
+        "item3": "Inquiries submitted on weekends/holidays will be processed on the next business day",
+        "item4": "For urgent inquiries, please use phone consultation"
+      }
+    },
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "category": "Inquiry Type",
+      "subject": "Subject",
+      "message": "Message",
+      "namePlaceholder": "Enter your name",
+      "subjectPlaceholder": "Enter inquiry subject",
+      "messagePlaceholder": "Please enter your inquiry in detail",
+      "privacyConsent": "I agree to the collection and use of personal information",
+      "privacyLink": "View Privacy Policy",
+      "submit": "Submit Inquiry",
+      "submitting": "Submitting...",
+      "submitSuccess": "✓ Submitted!"
+    },
+    "validation": {
+      "required": "Please fill in all required fields.",
+      "email": "Please enter a valid email format."
+    },
+    "error": {
+      "submitFailed": "Failed to submit inquiry."
+    },
+    "success": {
+      "message1": "Your inquiry has been successfully submitted.",
+      "message2": "We will respond as soon as possible."
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "Our Busan GO? (hereinafter referred to as \"Service\") complies with relevant laws and regulations including the Personal Information Protection Act, and has established and operates the following privacy policy to safely protect users' personal information in relation to providing Busan tourism information and reservation/inquiry services.",
+    "article1": {
+      "title": "Article 1 (Items of Personal Information Collected and Collection Methods)",
+      "intro": "The service may collect the following personal information during the process of membership registration, reservations, inquiries/consultations, event participation, etc.",
+      "item1": "Upon membership registration: Name, email address, password, mobile phone number",
+      "item2": "Upon reservation/inquiry: Name, contact information, email, reservation or inquiry content",
+      "item3": "Automatically collected during service use: Access IP, cookies, visit date and time, usage records, browser/device information, etc."
+    },
+    "article2": {
+      "title": "Article 2 (Purpose of Collection and Use of Personal Information)",
+      "item1": "Providing information and personalized content recommendations about Busan area attractions, festivals, restaurants, travel courses, etc.",
+      "item2": "Accepting, changing, canceling reservations for tourism products, experience programs, etc., and providing usage guidance",
+      "item3": "Processing user inquiries and complaints, delivering notices",
+      "item4": "Improving service quality and developing new tourism content through service usage statistics and analysis",
+      "item5": "Security, prevention of fraudulent use, and ensuring service stability"
+    },
+    "article3": {
+      "title": "Article 3 (Retention and Use Period of Personal Information)",
+      "intro": "The service retains and uses personal information within the period specified by relevant laws or within the scope of user consent, and in principle, destroys it without delay when the purpose of collection and use is achieved.",
+      "item1": "Member information: Retained until membership withdrawal",
+      "item2": "Reservation and payment records: Retained for 5 years in accordance with e-commerce related laws",
+      "item3": "Consumer complaints or dispute handling records: Retained for 3 years",
+      "item4": "Service usage records such as access logs: Retained for 3 months or more in accordance with the Communication Secrets Protection Act"
+    },
+    "article4": {
+      "title": "Article 4 (Provision of Personal Information to Third Parties and Processing Consignment)",
+      "content": "The service does not provide personal information to external parties without user consent, and can exceptionally provide it only when there is a legal basis. In addition, when necessary for service provision, personal information processing tasks may be consigned to trusted external companies, and in such cases, the consignee, task content, retention period, etc. are notified to users."
+    },
+    "article5": {
+      "title": "Article 5 (User Rights and Methods of Exercise)",
+      "item1": "Users can request access, correction, deletion, suspension of processing, etc. of their personal information at any time.",
+      "item2": "Users can request deletion of personal information through membership withdrawal.",
+      "item3": "The service takes necessary measures without delay after identity verification."
+    },
+    "article6": {
+      "title": "Article 6 (Destruction of Personal Information)",
+      "content": "When the retention period of personal information has elapsed or the processing purpose has been achieved, the service destroys the information in an irrecoverable manner without delay."
+    },
+    "article7": {
+      "title": "Article 7 (Safety Measures for Personal Information Protection)",
+      "content": "The service implements necessary technical and administrative protection measures such as access authority management, encryption, security program installation, access record retention, etc. for the safe processing of personal information."
+    },
+    "article8": {
+      "title": "Article 8 (Personal Information Protection Officer)",
+      "intro": "Users can request inquiries, complaint processing, relief for damages, etc. related to personal information protection through the contact information below.",
+      "item1": "Personal Information Protection Officer: [Name]",
+      "item2": "Email: [Email Address]",
+      "item3": "Contact: [Phone Number]"
+    },
+    "article9": {
+      "title": "Article 9 (Changes to Privacy Policy)",
+      "content": "This privacy policy may be amended according to changes in related laws, policies, or service content, and important changes will be notified in advance through service notices.",
+      "date": "Announcement Date: [2025.12.08] / Effective Date: [2025.12.08]"
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "intro": "These Terms of Service are intended to stipulate the rights, obligations, and responsibilities between the service and users, and other necessary matters related to the use of Busan tourism-related information and reservation/inquiry services provided by Our Busan GO? (hereinafter referred to as \"Service\").",
+    "article1": {
+      "title": "Article 1 (Purpose)",
+      "content": "These terms are intended to stipulate the rights, obligations, and responsibilities between the service and users related to the use of Busan tourism information services and related services provided through the site operated by the service."
+    },
+    "article2": {
+      "title": "Article 2 (Definitions)",
+      "item1": "\"Service\" refers to the website and all services provided by Our Busan GO?.",
+      "item2": "\"User\" refers to members and non-members who use the content provided by the service in accordance with these terms.",
+      "item3": "\"Member\" refers to a person who has registered as a member of the service and can continuously use the service.",
+      "item4": "\"Non-member\" refers to a person who uses the service without registering as a member."
+    },
+    "article3": {
+      "title": "Article 3 (Effectiveness and Changes of Terms)",
+      "item1": "These terms take effect by being posted on the service screen or announced to users by other means.",
+      "item2": "The service may revise the terms within the scope that does not violate related laws, and notifies in advance when the terms are changed.",
+      "item3": "Users can suspend service use and request membership withdrawal if they do not agree to the changed terms. If the service continues to be used after the effective date of the changed terms, it is deemed to have agreed to the changed terms."
+    },
+    "article4": {
+      "title": "Article 4 (Provision and Changes of Services)",
+      "item1": "Providing tourism information such as Busan area attractions, festivals, events, restaurants, accommodations, travel courses, etc.",
+      "item2": "Reservation/inquiry services for tourism products, experience programs, etc.",
+      "item3": "Other tourism-related additional services determined by the service",
+      "item4": "The service may change or suspend services in operation due to operational or technical needs, and important changes will be notified in advance."
+    },
+    "article5": {
+      "title": "Article 5 (User Obligations)",
+      "item1": "Obligation to comply with relevant laws, terms, usage guidelines, and matters announced by the service",
+      "item2": "Prohibition of acts of impersonating others' personal information, inputting false information",
+      "item3": "Prohibition of acts that interfere with service operation or harm stability",
+      "item4": "Prohibition of unauthorized copying, distribution, or commercial use of information obtained through the service without prior consent"
+    },
+    "article6": {
+      "title": "Article 6 (Copyright and Content Use)",
+      "content": "All copyrights and other intellectual property rights for all content such as text, images, videos, and data provided by the service belong to the service or legitimate rights holders. Users must not copy, transmit, distribute, sell, or publish content provided through the service without prior permission."
+    },
+    "article7": {
+      "title": "Article 7 (Limitation of Liability)",
+      "content": "The service is not responsible for cases where services cannot be provided due to force majeure reasons such as natural disasters, technical failures, or telecommunications company circumstances. In addition, the service does not intervene in disputes between users or between users and third parties in principle, and is not responsible for damages arising from this."
+    },
+    "article8": {
+      "title": "Article 8 (Governing Law and Jurisdiction)",
+      "content": "Regarding the interpretation and application of these terms, Korean law applies as the governing law, and when disputes arise related to service use, the competent court in accordance with related laws such as the Civil Procedure Act is the exclusive competent court."
+    },
+    "supplementary": {
+      "title": "Supplementary Provisions",
+      "content": "These terms take effect from December 8, 2025."
+    }
+  }
+}
+
+

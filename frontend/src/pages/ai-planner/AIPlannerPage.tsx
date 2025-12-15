@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ReactMarkdown from 'react-markdown';
 import "./AIPlannerPage.css";
@@ -12,15 +13,26 @@ interface ChatMessage {
 }
 
 const AIPlannerPage: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [input, setInput] = useState<string>('');
+  
+  const initialMessage = t('aiPlanner.initialMessage');
   const [messages, setMessages] = useState<ChatMessage[]>([
     { 
       role: 'model', 
-      text: '안녕하세요! 부산 여행 AI 플래너입니다. 🏖️\n\n원하시는 여행 스타일, 기간, 관심사를 알려주시면 맞춤 여행 계획을 추천해드릴게요!\n\n예시:\n- "2박 3일 부산 여행 계획 짜줘"\n- "해운대 근처 맛집 추천해줘"\n- "가족과 함께 갈만한 부산 명소 알려줘"' 
+      text: initialMessage
     }
   ]);
   const [isThinking, setIsThinking] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 언어 변경 시 초기 메시지 업데이트
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === 'model') {
+      setMessages([{ role: 'model', text: t('aiPlanner.initialMessage') }]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language, t]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,7 +50,7 @@ const AIPlannerPage: React.FC = () => {
     try {
       if (!API_KEY) {
         console.error('API 키가 없습니다.');
-        throw new Error("Gemini API 키가 설정되지 않았습니다.");
+        throw new Error(t('aiPlanner.errors.apiKeyNotSet'));
       }
 
       console.log('API 키 확인:', API_KEY ? '존재함' : '없음');
@@ -47,18 +59,8 @@ const AIPlannerPage: React.FC = () => {
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-      const systemPrompt = `당신은 부산 여행 전문 AI 플래너입니다. 
-사용자의 질문에 대해 친절하고 상세하게 부산 여행 계획을 추천해주세요.
-
-응답 시 다음 사항을 고려하세요:
-- 부산의 주요 관광지, 맛집, 해변, 문화시설 등을 추천
-- 여행 일정, 예산, 동선을 고려한 실용적인 계획
-- 계절과 날씨에 맞는 추천
-- 교통편, 소요시간, 예상 비용 등 구체적인 정보 제공
-- 한국어로 자연스럽고 친근하게 대화
-- 마크다운 형식으로 보기 좋게 정리
-
-사용자 질문: ${userMsg}`;
+      const systemPromptTemplate = t('aiPlanner.systemPrompt');
+      const systemPrompt = systemPromptTemplate.replace('{{userMsg}}', userMsg);
 
       console.log('Gemini API 호출 시작...');
       const result = await model.generateContent(systemPrompt);
@@ -74,19 +76,19 @@ const AIPlannerPage: React.FC = () => {
       console.error('오류 상세:', error);
       console.error('오류 응답:', error.response?.data);
       
-      let errorMessage = '죄송합니다. 응답을 생성하는 중 오류가 발생했습니다.';
+      let errorMessage = t('aiPlanner.errors.default');
       
       if (error.message?.includes('API key')) {
-        errorMessage = 'API 키가 올바르지 않습니다. 관리자에게 문의하세요.';
+        errorMessage = t('aiPlanner.errors.invalidApiKey');
       } else if (error.message?.includes('quota')) {
-        errorMessage = 'API 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.';
+        errorMessage = t('aiPlanner.errors.quotaExceeded');
       } else if (error.message?.includes('SAFETY')) {
-        errorMessage = '안전 필터에 의해 차단되었습니다. 다른 질문을 시도해주세요.';
+        errorMessage = t('aiPlanner.errors.safetyFilter');
       }
       
       setMessages(prev => [...prev, { 
         role: 'model', 
-        text: `${errorMessage}\n\n기술 정보: ${error.message}` 
+        text: `${errorMessage}\n\n${t('aiPlanner.errors.technicalInfo')}: ${error.message}` 
       }]);
     } finally {
       setIsThinking(false);
@@ -99,41 +101,43 @@ const AIPlannerPage: React.FC = () => {
 
   const handleShareText = () => {
     // 대화 내용을 텍스트로 변환
+    const initialMessageText = t('aiPlanner.initialMessage').split('\n')[0];
     const conversationText = messages
-      .filter(msg => msg.role !== 'model' || !msg.text.includes('안녕하세요! 부산 여행 AI 플래너입니다'))
+      .filter(msg => msg.role !== 'model' || !msg.text.includes(initialMessageText))
       .map(msg => {
-        const role = msg.role === 'user' ? '👤 사용자' : '🤖 AI';
+        const role = msg.role === 'user' ? `👤 ${t('aiPlanner.user')}` : `🤖 ${t('aiPlanner.ai')}`;
         return `${role}:\n${msg.text}\n`;
       })
       .join('\n---\n\n');
 
-    const fullText = `부산 여행 AI 플래너 대화 내용\n\n${conversationText}`;
+    const fullText = `${t('aiPlanner.conversationTitle')}\n\n${conversationText}`;
 
     // 클립보드에 복사
     navigator.clipboard.writeText(fullText).then(() => {
-      alert('대화 내용이 클립보드에 복사되었습니다!');
+      alert(t('aiPlanner.copySuccess'));
     }).catch(() => {
-      alert('복사에 실패했습니다. 다시 시도해주세요.');
+      alert(t('aiPlanner.copyFailed'));
     });
   };
 
   const handleDownloadText = () => {
     // 대화 내용을 텍스트 파일로 다운로드
+    const initialMessageText = t('aiPlanner.initialMessage').split('\n')[0];
     const conversationText = messages
-      .filter(msg => msg.role !== 'model' || !msg.text.includes('안녕하세요! 부산 여행 AI 플래너입니다'))
+      .filter(msg => msg.role !== 'model' || !msg.text.includes(initialMessageText))
       .map(msg => {
-        const role = msg.role === 'user' ? '👤 사용자' : '🤖 AI';
+        const role = msg.role === 'user' ? `👤 ${t('aiPlanner.user')}` : `🤖 ${t('aiPlanner.ai')}`;
         return `${role}:\n${msg.text}\n`;
       })
       .join('\n---\n\n');
 
-    const fullText = `부산 여행 AI 플래너 대화 내용\n생성 시간: ${new Date().toLocaleString('ko-KR')}\n\n${conversationText}`;
+    const fullText = `${t('aiPlanner.conversationTitle')}\n${t('aiPlanner.createdAt')}: ${new Date().toLocaleString(i18n.language === 'en' ? 'en-US' : 'ko-KR')}\n\n${conversationText}`;
 
     const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `부산여행계획_${new Date().toISOString().split('T')[0]}.txt`;
+    link.download = `${t('aiPlanner.downloadFileName')}_${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -148,21 +152,21 @@ const AIPlannerPage: React.FC = () => {
                   src={ROBOT_IMAGE} 
                   alt="AI Robot" 
                   style={{ width: '40px', height: '40px', borderRadius: '50%' }}
-                /> AI 여행 계획
+                /> {t('aiPlanner.title')}
                  <img 
                   src={ROBOT_IMAGE} 
                   alt="AI Robot" 
                   style={{ width: '40px', height: '40px', borderRadius: '50%' }}
                 /></h1>
-        <p>AI가 추천하는 부산 맞춤 여행 플랜</p>
+        <p>{t('aiPlanner.subtitle')}</p>
         
         {messages.length > 1 && (
           <div className="share-buttons">
             <button onClick={handleShareText} className="share-btn">
-              📋 복사하기
+              📋 {t('aiPlanner.copy')}
             </button>
             <button onClick={handleDownloadText} className="share-btn">
-              💾 저장하기
+              💾 {t('aiPlanner.save')}
             </button>
           </div>
         )}
@@ -170,20 +174,20 @@ const AIPlannerPage: React.FC = () => {
 
 
       <div className="quick-questions">
-        <button onClick={() => handleQuickQuestion('2박 3일 부산 여행 계획 짜줘')}>
-          📅 2박 3일 여행
+        <button onClick={() => handleQuickQuestion(t('aiPlanner.quickQuestions.threeDays.question'))}>
+          📅 {t('aiPlanner.quickQuestions.threeDays.label')}
         </button>
-        <button onClick={() => handleQuickQuestion('해운대 주변 맛집 추천해줘')}>
-          🍽️ 해운대 맛집
+        <button onClick={() => handleQuickQuestion(t('aiPlanner.quickQuestions.haeundaeRestaurant.question'))}>
+          🍽️ {t('aiPlanner.quickQuestions.haeundaeRestaurant.label')}
         </button>
-        <button onClick={() => handleQuickQuestion('가족과 함께 갈만한 부산 명소')}>
-          👨‍👩‍👧‍👦 가족 여행
+        <button onClick={() => handleQuickQuestion(t('aiPlanner.quickQuestions.family.question'))}>
+          👨‍👩‍👧‍👦 {t('aiPlanner.quickQuestions.family.label')}
         </button>
-        <button onClick={() => handleQuickQuestion('부산 야경 명소 알려줘')}>
-          🌃 야경 명소
+        <button onClick={() => handleQuickQuestion(t('aiPlanner.quickQuestions.nightView.question'))}>
+          🌃 {t('aiPlanner.quickQuestions.nightView.label')}
         </button>
-        <button onClick={() => handleQuickQuestion('쇼핑 명소 포함 부산 여행 코스 추천해줘')}>
-          🛍️ 쇼핑 명소 포함 AI 코스
+        <button onClick={() => handleQuickQuestion(t('aiPlanner.quickQuestions.shopping.question'))}>
+          🛍️ {t('aiPlanner.quickQuestions.shopping.label')}
         </button>
       </div>
 
@@ -238,11 +242,11 @@ const AIPlannerPage: React.FC = () => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="여행 계획에 대해 물어보세요..."
+          placeholder={t('aiPlanner.inputPlaceholder')}
           disabled={isThinking}
         />
         <button type="submit" disabled={isThinking || !input.trim()}>
-          전송
+          {t('aiPlanner.send')}
         </button>
       </form>
     </div>

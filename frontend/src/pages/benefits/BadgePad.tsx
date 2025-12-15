@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './BadgePad.css';
 import { api } from '../../api/axios';
 
@@ -57,47 +58,72 @@ const BADGES: Badge[] = [
 ];
 
 const BadgePad: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [badges, setBadges] = useState<Badge[]>(BADGES);
   const [selected, setSelected] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('로그인 후 이용 가능합니다.');
-      navigate('/login');
-      return;
-    }
-    loadMyBadges();
-  }, [navigate]);
+  const [badges, setBadges] = useState<Badge[]>([]);
 
   // 내가 보유한 배지 조회
-  const loadMyBadges = async () => {
+  const loadMyBadges = React.useCallback(async () => {
     try {
       const response = await api.get('/events/type/BADGE');
       if (response.data.success && response.data.events) {
         const achievedBadgeNames = response.data.events.map((badge: EventDTO) => badge.eventName);
-        const updatedBadges = BADGES.map(badge => ({
-          ...badge,
-          achieved: achievedBadgeNames.includes(badge.name)
-        }));
+        const updatedBadges = BADGES.map(badge => {
+          // 한국어와 영어 이름 모두 확인 (서버는 한국어로 저장하므로)
+          const koBadgeName = t(`benefits.badges.${badge.id}.name`, { lng: 'ko' });
+          const enBadgeName = t(`benefits.badges.${badge.id}.name`, { lng: 'en' });
+          const currentBadgeName = t(`benefits.badges.${badge.id}.name`);
+          return {
+            ...badge,
+            name: currentBadgeName,
+            desc: t(`benefits.badges.${badge.id}.desc`),
+            achieved: achievedBadgeNames.includes(koBadgeName) || achievedBadgeNames.includes(enBadgeName) || achievedBadgeNames.includes(currentBadgeName)
+          };
+        });
         setBadges(updatedBadges);
+      } else {
+        // 응답이 없으면 기본 배지 목록 표시
+        const defaultBadges = BADGES.map(badge => ({
+          ...badge,
+          name: t(`benefits.badges.${badge.id}.name`),
+          desc: t(`benefits.badges.${badge.id}.desc`)
+        }));
+        setBadges(defaultBadges);
       }
     } catch (error) {
       console.error('배지 조회 실패:', error);
+      // 에러 발생 시 기본 배지 목록 표시
+      const defaultBadges = BADGES.map(badge => ({
+        ...badge,
+        name: t(`benefits.badges.${badge.id}.name`),
+        desc: t(`benefits.badges.${badge.id}.desc`)
+      }));
+      setBadges(defaultBadges);
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert(t('benefits.loginRequired'));
+      navigate('/login');
+      return;
+    }
+    loadMyBadges();
+  }, [navigate, t, loadMyBadges]);
+
 
   if (loading) {
-    return <div style={{ padding: "50px", textAlign: "center" }}>로딩중...</div>;
+    return <div style={{ padding: "50px", textAlign: "center" }}>{t('benefits.loading')}</div>;
   }
 
   return (
     <div className="badgepad-container">
-      <h1 className="badgepad-title">🏅 내 뱃지패드</h1>
+      <h1 className="badgepad-title">🏅 {t('benefits.badgePad.title')}</h1>
       <div className="badgepad-grid">
         {badges.map((badge, idx) => (
           <div
@@ -116,7 +142,7 @@ const BadgePad: React.FC = () => {
         ))}
       </div>
       <div className="badgepad-count">
-        획득: {badges.filter(b => b.achieved).length} / {badges.length}
+        {t('benefits.badgePad.achieved')}: {badges.filter(b => b.achieved).length} / {badges.length}
       </div>
       {selected !== null && (
         <div className="badgepad-modal-bg" onClick={() => setSelected(null)}>
@@ -124,7 +150,7 @@ const BadgePad: React.FC = () => {
             <img src={badges[selected].img} alt={badges[selected].name} className="badgepad-modal-img" />
             <div className="badgepad-modal-title">{badges[selected].name}</div>
             <div className="badgepad-modal-desc">{badges[selected].desc}</div>
-            <button className="badgepad-modal-close" onClick={() => setSelected(null)}>닫기</button>
+            <button className="badgepad-modal-close" onClick={() => setSelected(null)}>{t('benefits.close')}</button>
           </div>
         </div>
       )}

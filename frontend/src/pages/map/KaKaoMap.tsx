@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DistanceSlider from "./map_distance"; 
 import "./map_distance.css";
 import { dfs_xy_conv, skyStatus, getBaseTime, getDistance } from "./mapHelpers";
@@ -48,6 +49,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   onRestaurantClick,
   externalLocation
 }) => {
+  const { t } = useTranslation();
   const kakaoKey = import.meta.env.VITE_KAKAOMAP_KEY;
   const weatherKey = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -124,7 +126,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       displayRestaurantMarkers(nearbyRestaurants);
     } catch (error) {
       console.error("음식점 데이터 불러오기 실패:", error);
-      alert("음식점 데이터를 불러오는데 실패했습니다.");
+      alert(t('map.search.restaurantError'));
     }
   }, [setRestaurants]);
 
@@ -186,7 +188,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       displayStayMarkers(nearbyStays);
     } catch (error) {
       console.error("숙소 데이터 불러오기 실패:", error);
-      alert("숙소 데이터를 불러오는데 실패했습니다.");
+      alert(t('map.search.accommodationError'));
     }
   }, [setStays]);
 
@@ -1429,7 +1431,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   /* 현재 위치 버튼 */
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) {
-      alert("현재 위치를 지원하지 않는 브라우저입니다.");
+      alert(t('map.search.browserNotSupported'));
       return;
     }
 
@@ -1577,7 +1579,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         );
       },
 
-      () => alert("현재 위치 권한을 허용해주세요.")
+      () => alert(t('map.search.permissionDenied'))
     );
   };
 
@@ -1589,7 +1591,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   // 검색 실행 함수
   const handleSearch = () => {
     if (!currentLocation.current) {
-      alert("먼저 현재 위치를 설정해주세요.");
+      alert(t('map.search.setLocationFirst'));
       return;
     }
     const { lat, lng } = currentLocation.current;
@@ -1618,7 +1620,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           <input
             type="text"
             className="search-input"
-            placeholder="맛집 검색..."
+            placeholder={t('map.search.placeholder')}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -1628,7 +1630,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           </button>
         </div>
         <button className="btn-my-location-top" onClick={handleFindMyLocation}>
-          📍 현재 위치에서 검색
+          📍 {t('map.search.searchFromCurrentLocation')}
         </button>
       </div>
 

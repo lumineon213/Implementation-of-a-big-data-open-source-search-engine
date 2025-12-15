@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 // import StampEvent from "../../pages/benefits/StampEvent";
 import "./header.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import walk from '../../components/common/img/walk.png'; 
 import theme from '../../components/common/img/theme.png';
@@ -24,11 +25,13 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { t, i18n } = useTranslation();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null); 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -38,6 +41,7 @@ const Header: React.FC = () => {
     course: useRef<HTMLDivElement>(null),
     info: useRef<HTMLDivElement>(null),
     benefits: useRef<HTMLDivElement>(null),
+    language: useRef<HTMLDivElement>(null),
   };
 
   const checkAuth = async () => {
@@ -101,16 +105,19 @@ const Header: React.FC = () => {
       if (isInfoDropdownOpen && dropdownRefs.info.current && !dropdownRefs.info.current.contains(target)) {
         setIsInfoDropdownOpen(false);
       }
+      if (isLanguageDropdownOpen && dropdownRefs.language.current && !dropdownRefs.language.current.contains(target)) {
+        setIsLanguageDropdownOpen(false);
+      }
     };
 
-    if (expandedMenu || isInfoDropdownOpen) {
+    if (expandedMenu || isInfoDropdownOpen || isLanguageDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [expandedMenu, isInfoDropdownOpen]);
+  }, [expandedMenu, isInfoDropdownOpen, isLanguageDropdownOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -148,6 +155,19 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
     setExpandedMenu(null);
     setIsInfoDropdownOpen(false);
+    setIsLanguageDropdownOpen(false);
+  };
+
+  // 언어 변경 함수
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+    setIsLanguageDropdownOpen(false);
+  };
+
+  // 현재 언어 표시 텍스트
+  const getLanguageText = () => {
+    return i18n.language === 'en' ? 'English' : '한국어';
   };
 
   return (
@@ -155,11 +175,11 @@ const Header: React.FC = () => {
       <header className="header-container">
         <div className="header-inner">
           <Link to="/" className="header-logo">
-            우리 <span className="header-logo-round">부산 GO?</span>
+            {t('header.logo')} <span className="header-logo-round">{t('header.logoSub')}</span>
           </Link>
 
           <nav className="header-desktop-menu">
-            <Link to="/" className="menu-item">홈</Link>
+            <Link to="/" className="menu-item">{t('header.home')}</Link>
             
             <div className="dropdown-wrapper" ref={dropdownRefs.sns}>
               <span
@@ -181,14 +201,14 @@ const Header: React.FC = () => {
               </span>
               {expandedMenu === 'sns' && (
                 <div className="dropdown-menu">
-                  <Link to="/blog" className="dropdown-item" onClick={() => setExpandedMenu(null)}>블로그</Link>
-                  <Link to="/cafe" className="dropdown-item" onClick={() => setExpandedMenu(null)}>카페</Link>
+                  <Link to="/blog" className="dropdown-item" onClick={() => setExpandedMenu(null)}>{t('header.blog')}</Link>
+                  <Link to="/cafe" className="dropdown-item" onClick={() => setExpandedMenu(null)}>{t('header.cafe')}</Link>
                 </div>
               )}
             </div>
             
-            <Link to="/tour" className="menu-item">명소</Link>
-            <Link to="/food" className="menu-item">맛집</Link>
+            <Link to="/tour" className="menu-item">{t('header.tour')}</Link>
+            <Link to="/food" className="menu-item">{t('header.food')}</Link>
             <div 
               className="dropdown-wrapper"
               ref={dropdownRefs.course}
@@ -198,7 +218,7 @@ const Header: React.FC = () => {
                 onClick={() => toggleMenu("course")}
                 style={{ cursor: 'pointer' }}
               >
-                여행코스
+                {t('header.travelCourse')}
                 <svg 
                   className={`dropdown-arrow ${expandedMenu === "course" ? "open" : ""}`}
                   width="10"
@@ -215,34 +235,34 @@ const Header: React.FC = () => {
                 <div className="dropdown-menu course-dropdown">
 
                   <Link to="/course/walk" className="course-card" onClick={() => setExpandedMenu(null)}>
-                    <img src={walk} alt="도보 여행" className="course-icon" />
+                    <img src={walk} alt={t('header.walkTravel')} className="course-icon" />
                     <div className="course-info">
-                      <div className="course-info-title">도보 여행</div>
-                      <div className="course-info-desc">부산을 걸으며 즐기는 여행 코스</div>
+                      <div className="course-info-title">{t('header.walkTravel')}</div>
+                      <div className="course-info-desc">{t('header.walkTravelDesc')}</div>
                     </div>
                   </Link>
 
                   <Link to="/course/theme" className="course-card" onClick={() => setExpandedMenu(null)}>
-                    <img src={theme} alt="테마 여행" className="course-icon" />
+                    <img src={theme} alt={t('header.themeTravel')} className="course-icon" />
                     <div className="course-info">
-                      <div className="course-info-title">테마 여행</div>
-                      <div className="course-info-desc">힐링 · 바다 · 감성 루트</div>
+                      <div className="course-info-title">{t('header.themeTravel')}</div>
+                      <div className="course-info-desc">{t('header.themeTravelDesc')}</div>
                     </div>
                   </Link>
 
                   <Link to="/course/marine" className="course-card" onClick={() => setExpandedMenu(null)}>
-                    <img src={marine} alt="해양 여행" className="course-icon" />
+                    <img src={marine} alt={t('header.marineTravel')} className="course-icon" />
                     <div className="course-info">
-                      <div className="course-info-title">해양 여행</div>
-                      <div className="course-info-desc">바다를 즐기는 특별한 코스</div>
+                      <div className="course-info-title">{t('header.marineTravel')}</div>
+                      <div className="course-info-desc">{t('header.marineTravelDesc')}</div>
                     </div>
                   </Link>
 
                   <Link to="/course/urban" className="course-card" onClick={() => setExpandedMenu(null)}>
-                    <img src={urban} alt="도시 여행" className="course-icon" />
+                    <img src={urban} alt={t('header.urbanTravel')} className="course-icon" />
                     <div className="course-info">
-                      <div className="course-info-title">도시 여행</div>
-                      <div className="course-info-desc">도시를 즐기는 특별한 코스</div>
+                      <div className="course-info-title">{t('header.urbanTravel')}</div>
+                      <div className="course-info-desc">{t('header.urbanTravelDesc')}</div>
                     </div>
                   </Link>
 
@@ -262,7 +282,7 @@ const Header: React.FC = () => {
                 onClick={toggleInfoMenu}
                 style={{ cursor: 'pointer' }}
               >
-                여행정보
+                {t('header.travelInfo')}
                 <svg 
                   className={`dropdown-arrow ${isInfoDropdownOpen ? 'open' : ''}`}
                   width="10" 
@@ -280,43 +300,43 @@ const Header: React.FC = () => {
                   <Link to="/info/regions" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🗺️</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">여행지역</div>
-                      <div className="dropdown-desc">부산의 주요 지역 탐색</div>
+                      <div className="dropdown-title">{t('header.travelRegion')}</div>
+                      <div className="dropdown-desc">{t('header.travelRegionDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/info/articles" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">📰</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">여행기사</div>
-                      <div className="dropdown-desc">최신 여행 소식</div>
+                      <div className="dropdown-title">{t('header.travelArticles')}</div>
+                      <div className="dropdown-desc">{t('header.travelArticlesDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/festival" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">축제</div>
-                      <div className="dropdown-desc">다양한 축제 정보</div>
+                      <div className="dropdown-title">{t('header.festival')}</div>
+                      <div className="dropdown-desc">{t('header.festivalDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/shopping" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🛍️</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">쇼핑·기념품</div>
-                      <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
+                      <div className="dropdown-title">{t('header.shopping')}</div>
+                      <div className="dropdown-desc">{t('header.shoppingDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/info/stay" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">숙박</div>
-                      <div className="dropdown-desc">추천 숙소</div>
+                      <div className="dropdown-title">{t('header.accommodation')}</div>
+                      <div className="dropdown-desc">{t('header.accommodationDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/ai-planner" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🤖</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">AI 여행 계획</div>
-                      <div className="dropdown-desc">AI가 추천하는 맞춤 여행</div>
+                      <div className="dropdown-title">{t('header.aiPlanner')}</div>
+                      <div className="dropdown-desc">{t('header.aiPlannerDesc')}</div>
                     </div>
                   </Link>
                 </div>
@@ -330,7 +350,7 @@ const Header: React.FC = () => {
                 onClick={() => toggleMenu("benefits")}
                 style={{ cursor: 'pointer' }}
               >
-                여행혜택
+                {t('header.travelBenefits')}
                 <svg
                   className={`dropdown-arrow ${expandedMenu === "benefits" ? "open" : ""}`}
                   width="10"
@@ -347,29 +367,29 @@ const Header: React.FC = () => {
                   <Link to="/footer_details/event" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">이벤트</div>
-                      <div className="dropdown-desc">여행 관련 이벤트</div>
+                      <div className="dropdown-title">{t('header.event')}</div>
+                      <div className="dropdown-desc">{t('header.eventDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/benefits/stamp" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🛎️</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">스템프 이벤트</div>
-                      <div className="dropdown-desc">명소 방문 인증/스탬프 투어</div>
+                      <div className="dropdown-title">{t('header.stampEvent')}</div>
+                      <div className="dropdown-desc">{t('header.stampEventDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/benefits/coupon" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🎫</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">기프래카드</div>
-                      <div className="dropdown-desc">여행 쿠폰/카드</div>
+                      <div className="dropdown-title">{t('header.giftCard')}</div>
+                      <div className="dropdown-desc">{t('header.giftCardDesc')}</div>
                     </div>
                   </Link>
                   <Link to="/benefits/badge" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🏅</span>
                     <div className="dropdown-content">
-                      <div className="dropdown-title">베지패드</div>
-                      <div className="dropdown-desc">스페셜 뱃지</div>
+                      <div className="dropdown-title">{t('header.badgePad')}</div>
+                      <div className="dropdown-desc">{t('header.badgePadDesc')}</div>
                     </div>
                   </Link>
                 </div>
@@ -382,7 +402,7 @@ const Header: React.FC = () => {
               <div className="header-search-wrapper">
                 <input
                   className="header-search"
-                  placeholder="어디로, 어떤 여행을 떠날 예정인가요?"
+                  placeholder={t('header.searchPlaceholder')}
                   autoFocus
                 />
                 <button 
@@ -407,11 +427,11 @@ const Header: React.FC = () => {
               </Link>
 
               {user ? (
-                <Link to="/mypage" className="icon-btn" title="마이페이지">
+                <Link to="/mypage" className="icon-btn" title={t('header.mypage')}>
                   👤
                 </Link>
               ) : (
-                <Link to="/login" className="icon-btn" title="로그인">
+                <Link to="/login" className="icon-btn" title={t('header.login')}>
                   👤
                 </Link>
               )}
@@ -419,18 +439,101 @@ const Header: React.FC = () => {
               <button 
                 className="icon-btn dark-mode-toggle" 
                 onClick={toggleDarkMode}
-                title={isDarkMode ? "라이트 모드" : "다크 모드"}
+                title={isDarkMode ? t('header.lightMode') : t('header.darkMode')}
               >
                 {isDarkMode ? "☀️" : "🌙"}
               </button>
 
-              <button className="icon-btn language-btn">
-                한국어 ▼
-              </button>
+              <div className="dropdown-wrapper" ref={dropdownRefs.language} style={{ position: 'relative' }}>
+                <button 
+                  className="icon-btn language-btn"
+                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px' }}
+                >
+                  {getLanguageText()} <span style={{ fontSize: '10px' }}>▼</span>
+                </button>
+                {isLanguageDropdownOpen && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      marginTop: '8px',
+                      background: isDarkMode ? 'var(--bg-secondary)' : '#fff',
+                      border: `1px solid ${isDarkMode ? 'var(--border-color)' : '#ddd'}`,
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      zIndex: 1000,
+                      minWidth: '120px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <button
+                      onClick={() => changeLanguage('ko')}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        border: 'none',
+                        background: i18n.language === 'ko' 
+                          ? (isDarkMode ? 'rgba(0, 102, 255, 0.2)' : '#e3f2fd')
+                          : 'transparent',
+                        color: isDarkMode ? 'var(--text-primary)' : '#333',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: i18n.language === 'ko' ? '600' : '400',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (i18n.language !== 'ko') {
+                          e.currentTarget.style.background = isDarkMode ? 'var(--bg-tertiary)' : '#f5f5f5';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (i18n.language !== 'ko') {
+                          e.currentTarget.style.background = 'transparent';
+                        }
+                      }}
+                    >
+                      {t('header.korean')}
+                    </button>
+                    <button
+                      onClick={() => changeLanguage('en')}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        border: 'none',
+                        borderTop: `1px solid ${isDarkMode ? 'var(--border-color)' : '#eee'}`,
+                        background: i18n.language === 'en'
+                          ? (isDarkMode ? 'rgba(0, 102, 255, 0.2)' : '#e3f2fd')
+                          : 'transparent',
+                        color: isDarkMode ? 'var(--text-primary)' : '#333',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: i18n.language === 'en' ? '600' : '400',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (i18n.language !== 'en') {
+                          e.currentTarget.style.background = isDarkMode ? 'var(--bg-tertiary)' : '#f5f5f5';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (i18n.language !== 'en') {
+                          e.currentTarget.style.background = 'transparent';
+                        }
+                      }}
+                    >
+                      {t('header.english')}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {!isLoading && user && (
-              <span className="header-welcome">{user.accountName}님</span>
+              <span className="header-welcome">{user.accountName}{t('header.welcome')}</span>
             )}
 
             <button
@@ -443,29 +546,29 @@ const Header: React.FC = () => {
         </div>
 
         <div className="header-mobile-search-wrapper">
-          <input className="header-mobile-search" placeholder="검색어 입력" />
+          <input className="header-mobile-search" placeholder={t('header.searchInput')} />
           <button className="header-mobile-search-btn">🔍</button>
         </div>
 
         <nav className="header-mobile-tabs">
-          <Link to="/" className="mobile-tab-item">홈</Link>
-          <Link to="/theme" className="mobile-tab-item">추천 명소</Link>
-          <Link to="/food" className="mobile-tab-item">맛집</Link>
-          <Link to="/course" className="mobile-tab-item">여행코스</Link>
-          <Link to="/info" className="mobile-tab-item">여행정보</Link>
-          <Link to="/benefits" className="mobile-tab-item">여행혜택</Link>
+          <Link to="/" className="mobile-tab-item">{t('header.mobileHome')}</Link>
+          <Link to="/theme" className="mobile-tab-item">{t('header.mobileTheme')}</Link>
+          <Link to="/food" className="mobile-tab-item">{t('header.mobileFood')}</Link>
+          <Link to="/course" className="mobile-tab-item">{t('header.mobileCourse')}</Link>
+          <Link to="/info" className="mobile-tab-item">{t('header.mobileInfo')}</Link>
+          <Link to="/benefits" className="mobile-tab-item">{t('header.mobileBenefits')}</Link>
         </nav>
       </header>
 
       <nav className="mobile-bottom-nav">
         <Link to="/" className="bottom-nav-item">
-          🏠 <span>홈</span>
+          🏠 <span>{t('header.mobileHome')}</span>
         </Link>
         <Link to="/search" className="bottom-nav-item">
-          🔍 <span>검색</span>
+          🔍 <span>{t('header.mobileSearch')}</span>
         </Link>
         <Link to="/map" className="bottom-nav-item">
-          🗺️ <span>여행지도</span>
+          🗺️ <span>{t('header.mobileTravelMap')}</span>
         </Link>
       </nav>
 
@@ -480,9 +583,9 @@ const Header: React.FC = () => {
                 className="mobile-user-link"
                 onClick={handleMenuClose}
               >
-                <p className="user-greeting">{user.accountName}님 안녕하세요</p>
+                <p className="user-greeting">{user.accountName}{t('header.mobileGreeting')}</p>
                 <p className="user-subtitle">
-                  마이페이지에서 회원정보를 확인하세요.
+                  {t('header.mobileSubtitle')}
                 </p>
               </Link>
             ) : (
@@ -491,57 +594,57 @@ const Header: React.FC = () => {
                 className="mobile-user-link"
                 onClick={handleMenuClose}
               >
-                <p className="user-greeting">로그인 해주세요</p>
-                <p className="user-subtitle">더 많은 서비스를 이용할 수 있어요.</p>
+                <p className="user-greeting">{t('header.mobileLogout')}</p>
+                <p className="user-subtitle">{t('header.mobileLogoutDesc')}</p>
               </Link>
             )}
           </div>
 
           <nav className="mobile-nav">
             <Link to="/" className="mobile-nav-item" onClick={handleMenuClose}>
-              🏠 홈
+              🏠 {t('header.mobileHome')}
             </Link>
 
             <Link to="/theme" className="mobile-nav-item" onClick={handleMenuClose}>
-              ⭐ 테마
+              ⭐ {t('header.mobileTheme')}
             </Link>
 
             <Link to="/map" className="mobile-nav-item" onClick={handleMenuClose}>
-              🗺️ 지역
+              🗺️ {t('header.mobileInfo')}
             </Link>
 
             <div
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("course")}
             >
-              🎯 여행코스
+              🎯 {t('header.mobileCourse')}
               <span className={`nav-arrow ${expandedMenu === "course" ? "expanded" : ""}`}>
                 ›
               </span>
             </div>
 
-            {expandedMenu === "course" && (
+              {expandedMenu === "course" && (
               <div className="mobile-sub-nav">
                 <Link to="/course/walk" onClick={handleMenuClose}>
-                  도보 여행
+                  {t('header.walkTravel')}
                 </Link>
 
                 <Link to="/course/theme" onClick={handleMenuClose}>
-                  테마 여행
+                  {t('header.themeTravel')}
                 </Link>
 
                 <Link to="/course/marine" onClick={handleMenuClose}>
-                  해양 여행
+                  {t('header.marineTravel')}
                 </Link>
 
                 <Link to="/course/urban" onClick={handleMenuClose}>
-                  도시 여행
+                  {t('header.urbanTravel')}
                 </Link>
                 <Link to="/course/recommended" onClick={handleMenuClose}>
-                  추천코스
+                  {t('header.travelCourse')}
                 </Link>
                 <Link to="/course/planner" onClick={handleMenuClose}>
-                  스크랩 플래너
+                  {t('header.aiPlanner')}
                 </Link>
               </div>
             )}
@@ -550,7 +653,7 @@ const Header: React.FC = () => {
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("info")}
             >
-              ℹ️ 여행정보
+              ℹ️ {t('header.travelInfo')}
               <span className={`nav-arrow ${expandedMenu === "info" ? "expanded" : ""}`}>
                 ›
               </span>
@@ -558,12 +661,12 @@ const Header: React.FC = () => {
 
             {expandedMenu === "info" && (
               <div className="mobile-sub-nav">
-                <Link to="/info/regions" onClick={handleMenuClose}>여행지역</Link>
-                <Link to="/info/articles" onClick={handleMenuClose}>여행기사</Link>
-                <Link to="/festival" onClick={handleMenuClose}>축제</Link>
-                <Link to="/shopping" onClick={handleMenuClose}>쇼핑·기념품</Link>
-                <Link to="/info/accommodation" onClick={handleMenuClose}>숙박/맛집</Link>
-                <Link to="/ai-planner" onClick={handleMenuClose}>AI 여행 계획</Link>
+                <Link to="/info/regions" onClick={handleMenuClose}>{t('header.travelRegion')}</Link>
+                <Link to="/info/articles" onClick={handleMenuClose}>{t('header.travelArticles')}</Link>
+                <Link to="/festival" onClick={handleMenuClose}>{t('header.festival')}</Link>
+                <Link to="/shopping" onClick={handleMenuClose}>{t('header.shopping')}</Link>
+                <Link to="/info/accommodation" onClick={handleMenuClose}>{t('header.accommodation')}</Link>
+                <Link to="/ai-planner" onClick={handleMenuClose}>{t('header.aiPlanner')}</Link>
               </div>
             )}
 
@@ -571,7 +674,7 @@ const Header: React.FC = () => {
               className="mobile-nav-item expandable"
               onClick={() => toggleMenu("benefits")}
             >
-              🎁 여행혜택
+              🎁 {t('header.travelBenefits')}
               <span className={`nav-arrow ${expandedMenu === "benefits" ? "expanded" : ""}`}>
                 ›
               </span>
@@ -579,25 +682,25 @@ const Header: React.FC = () => {
 
             {expandedMenu === "benefits" && (
               <div className="mobile-sub-nav">
-                <Link to="/benefits/event" onClick={handleMenuClose}>이벤트</Link>
-                <Link to="/benefits/stamp" onClick={handleMenuClose}>스템프 이벤트</Link>
-                <Link to="/benefits/coupon" onClick={handleMenuClose}>기프래카드</Link>
-                <Link to="/benefits/badge" onClick={handleMenuClose}>베지패드</Link>
+                <Link to="/benefits/event" onClick={handleMenuClose}>{t('header.event')}</Link>
+                <Link to="/benefits/stamp" onClick={handleMenuClose}>{t('header.stampEvent')}</Link>
+                <Link to="/benefits/coupon" onClick={handleMenuClose}>{t('header.giftCard')}</Link>
+                <Link to="/benefits/badge" onClick={handleMenuClose}>{t('header.badgePad')}</Link>
               </div>
             )}
 
             <Link to="/map" className="mobile-nav-item" onClick={handleMenuClose}>
-              🗺️ 여행지도
+              🗺️ {t('header.mobileTravelMap')}
             </Link>
           </nav>
 
           {user ? (
             <button className="mobile-auth-btn" onClick={handleLogout}>
-              로그아웃
+              {t('mypage.logout')}
             </button>
           ) : (
             <Link to="/login" onClick={handleMenuClose} className="mobile-auth-btn">
-              로그인
+              {t('header.login')}
             </Link>
           )}
         </div>

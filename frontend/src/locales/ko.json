@@ -1,0 +1,664 @@
+{
+  "mypage": {
+    "title": "마이페이지",
+    "loading": "로딩중...",
+    "loginRequired": "로그인이 필요합니다.",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "profile": {
+      "title": "프로필",
+      "changeImage": "프로필 이미지 변경",
+      "imageChanged": "프로필 이미지가 성공적으로 변경되었습니다.",
+      "imageChangeError": "이미지 업로드에 실패했습니다",
+      "nameSuffix": "님"
+    },
+    "userInfo": {
+      "title": "회원 정보",
+      "userId": "아이디",
+      "userName": "이름",
+      "email": "이메일",
+      "phone": "전화번호",
+      "regDate": "가입일",
+      "notRegistered": "미등록",
+      "edit": "정보 수정",
+      "save": "저장하기",
+      "saving": "저장중...",
+      "cancel": "취소",
+      "editTitle": "회원 정보 수정",
+      "saveSuccess": "정보가 수정되었습니다.",
+      "saveError": "정보 수정에 실패했습니다.",
+      "loadingError": "마이페이지 정보를 불러올 수 없습니다."
+    },
+    "eventHistory": {
+      "title": "📋 이벤트 내역",
+      "tabs": {
+        "all": "전체",
+        "stamp": "✉️ 스템프",
+        "gift": "🎁 쿠폰",
+        "badge": "🏅 배지"
+      },
+      "empty": "이벤트 내역이 없습니다",
+      "previous": "이전",
+      "next": "다음",
+      "items": "개"
+    },
+    "reviews": {
+      "title": "✍️ 내가 작성한 리뷰",
+      "empty": "작성한 리뷰가 없습니다",
+      "previous": "이전",
+      "next": "다음",
+      "imageAlt": "리뷰 이미지"
+    },
+    "inquiries": {
+      "title": "💬 문의사항 답변",
+      "empty": "답변된 문의가 없습니다",
+      "answer": "답변",
+      "inquiryDate": "문의일",
+      "answerDate": "답변일",
+      "previous": "이전",
+      "next": "다음"
+    },
+    "date": {
+      "justNow": "방금 전",
+      "minutesAgo": "{{count}}분 전",
+      "hoursAgo": "{{count}}시간 전",
+      "yesterday": "어제",
+      "daysAgo": "{{count}}일 전"
+    },
+    "messages": {
+      "tokenRequired": "토큰이 없어서 로그인 페이지로 이동합니다.",
+      "placeLoadError": "장소 정보를 불러올 수 없습니다."
+    }
+  },
+  "header": {
+    "logo": "우리",
+    "logoSub": "부산 GO?",
+    "home": "홈",
+    "sns": "SNS",
+    "blog": "블로그",
+    "cafe": "카페",
+    "tour": "명소",
+    "food": "맛집",
+    "travelCourse": "여행코스",
+    "walkTravel": "도보 여행",
+    "walkTravelDesc": "부산을 걸으며 즐기는 여행 코스",
+    "themeTravel": "테마 여행",
+    "themeTravelDesc": "힐링 · 바다 · 감성 루트",
+    "marineTravel": "해양 여행",
+    "marineTravelDesc": "바다를 즐기는 특별한 코스",
+    "urbanTravel": "도시 여행",
+    "urbanTravelDesc": "도시를 즐기는 특별한 코스",
+    "travelInfo": "여행정보",
+    "travelRegion": "여행지역",
+    "travelRegionDesc": "부산의 주요 지역 탐색",
+    "travelArticles": "여행기사",
+    "travelArticlesDesc": "최신 여행 소식",
+    "festival": "축제",
+    "festivalDesc": "다양한 축제 정보",
+    "shopping": "쇼핑·기념품",
+    "shoppingDesc": "부산 특산품과 쇼핑 명소",
+    "accommodation": "숙박",
+    "accommodationDesc": "추천 숙소",
+    "aiPlanner": "AI 여행 계획",
+    "aiPlannerDesc": "AI가 추천하는 맞춤 여행",
+    "travelBenefits": "여행혜택",
+    "event": "이벤트",
+    "eventDesc": "여행 관련 이벤트",
+    "stampEvent": "스템프 이벤트",
+    "stampEventDesc": "명소 방문 인증/스탬프 투어",
+    "giftCard": "기프래카드",
+    "giftCardDesc": "여행 쿠폰/카드",
+    "badgePad": "베지패드",
+    "badgePadDesc": "스페셜 뱃지",
+    "searchPlaceholder": "어디로, 어떤 여행을 떠날 예정인가요?",
+    "searchInput": "검색어 입력",
+    "mypage": "마이페이지",
+    "login": "로그인",
+    "lightMode": "라이트 모드",
+    "darkMode": "다크 모드",
+    "korean": "한국어",
+    "english": "English",
+    "welcome": "님",
+    "mobileHome": "홈",
+    "mobileTheme": "추천 명소",
+    "mobileFood": "맛집",
+    "mobileCourse": "여행코스",
+    "mobileInfo": "여행정보",
+    "mobileBenefits": "여행혜택",
+    "mobileTravelMap": "여행지도",
+    "mobileSearch": "검색",
+    "mobileLogout": "로그인 해주세요",
+    "mobileLogoutDesc": "더 많은 서비스를 이용할 수 있어요.",
+    "mobileGreeting": "님 안녕하세요",
+    "mobileSubtitle": "마이페이지에서 회원정보를 확인하세요."
+  },
+  "footer": {
+    "title": "우리 부산 GO?",
+    "description": "부산의 모든 여행 정보를 한눈에!",
+    "descriptionSub": "명소, 맛집, 여행코스까지",
+    "facebook": "페이스북",
+    "instagram": "인스타그램",
+    "youtube": "유튜브",
+    "travelInfo": "여행 정보",
+    "recommendedSpot": "추천 명소",
+    "foodInfo": "맛집 정보",
+    "travelCourse": "여행 코스",
+    "travelInformation": "여행 정보",
+    "customerSupport": "고객 지원",
+    "notice": "공지사항",
+    "faq": "자주 묻는 질문",
+    "inquiry": "문의하기",
+    "event": "이벤트",
+    "contact": "연락처",
+    "customerCenter": "고객센터: 1588-0000",
+    "email": "이메일: info@busango.kr",
+    "hours": "운영시간: 평일 09:00 - 18:00",
+    "privacyPolicy": "개인정보 처리방침",
+    "terms": "이용약관",
+    "sitemap": "사이트맵",
+    "copyright": "© {{year}} 우리 부산 GO? All rights reserved.",
+    "orgInfo": "본 사이트는 부산광역시 관광 정보를 제공합니다."
+  },
+  "main": {
+    "search": {
+      "title": "KH.Solr AI 검색",
+      "placeholder": "가장 빠른 AI 검색",
+      "searching": "검색 중...",
+      "noResults": "검색 결과가 없습니다.",
+      "dateUndecided": "날짜 미정",
+      "noContent": "내용 없음"
+    },
+    "favorite": {
+      "title": "즐겨찾기",
+      "empty": "관심있는 정보를",
+      "emptySub": "담아보세요.",
+      "loginPrompt": "로그인하고 즐겨찾기를 저장해보세요",
+      "welcome": "님 환영합니다 👋",
+      "syncPrompt": "로그인하고 기록을 동기화 해보세요"
+    },
+    "searchHistory": {
+      "title": "최근 검색어",
+      "empty": "아직 기록이 없어요.",
+      "emptySub": "새로운 검색을 해보세요.",
+      "loginPrompt": "로그인하고 검색 기록을 저장해보세요",
+      "clearAll": "전체 삭제",
+      "delete": "삭제"
+    },
+    "chat": {
+      "title": "축제 AI 도우미",
+      "placeholder": "질문을 입력하세요...",
+      "send": "전송",
+      "thinking": "답변 생성 중...",
+      "initialMessage": "안녕하세요! 축제에 대해 궁금한 점을 물어보세요. 🎪",
+      "error": "오류가 발생했습니다.",
+      "loginRequired": "로그인이 필요합니다.",
+      "favoriteSaveError": "즐겨찾기 저장에 실패했습니다.",
+      "favoriteDeleteError": "즐겨찾기 삭제에 실패했습니다."
+    },
+    "hero": {
+      "searchPlaceholder": "부산 여행지를 검색해보세요...",
+      "categories": {
+        "all": "전체",
+        "family": "가족여행",
+        "couple": "커플데이트",
+        "foodTour": "맛집투어",
+        "activity": "액티비티",
+        "healing": "힐링",
+        "culture": "문화예술"
+      }
+    },
+    "popular": {
+      "title": "부산 인기 여행지",
+      "subtitle": "지금 가장 HOT한 부산 명소",
+      "loading": "인기 여행지를 불러오는 중...",
+      "error": "인기 여행지 정보를 불러올 수 없습니다.",
+      "defaultDescription": "부산의 아름다운 명소를 만나보세요",
+      "defaultPlace": "부산"
+    },
+    "activities": {
+      "title": "부산에서 뭐하지?",
+      "subtitle": "취향대로 골라보는 부산 여행",
+      "foodTour": "맛집 탐방",
+      "foodTourDesc": "부산 대표 먹거리",
+      "spotTour": "명소 투어",
+      "spotTourDesc": "부산 필수 관광지",
+      "festivalInfo": "축제 정보",
+      "festivalInfoDesc": "부산 문화 축제",
+      "travelCourse": "여행 코스",
+      "travelCourseDesc": "테마별 추천 코스"
+    },
+    "cta": {
+      "title": "나만의 부산 여행 계획 세우기",
+      "description": "AI가 추천하는 맞춤형 여행 코스를 만나보세요",
+      "button": "여행 계획 시작하기"
+    }
+  },
+  "map": {
+    "sidebar": {
+      "clickLocation": "현재 위치를 눌러보세요.",
+      "recentPlaces": "최근 본 장소",
+      "weather": {
+        "label": "현재 날씨",
+        "high": "최고",
+        "low": "최저",
+        "todayRecommendation": "오늘의 추천"
+      },
+      "categories": {
+        "attraction": "명소",
+        "restaurant": "음식점",
+        "cafe": "카페",
+        "accommodation": "숙소",
+        "parking": "주차장",
+        "souvenir": "여행코스<br/>기념품",
+        "walking": "여행코스<br/>도보여행",
+        "theme": "여행코스<br/>테마여행",
+        "marine": "여행코스<br/>해양여행",
+        "urban": "여행코스<br/>도시여행"
+      },
+      "lists": {
+        "nearbyRestaurants": "주변 맛집",
+        "nearbyAccommodations": "주변 숙소",
+        "walkingCourse": "도보여행 코스",
+        "themeCourse": "테마여행 코스",
+        "marineCourse": "해양여행 코스",
+        "urbanCourse": "도시여행 코스",
+        "nearbyAttractions": "주변 명소",
+        "nearbySouvenirs": "주변 기념품",
+        "nearbyParking": "주변 주차장",
+        "items": "개"
+      },
+      "parking": {
+        "basicFee": "기본요금"
+      }
+    },
+    "weather": {
+      "rainRecommendation": "비/눈이 오는 날씨입니다. 실내 활동을 추천합니다!",
+      "hotRecommendation": "더운 날씨입니다. 시원한 곳을 추천합니다!",
+      "coldRecommendation": "추운 날씨입니다. 따뜻한 실내를 추천합니다!",
+      "sunnyRecommendation": "맑고 좋은 날씨입니다. 야외 활동을 즐기세요!",
+      "cloudyRecommendation": "흐린 날씨입니다. 가벼운 야외 활동이 좋습니다!",
+      "defaultRecommendation": "오늘도 부산을 즐겨보세요!"
+    },
+    "search": {
+      "placeholder": "맛집 검색...",
+      "searchFromCurrentLocation": "현재 위치에서 검색",
+      "browserNotSupported": "현재 위치를 지원하지 않는 브라우저입니다.",
+      "permissionDenied": "현재 위치 권한을 허용해주세요.",
+      "setLocationFirst": "먼저 현재 위치를 설정해주세요.",
+      "restaurantError": "음식점 데이터를 불러오는데 실패했습니다.",
+      "accommodationError": "숙소 데이터를 불러오는데 실패했습니다."
+    }
+  },
+  "aiPlanner": {
+    "title": "AI 여행 계획",
+    "subtitle": "AI가 추천하는 부산 맞춤 여행 플랜",
+    "initialMessage": "안녕하세요! 부산 여행 AI 플래너입니다. 🏖️\n\n원하시는 여행 스타일, 기간, 관심사를 알려주시면 맞춤 여행 계획을 추천해드릴게요!\n\n예시:\n- \"2박 3일 부산 여행 계획 짜줘\"\n- \"해운대 근처 맛집 추천해줘\"\n- \"가족과 함께 갈만한 부산 명소 알려줘\"",
+    "systemPrompt": "당신은 부산 여행 전문 AI 플래너입니다. \n사용자의 질문에 대해 친절하고 상세하게 부산 여행 계획을 추천해주세요.\n\n응답 시 다음 사항을 고려하세요:\n- 부산의 주요 관광지, 맛집, 해변, 문화시설 등을 추천\n- 여행 일정, 예산, 동선을 고려한 실용적인 계획\n- 계절과 날씨에 맞는 추천\n- 교통편, 소요시간, 예상 비용 등 구체적인 정보 제공\n- 한국어로 자연스럽고 친근하게 대화\n- 마크다운 형식으로 보기 좋게 정리\n\n사용자 질문: {{userMsg}}",
+    "copy": "복사하기",
+    "save": "저장하기",
+    "inputPlaceholder": "여행 계획에 대해 물어보세요...",
+    "send": "전송",
+    "user": "사용자",
+    "ai": "AI",
+    "conversationTitle": "부산 여행 AI 플래너 대화 내용",
+    "createdAt": "생성 시간",
+    "downloadFileName": "부산여행계획",
+    "copySuccess": "대화 내용이 클립보드에 복사되었습니다!",
+    "copyFailed": "복사에 실패했습니다. 다시 시도해주세요.",
+    "quickQuestions": {
+      "threeDays": {
+        "label": "2박 3일 여행",
+        "question": "2박 3일 부산 여행 계획 짜줘"
+      },
+      "haeundaeRestaurant": {
+        "label": "해운대 맛집",
+        "question": "해운대 주변 맛집 추천해줘"
+      },
+      "family": {
+        "label": "가족 여행",
+        "question": "가족과 함께 갈만한 부산 명소"
+      },
+      "nightView": {
+        "label": "야경 명소",
+        "question": "부산 야경 명소 알려줘"
+      },
+      "shopping": {
+        "label": "쇼핑 명소 포함 AI 코스",
+        "question": "쇼핑 명소 포함 부산 여행 코스 추천해줘"
+      }
+    },
+    "errors": {
+      "default": "죄송합니다. 응답을 생성하는 중 오류가 발생했습니다.",
+      "apiKeyNotSet": "Gemini API 키가 설정되지 않았습니다.",
+      "invalidApiKey": "API 키가 올바르지 않습니다. 관리자에게 문의하세요.",
+      "quotaExceeded": "API 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.",
+      "safetyFilter": "안전 필터에 의해 차단되었습니다. 다른 질문을 시도해주세요.",
+      "technicalInfo": "기술 정보"
+    }
+  },
+  "benefits": {
+    "loginRequired": "로그인 후 이용 가능합니다.",
+    "loading": "로딩중...",
+    "close": "닫기",
+    "badgePad": {
+      "title": "내 뱃지패드",
+      "achieved": "획득"
+    },
+    "badges": {
+      "stamp": {
+        "name": "스탬프 투어 완주",
+        "desc": "모든 명소 스탬프를 모으면 획득!"
+      },
+      "review": {
+        "name": "리뷰 3회 작성",
+        "desc": "리뷰를 3회 이상 작성하면 획득!"
+      },
+      "first": {
+        "name": "첫 방문",
+        "desc": "첫 명소 방문 인증 시 획득!"
+      },
+      "event": {
+        "name": "이벤트 참여",
+        "desc": "이벤트에 참여하면 획득!"
+      },
+      "ai": {
+        "name": "AI 추천 코스",
+        "desc": "AI 추천 코스 이용 시 획득!"
+      }
+    },
+    "giftCard": {
+      "title": "여행 기프래카드",
+      "validPeriod": "유효기간",
+      "alreadyIssued": "이미 발급된 쿠폰입니다.",
+      "issuing": "발급중...",
+      "received": "받음",
+      "getCoupon": "쿠폰받기",
+      "tip": "※ 쿠폰 이미지는 직접 등록해 주세요. 사용 조건 및 유의사항은 상세 안내 참고",
+      "loginMessage": "로그인한 회원만 쿠폰을 받을 수 있습니다.",
+      "alreadyReceived": "이미 발급받은 쿠폰입니다.",
+      "couponIssuance": "쿠폰 발급",
+      "issuanceSuccess": "{{title}} 쿠폰이 발급되었습니다! 마이페이지에서 확인하세요.",
+      "issuanceFailed": "쿠폰 발급에 실패했습니다.",
+      "loginRequiredAgain": "로그인이 필요합니다. 다시 로그인해주세요."
+    },
+    "coupons": {
+      "hotel": {
+        "title": "부산 숙소 5,000원 할인권",
+        "desc": "부산 내 제휴 호텔/게스트하우스에서 사용 가능",
+        "valid": "2025-12-31까지"
+      },
+      "cafe": {
+        "title": "해운대 카페 20% 할인",
+        "desc": "해운대 해변 인근 제휴 카페에서 사용 가능",
+        "valid": "2025-12-31까지"
+      },
+      "drone": {
+        "title": "광안리 드론쇼 우대석 추첨권",
+        "desc": "이벤트 응모 시 자동 추첨, 당첨자 개별 안내",
+        "valid": "2025-12-31 행사일까지"
+      },
+      "tower": {
+        "title": "부산타워 입장권 30% 할인",
+        "desc": "부산타워 현장 매표소에서 사용 가능",
+        "valid": "2025-12-31까지"
+      },
+      "yacht": {
+        "title": "요트투어 1만원 할인",
+        "desc": "부산 요트투어 제휴사에서 사용 가능",
+        "valid": "2025-12-31까지"
+      }
+    },
+    "stampEvent": {
+      "title": "부산 명소 스탬프 투어 이벤트",
+      "description": "부산의 대표 명소를 방문하고 스탬프를 모아보세요!<br/>모든 스탬프를 모으면 특별 뱃지와 기념품을 드립니다.",
+      "checkingLocation": "위치 확인 중...",
+      "browserNotSupported": "이 브라우저는 위치 정보를 지원하지 않습니다.",
+      "placeNotFound": "명소 정보를 찾을 수 없습니다.",
+      "visitCertification": "방문 인증",
+      "certificationSuccess": "인증 성공! 스탬프가 발급되었습니다.",
+      "allStampsCollected": "모든 명소 스탬프를 모았습니다!",
+      "allStampsComplete": "🎉 축하합니다! 모든 스탬프를 모으셨습니다. 배지가 발급되었습니다!",
+      "issuanceFailed": "스탬프 발급에 실패했습니다.",
+      "issuanceFailedRetry": "스탬프 발급에 실패했습니다. 다시 시도해주세요.",
+      "distanceMessage": "현재 위치와 명소가 {{distance}}m 떨어져 있습니다. 100m 이내에서 인증 가능합니다.",
+      "permissionDenied": "위치 정보 확인에 실패했습니다. 권한을 허용해 주세요.",
+      "certificationComplete": "인증 완료!",
+      "checking": "확인 중...",
+      "certifyVisit": "방문 인증하기",
+      "myStatus": "내 스탬프 현황",
+      "achieved": "획득",
+      "allStampsMessage": "모든 스탬프를 모았습니다! 기념품을 신청하세요.",
+      "rewardMessage": "🎁 성공 시 숙소 3,000원 할인권 증정!"
+    },
+    "stamps": {
+      "jagalchi": {
+        "name": "자갈치시장"
+      },
+      "gukje": {
+        "name": "국제시장"
+      },
+      "haeundae": {
+        "name": "해운대"
+      },
+      "centum": {
+        "name": "센텀시티"
+      },
+      "songdo": {
+        "name": "송도해수욕장"
+      }
+    }
+  },
+  "event": {
+    "title": "진행중인 이벤트",
+    "subtitle": "다양한 혜택과 이벤트를 놓치지 마세요!",
+    "categories": {
+      "all": "전체",
+      "event": "이벤트",
+      "benefit": "혜택",
+      "promotion": "프로모션",
+      "season": "시즌"
+    },
+    "status": {
+      "ongoing": "진행중",
+      "scheduled": "예정",
+      "ended": "종료"
+    },
+    "noEvents": "해당 카테고리의 이벤트가 없습니다.",
+    "modal": {
+      "period": "이벤트 기간",
+      "description": "이벤트 소개",
+      "benefit": "혜택 안내",
+      "participate": "참여하기",
+      "share": "공유하기"
+    }
+  },
+  "faq": {
+    "title": "자주 묻는 질문",
+    "subtitle": "궁금하신 내용을 빠르게 찾아보세요",
+    "categories": {
+      "all": "전체",
+      "general": "일반",
+      "search": "검색/이용",
+      "technical": "기술지원",
+      "account": "계정/기능",
+      "notice": "공지/이벤트"
+    },
+    "contact": {
+      "title": "더 궁금하신 내용이 있으신가요?",
+      "subtitle": "찾으시는 답변이 없다면 고객센터로 문의해주세요.",
+      "customerCenter": "고객센터: 1588-0000",
+      "email": "이메일 문의"
+    }
+  },
+  "inquiry": {
+    "title": "문의하기",
+    "subtitle": "궁금하신 점이나 건의사항을 남겨주세요. 빠른 시일 내에 답변드리겠습니다.",
+    "categories": {
+      "general": "일반문의",
+      "service": "서비스 이용",
+      "technical": "기술 지원",
+      "partnership": "제휴 문의",
+      "complaint": "불편 신고",
+      "other": "기타"
+    },
+    "info": {
+      "phone": {
+        "title": "전화 문의",
+        "hours": "평일 09:00 - 18:00"
+      },
+      "email": {
+        "title": "이메일",
+        "hours": "24시간 접수 가능"
+      },
+      "visit": {
+        "title": "방문 상담",
+        "address": "부산광역시 중구",
+        "note": "사전 예약 필수"
+      },
+      "notice": {
+        "title": "문의 전 확인사항",
+        "item1": "FAQ에서 먼저 답변을 찾아보세요",
+        "item2": "평일 접수 건은 1-2일 내 답변",
+        "item3": "주말/공휴일 접수는 다음 영업일 처리",
+        "item4": "급한 문의는 전화 상담을 이용해주세요"
+      }
+    },
+    "form": {
+      "name": "이름",
+      "email": "이메일",
+      "phone": "연락처",
+      "category": "문의 유형",
+      "subject": "제목",
+      "message": "문의 내용",
+      "namePlaceholder": "이름을 입력하세요",
+      "subjectPlaceholder": "문의 제목을 입력하세요",
+      "messagePlaceholder": "문의 내용을 자세히 입력해주세요",
+      "privacyConsent": "개인정보 수집 및 이용에 동의합니다",
+      "privacyLink": "개인정보 처리방침 보기",
+      "submit": "문의 접수하기",
+      "submitting": "전송 중...",
+      "submitSuccess": "✓ 전송 완료!"
+    },
+    "validation": {
+      "required": "필수 항목을 모두 입력해주세요.",
+      "email": "올바른 이메일 형식을 입력해주세요."
+    },
+    "error": {
+      "submitFailed": "문의 전송에 실패했습니다."
+    },
+    "success": {
+      "message1": "문의가 성공적으로 접수되었습니다.",
+      "message2": "빠른 시일 내에 답변드리겠습니다."
+    }
+  },
+  "privacy": {
+    "title": "개인정보 처리방침",
+    "intro": "우리 부산 GO?(이하 \"서비스\")는 「개인정보 보호법」 등 관련 법령을 준수하며, 부산 관광 정보 제공 및 예약·문의 서비스 제공과 관련하여 이용자의 개인정보를 안전하게 보호하기 위해 다음과 같이 개인정보 처리방침을 수립·운영합니다.",
+    "article1": {
+      "title": "제1조(수집하는 개인정보의 항목 및 수집 방법)",
+      "intro": "서비스는 회원가입, 예약, 문의·상담, 이벤트 참여 등 과정에서 아래와 같은 개인정보를 수집할 수 있습니다.",
+      "item1": "회원가입 시: 이름, 이메일 주소, 비밀번호, 휴대전화번호",
+      "item2": "예약/문의 시: 이름, 연락처, 이메일, 예약 또는 문의 내용",
+      "item3": "서비스 이용 시 자동 수집: 접속 IP, 쿠키, 방문 일시, 이용 기록, 브라우저/기기 정보 등"
+    },
+    "article2": {
+      "title": "제2조(개인정보의 수집 및 이용 목적)",
+      "item1": "부산 지역 관광지, 축제, 맛집, 여행코스 등 정보 제공 및 맞춤형 콘텐츠 추천",
+      "item2": "관광 상품, 체험 프로그램 등의 예약 접수·변경·취소 및 이용 안내",
+      "item3": "이용자 문의 및 민원 처리, 공지사항 전달",
+      "item4": "서비스 이용 통계·분석을 통한 서비스 품질 개선 및 신규 관광 콘텐츠 개발",
+      "item5": "보안, 부정 이용 방지 및 서비스 안정성 확보"
+    },
+    "article3": {
+      "title": "제3조(개인정보의 보유 및 이용 기간)",
+      "intro": "서비스는 관련 법령에서 정한 기간 또는 이용자의 동의 범위 내에서 개인정보를 보유·이용하며, 원칙적으로 수집 및 이용 목적이 달성되면 지체 없이 파기합니다.",
+      "item1": "회원 정보: 회원 탈퇴 시까지 보관",
+      "item2": "예약 및 결제 관련 기록: 전자상거래 관련 법령에 따라 5년간 보관",
+      "item3": "소비자 불만 또는 분쟁 처리 기록: 3년간 보관",
+      "item4": "접속 로그 등 서비스 이용 기록: 통신비밀보호법에 따라 3개월 이상 보관"
+    },
+    "article4": {
+      "title": "제4조(개인정보의 제3자 제공 및 처리 위탁)",
+      "content": "서비스는 이용자의 동의 없이는 개인정보를 외부에 제공하지 않으며, 법령에 근거가 있는 경우에만 예외적으로 제공할 수 있습니다. 또한 서비스 제공을 위하여 필요한 경우, 개인정보 처리 업무를 신뢰할 수 있는 외부 업체에 위탁할 수 있으며, 이 경우 위탁받는 자와 업무 내용, 보유 기간 등을 이용자에게 고지합니다."
+    },
+    "article5": {
+      "title": "제5조(이용자의 권리와 행사 방법)",
+      "item1": "이용자는 언제든지 자신의 개인정보에 대한 열람, 정정, 삭제, 처리정지 등을 요청할 수 있습니다.",
+      "item2": "회원 탈퇴를 통하여 개인정보 삭제를 요청할 수 있습니다.",
+      "item3": "서비스는 본인 확인 후 지체 없이 필요한 조치를 취합니다."
+    },
+    "article6": {
+      "title": "제6조(개인정보의 파기)",
+      "content": "서비스는 개인정보의 보유 기간이 경과하거나 처리 목적이 달성된 경우, 지체 없이 해당 정보를 복구가 불가능한 방법으로 파기합니다."
+    },
+    "article7": {
+      "title": "제7조(개인정보 보호를 위한 안전성 확보조치)",
+      "content": "서비스는 개인정보의 안전한 처리를 위하여 접근 권한 관리, 암호화, 보안 프로그램 설치, 접속 기록 보관 등 필요한 기술적·관리적 보호조치를 시행합니다."
+    },
+    "article8": {
+      "title": "제8조(개인정보 보호책임자)",
+      "intro": "이용자는 개인정보 보호와 관련한 문의, 불만 처리, 피해 구제 등을 아래 연락처로 요청할 수 있습니다.",
+      "item1": "개인정보 보호책임자: [이름]",
+      "item2": "이메일: [이메일 주소]",
+      "item3": "연락처: [전화번호]"
+    },
+    "article9": {
+      "title": "제9조(개인정보 처리방침의 변경)",
+      "content": "본 개인정보 처리방침은 관련 법령, 정책 또는 서비스 내용의 변경에 따라 수정될 수 있으며, 중요한 변경 사항이 있을 경우 서비스 내 공지사항을 통하여 사전에 안내합니다.",
+      "date": "공고일자: [2025.12.08] / 시행일자: [2025.12.08]"
+    }
+  },
+  "terms": {
+    "title": "이용약관",
+    "intro": "이 이용약관은 우리 부산 GO? (이하 \"서비스\")가 제공하는 부산 관광 관련 정보 및 예약·문의 서비스 이용과 관련하여, 서비스와 이용자 간의 권리, 의무 및 책임 사항, 기타 필요한 사항을 규정함을 목적으로 합니다.",
+    "article1": {
+      "title": "제1조(목적)",
+      "content": "이 약관은 서비스가 운영하는 사이트를 통하여 제공하는 부산 관광 정보 서비스 및 관련 제반 서비스의 이용과 관련하여 서비스와 이용자 간의 권리, 의무 및 책임 사항을 규정하는 것을 목적으로 합니다."
+    },
+    "article2": {
+      "title": "제2조(정의)",
+      "item1": "\"서비스\"란 우리 부산 GO?가 제공하는 웹사이트 및 이에 부수되는 모든 서비스를 말합니다.",
+      "item2": "\"이용자\"란 본 약관에 따라 서비스가 제공하는 콘텐츠를 이용하는 회원 및 비회원을 말합니다.",
+      "item3": "\"회원\"이란 서비스에 회원 등록을 한 자로서, 지속적으로 서비스를 이용할 수 있는 자를 말합니다.",
+      "item4": "\"비회원\"이란 회원으로 가입하지 않고 서비스를 이용하는 자를 말합니다."
+    },
+    "article3": {
+      "title": "제3조(약관의 효력 및 변경)",
+      "item1": "이 약관은 서비스 화면에 게시하거나 기타의 방법으로 이용자에게 공지함으로써 효력이 발생합니다.",
+      "item2": "서비스는 관련 법령을 위배하지 않는 범위에서 약관을 개정할 수 있으며, 약관이 변경되는 경우 사전에 공지합니다.",
+      "item3": "이용자는 변경된 약관에 동의하지 않을 경우 서비스 이용을 중단하고 회원 탈퇴를 요청할 수 있습니다. 변경된 약관의 효력 발생일 이후에도 서비스를 계속 이용하는 경우, 변경된 약관에 동의한 것으로 간주됩니다."
+    },
+    "article4": {
+      "title": "제4조(서비스의 제공 및 변경)",
+      "item1": "부산 지역 관광지, 축제, 행사, 맛집, 숙박, 여행코스 등 관광 정보 제공",
+      "item2": "관광 상품, 체험 프로그램 등의 예약·문의 서비스",
+      "item3": "기타 서비스가 정하는 관광 관련 부가 서비스",
+      "item4": "서비스는 운영상 또는 기술상의 필요에 따라 제공 중인 서비스를 변경, 중단할 수 있으며, 중요한 변경의 경우 사전에 공지합니다."
+    },
+    "article5": {
+      "title": "제5조(이용자의 의무)",
+      "item1": "관계 법령, 약관, 이용 안내 및 서비스가 공지하는 사항을 준수할 의무",
+      "item2": "타인의 개인정보를 도용하는 행위, 허위 정보 입력 행위의 금지",
+      "item3": "서비스의 운영을 방해하거나 안정성을 해치는 행위의 금지",
+      "item4": "서비스를 통하여 얻은 정보를 사전 동의 없이 무단 복제, 배포, 상업적으로 이용하는 행위의 금지"
+    },
+    "article6": {
+      "title": "제6조(저작권 및 콘텐츠 이용)",
+      "content": "서비스가 제공하는 텍스트, 이미지, 영상, 데이터 등 모든 콘텐츠에 대한 저작권 및 기타 지적재산권은 서비스 또는 정당한 권리자에게 귀속합니다. 이용자는 서비스를 통해 제공되는 콘텐츠를 사전 허가 없이 복제, 전송, 배포, 판매, 출판하여서는 아니 됩니다."
+    },
+    "article7": {
+      "title": "제7조(책임의 한계)",
+      "content": "서비스는 천재지변, 기술적 장애, 통신사 사정 등 불가항력적인 사유로 인하여 서비스를 제공할 수 없는 경우 그에 대한 책임을 지지 않습니다. 또한, 서비스는 이용자 간 또는 이용자와 제3자 간에 발생한 분쟁에 대하여 원칙적으로 개입하지 않으며, 이로 인한 손해에 대하여 책임을 지지 않습니다."
+    },
+    "article8": {
+      "title": "제8조(준거법 및 관할)",
+      "content": "이 약관의 해석 및 적용에 관하여는 대한민국 법령을 준거법으로 하며, 서비스 이용과 관련하여 분쟁이 발생하는 경우 민사소송법 등 관련 법령에 따른 관할 법원을 전속 관할 법원으로 합니다."
+    },
+    "supplementary": {
+      "title": "부칙",
+      "content": "본 약관은 2025년 12월 08일부터 시행합니다."
+    }
+  }
+}
+
+

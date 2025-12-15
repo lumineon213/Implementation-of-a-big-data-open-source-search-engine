@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./MyPage.css";
 import { api } from "../../api/axios";
 import { useDarkMode } from "../../contexts/DarkModeContext";
@@ -31,6 +32,7 @@ type HistoryTab = "all" | "stamp" | "gift" | "badge";
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [user, setUser] = useState<MyPageDTO | null>(null);
   const [editData, setEditData] = useState<MyPageDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,7 +83,7 @@ const MyPage: React.FC = () => {
     // 토큰 여부 확인 (JWT가 없으면 로그인 페이지로 이동)
     const token = localStorage.getItem('token');
     if (!token) {
-      console.log("토큰이 없어서 로그인 페이지로 이동합니다.");
+      console.log(t('mypage.messages.tokenRequired'));
       navigate('/login');
       setLoading(false);
       return;
@@ -117,7 +119,7 @@ const MyPage: React.FC = () => {
       }
     } catch (e) {
       console.error("마이페이지 로딩 실패:", e);
-      alert("마이페이지 정보를 불러올 수 없습니다.");
+      alert(t('mypage.userInfo.loadingError'));
       navigate('/login');
     } finally {
       setLoading(false);
@@ -205,7 +207,7 @@ const MyPage: React.FC = () => {
       }
     } catch (error) {
       console.error('장소 정보 로딩 실패:', error);
-      alert('장소 정보를 불러올 수 없습니다.');
+      alert(t('mypage.messages.placeLoadError'));
     }
   };
   
@@ -265,15 +267,16 @@ const MyPage: React.FC = () => {
       const hours = Math.floor(diff / (1000 * 60 * 60));
       if (hours === 0) {
         const minutes = Math.floor(diff / (1000 * 60));
-        return minutes <= 1 ? "방금 전" : `${minutes}분 전`;
+        return minutes <= 1 ? t('mypage.date.justNow') : t('mypage.date.minutesAgo', { count: minutes });
       }
-      return `${hours}시간 전`;
+      return t('mypage.date.hoursAgo', { count: hours });
     } else if (days === 1) {
-      return "어제";
+      return t('mypage.date.yesterday');
     } else if (days < 7) {
-      return `${days}일 전`;
+      return t('mypage.date.daysAgo', { count: days });
     } else {
-      return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+      const currentLang = localStorage.getItem('language') || 'ko';
+      return date.toLocaleDateString(currentLang === 'ko' ? 'ko-KR' : 'en-US', { month: 'short', day: 'numeric' });
     }
   };
 
@@ -408,15 +411,15 @@ const MyPage: React.FC = () => {
           }
           
           console.log('✅ 모든 상태 업데이트 완료, 최종 URL:', urlWithTimestamp);
-          alert('프로필 이미지가 성공적으로 변경되었습니다.');
+          alert(t('mypage.profile.imageChanged'));
         } else {
           console.warn('⚠️ 응답에 profileImage URL이 없습니다');
           console.warn('⚠️ response.data.data:', response.data.data);
-          alert('이미지 URL을 받지 못했습니다. 서버 응답을 확인하세요.');
+          alert(t('mypage.profile.imageChangeError'));
         }
       } else {
         console.error('❌ success가 false:', response.data.message);
-        alert('이미지 업로드에 실패했습니다: ' + response.data.message);
+        alert(t('mypage.profile.imageChangeError') + ': ' + response.data.message);
         setProfilePreview(null);
       }
     } catch (error: any) {
@@ -450,13 +453,13 @@ const MyPage: React.FC = () => {
       if (response.data.success) {
         setUser(editData);
         setMode("view");
-        alert("정보가 수정되었습니다.");
+        alert(t('mypage.userInfo.saveSuccess'));
       } else {
-        alert("정보 수정에 실패했습니다: " + response.data.message);
+        alert(t('mypage.userInfo.saveError') + ': ' + response.data.message);
       }
     } catch (error: any) {
       console.error("저장 실패:", error);
-      alert("정보 수정에 실패했습니다.");
+      alert(t('mypage.userInfo.saveError'));
     } finally {
       setIsSaving(false);
     }
@@ -475,19 +478,19 @@ const MyPage: React.FC = () => {
     navigate("/login");
   };
 
-  if (loading) return <div style={{ padding: "50px", textAlign: "center" }}>로딩중...</div>;
+  if (loading) return <div style={{ padding: "50px", textAlign: "center" }}>{t('mypage.loading')}</div>;
 
   if (!user)
     return (
       <div className="mypage-nologin">
-        <p>로그인이 필요합니다.</p>
-        <Link to="/login">로그인</Link>
+        <p>{t('mypage.loginRequired')}</p>
+        <Link to="/login">{t('mypage.login')}</Link>
       </div>
     );
 
   return (
     <div className="mypage-layout">
-      <h2 className="mypage-title">마이페이지</h2>
+      <h2 className="mypage-title">{t('mypage.title')}</h2>
 
       <div className="mypage-main">
         {/* LEFT - 프로필 */}
@@ -496,16 +499,16 @@ const MyPage: React.FC = () => {
             <button
     className="profile-logout-btn"
     onClick={handleLogout}
-    title="로그아웃"
+    title={t('mypage.logout')}
   >
-    로그아웃
+    {t('mypage.logout')}
   </button>
             {/* 프로필 이미지 */}
             <img
               key={profilePreview || user.profileImage}
               src={profilePreview || user.profileImage || "/default-profile.png"}
               className="profile-image"
-              alt="프로필"
+              alt={t('mypage.profile.title')}
               crossOrigin="anonymous"
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
@@ -529,25 +532,25 @@ const MyPage: React.FC = () => {
               onChange={handleProfileUpload}
             />
 
-            <h3 className="profile-name">{user.accountName} 님</h3>
+            <h3 className="profile-name">{user.accountName} {t('mypage.profile.nameSuffix')}</h3>
 
             <button
               className="profile-edit-btn"
               onClick={() => document.getElementById("profileUpload")?.click()}
             >
-              프로필 이미지 변경
+              {t('mypage.profile.changeImage')}
             </button>
           </div>
 
           {/* 회원 정보 카드 */}
           <div className="benefit-card">
-            <h3>회원 정보</h3>
+            <h3>{t('mypage.userInfo.title')}</h3>
             <ul>
-              <li><strong>아이디:</strong> {user.accountId}</li>
-              <li><strong>이름:</strong> {user.accountName}</li>
-              <li><strong>이메일:</strong> {user.email}</li>
-              <li><strong>전화번호:</strong> {user.phoneNumber || "미등록"}</li>
-              <li><strong>가입일:</strong> {user.regDate ? new Date(user.regDate).toLocaleDateString('ko-KR') : "-"}</li>
+              <li><strong>{t('mypage.userInfo.userId')}:</strong> {user.accountId}</li>
+              <li><strong>{t('mypage.userInfo.userName')}:</strong> {user.accountName}</li>
+              <li><strong>{t('mypage.userInfo.email')}:</strong> {user.email}</li>
+              <li><strong>{t('mypage.userInfo.phone')}:</strong> {user.phoneNumber || t('mypage.userInfo.notRegistered')}</li>
+              <li><strong>{t('mypage.userInfo.regDate')}:</strong> {user.regDate ? new Date(user.regDate).toLocaleDateString(localStorage.getItem('language') === 'en' ? 'en-US' : 'ko-KR') : "-"}</li>
             </ul>
             
             {mode === "view" && (
@@ -556,7 +559,7 @@ const MyPage: React.FC = () => {
                 onClick={() => setMode("edit")}
                 style={{ marginTop: "15px" }}
               >
-                정보 수정
+                {t('mypage.userInfo.edit')}
               </button>
             )}
           </div>
@@ -568,22 +571,22 @@ const MyPage: React.FC = () => {
           {/* 수정 모드 */}
           {mode === "edit" && (
             <div className="profile-edit-box">
-              <h4>회원 정보 수정</h4>
-              <label>이름</label>
+              <h4>{t('mypage.userInfo.editTitle')}</h4>
+              <label>{t('mypage.userInfo.userName')}</label>
               <input
                 type="text"
                 value={editData?.accountName || ""}
                 onChange={(e) => handleChange("accountName", e.target.value)}
               />
 
-              <label>이메일</label>
+              <label>{t('mypage.userInfo.email')}</label>
               <input
                 type="email"
                 value={editData?.email || ""}
                 onChange={(e) => handleChange("email", e.target.value)}
               />
 
-              <label>전화번호</label>
+              <label>{t('mypage.userInfo.phone')}</label>
               <input
                 type="tel"
                 value={editData?.phoneNumber || ""}
@@ -591,9 +594,9 @@ const MyPage: React.FC = () => {
               />
 
               <div className="edit-btn-row">
-                <button onClick={handleCancel}>취소</button>
+                <button onClick={handleCancel}>{t('mypage.userInfo.cancel')}</button>
                 <button disabled={isSaving} onClick={handleSave}>
-                  {isSaving ? "저장중..." : "저장하기"}
+                  {isSaving ? t('mypage.userInfo.saving') : t('mypage.userInfo.save')}
                 </button>
               </div>
             </div>
@@ -602,7 +605,7 @@ const MyPage: React.FC = () => {
           {/* 이벤트 내역 패널 */}
           {mode === "view" && (
             <div className="benefit-card" style={{ marginBottom: "20px" }}>
-              <h3>📋 이벤트 내역</h3>
+              <h3>{t('mypage.eventHistory.title')}</h3>
                   
                   {/* 탭 메뉴 */}
                   <div style={getDarkModeStyle({ 
@@ -626,7 +629,7 @@ const MyPage: React.FC = () => {
                         fontWeight: "500"
                       }}
                     >
-                      전체
+                      {t('mypage.eventHistory.tabs.all')}
                     </button>
                     <button
                       onClick={() => handleHistoryTabChange("stamp")}
@@ -641,7 +644,7 @@ const MyPage: React.FC = () => {
                         fontWeight: "500"
                       }}
                     >
-                      ✉️ 스템프
+                      {t('mypage.eventHistory.tabs.stamp')}
                     </button>
                     <button
                       onClick={() => handleHistoryTabChange("gift")}
@@ -656,7 +659,7 @@ const MyPage: React.FC = () => {
                         fontWeight: "500"
                       }}
                     >
-                      🎁 쿠폰
+                      {t('mypage.eventHistory.tabs.gift')}
                     </button>
                     <button
                       onClick={() => handleHistoryTabChange("badge")}
@@ -671,7 +674,7 @@ const MyPage: React.FC = () => {
                         fontWeight: "500"
                       }}
                     >
-                      🏅 배지
+                      {t('mypage.eventHistory.tabs.badge')}
                     </button>
                   </div>
                   
@@ -680,7 +683,7 @@ const MyPage: React.FC = () => {
                     {filteredHistory.length === 0 ? (
                       <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
                         <div style={{ fontSize: "48px", marginBottom: "10px" }}>📭</div>
-                        <p>이벤트 내역이 없습니다</p>
+                        <p>{t('mypage.eventHistory.empty')}</p>
                       </div>
                     ) : (
                       <>
@@ -714,7 +717,7 @@ const MyPage: React.FC = () => {
                                 <span>{formatDate(item.createdAt)}</span>
                                 {item.count > 1 && (
                                   <span style={{ background: isDarkMode ? "rgba(100, 181, 246, 0.2)" : "#e3f2fd", padding: "2px 8px", borderRadius: "10px", color: isDarkMode ? "#64b5f6" : "#1976d2" }}>
-                                    +{item.count}개
+                                    +{item.count}{t('mypage.eventHistory.items')}
                                   </span>
                                 )}
                               </div>
@@ -747,7 +750,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              이전
+                              {t('mypage.eventHistory.previous')}
                             </button>
                             <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
                               {historyPage} / {totalHistoryPages}
@@ -765,7 +768,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              다음
+                              {t('mypage.eventHistory.next')}
                             </button>
                           </div>
                         )}
@@ -785,14 +788,14 @@ const MyPage: React.FC = () => {
           {/* 리뷰 내역 패널 */}
           {mode === "view" && (
             <div className="benefit-card" style={{ marginBottom: "20px" }}>
-              <h3>✍️ 내가 작성한 리뷰</h3>
+              <h3>{t('mypage.reviews.title')}</h3>
                   
                   {/* 리뷰 리스트 */}
                   <div style={{ minHeight: "200px", marginTop: "15px" }}>
                     {myReviews.length === 0 ? (
                       <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
                         <div style={{ fontSize: "48px", marginBottom: "10px" }}>📝</div>
-                        <p>작성한 리뷰가 없습니다</p>
+                        <p>{t('mypage.reviews.empty')}</p>
                       </div>
                     ) : (
                       <>
@@ -832,7 +835,7 @@ const MyPage: React.FC = () => {
                                       <img
                                         key={idx}
                                         src={img}
-                                        alt={`리뷰 이미지 ${idx + 1}`}
+                                        alt={`${t('mypage.reviews.imageAlt')} ${idx + 1}`}
                                         style={{
                                           width: "60px",
                                           height: "60px",
@@ -892,7 +895,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              이전
+                              {t('mypage.reviews.previous')}
                             </button>
                             <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
                               {reviewPage} / {totalReviewPages}
@@ -910,7 +913,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              다음
+                              {t('mypage.reviews.next')}
                             </button>
                           </div>
                         )}
@@ -923,14 +926,14 @@ const MyPage: React.FC = () => {
           {/* 문의 답변 패널 */}
           {mode === "view" && (
             <div className="benefit-card" style={{ marginBottom: "20px" }}>
-              <h3>💬 문의사항 답변</h3>
+              <h3>{t('mypage.inquiries.title')}</h3>
                   
                   {/* 문의 리스트 */}
                   <div style={{ minHeight: "200px", marginTop: "15px" }}>
                     {answeredInquiries.length === 0 ? (
                       <div style={{ textAlign: "center", padding: "40px 20px", color: isDarkMode ? "var(--text-tertiary)" : "#999" }}>
                         <div style={{ fontSize: "48px", marginBottom: "10px" }}>📭</div>
-                        <p>답변된 문의가 없습니다</p>
+                        <p>{t('mypage.inquiries.empty')}</p>
                       </div>
                     ) : (
                       <>
@@ -963,7 +966,7 @@ const MyPage: React.FC = () => {
                                   lineHeight: "1.5"
                                 }}>
                                   <div style={{ fontWeight: "600", color: isDarkMode ? "#81c784" : "#2e7d32", marginBottom: "4px" }}>
-                                    ✓ 답변:
+                                    ✓ {t('mypage.inquiries.answer')}:
                                   </div>
                                   <div style={{ color: isDarkMode ? "var(--text-secondary)" : "#555" }}>
                                     {inquiry.answerContent}
@@ -972,9 +975,9 @@ const MyPage: React.FC = () => {
                               </div>
                             </div>
                             <div style={{ fontSize: "11px", color: isDarkMode ? "var(--text-tertiary)" : "#999", marginTop: "8px", display: "flex", gap: "12px" }}>
-                              <span>문의일: {inquiry.createdDate ? new Date(inquiry.createdDate).toLocaleDateString('ko-KR') : "-"}</span>
+                              <span>{t('mypage.inquiries.inquiryDate')}: {inquiry.createdDate ? new Date(inquiry.createdDate).toLocaleDateString(localStorage.getItem('language') === 'en' ? 'en-US' : 'ko-KR') : "-"}</span>
                               {inquiry.answeredDate && (
-                                <span>답변일: {new Date(inquiry.answeredDate).toLocaleDateString('ko-KR')}</span>
+                                <span>{t('mypage.inquiries.answerDate')}: {new Date(inquiry.answeredDate).toLocaleDateString(localStorage.getItem('language') === 'en' ? 'en-US' : 'ko-KR')}</span>
                               )}
                             </div>
                           </div>
@@ -1005,7 +1008,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              이전
+                              {t('mypage.inquiries.previous')}
                             </button>
                             <span style={{ fontSize: "13px", color: isDarkMode ? "var(--text-secondary)" : "#666" }}>
                               {inquiryPage} / {totalInquiryPages}
@@ -1023,7 +1026,7 @@ const MyPage: React.FC = () => {
                                 fontSize: "13px"
                               })}
                             >
-                              다음
+                              {t('mypage.inquiries.next')}
                             </button>
                           </div>
                         )}
