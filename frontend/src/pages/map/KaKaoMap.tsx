@@ -23,6 +23,9 @@ interface KakaoMapProps {
   setMarines: (marines: any[]) => void;
   setUrbans: (urbans: any[]) => void;
   setStays: (stays: any[]) => void;
+  setParkings: (parkings: any[]) => void;
+  setTours: (tours: any[]) => void;
+  setShoppings: (shoppings: any[]) => void;
   setCurrentLocation: (location: { lat: number; lng: number } | null) => void;
   onRestaurantClick: (restaurant: any) => void;
   externalLocation?: { lat: number; lng: number; title: string } | null;
@@ -38,6 +41,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setMarines,
   setUrbans,
   setStays,
+  setParkings,
+  setTours,
+  setShoppings,
   setCurrentLocation,
   onRestaurantClick,
   externalLocation
@@ -55,6 +61,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const marineMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const urbanMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const stayMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const parkingMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const tourMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const shoppingMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const currentLocation = useRef<{lat: number, lng: number} | null>(null);
   const currentInfowindow = useRef<any>(null);
 
@@ -415,6 +424,324 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [setMarines]);
 
+  /* Solr에서 명소(tour) 데이터 가져오기 */
+  const fetchTours = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    try {
+      console.log("🏛️ 명소 데이터 가져오기 시작...", { lat, lng, radiusKm });
+      const response = await fetch("http://localhost:8484/api/search");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+
+      const resultsArray = Array.isArray(data) ? data : (data?.list || []);
+      console.log(">>> 명소 데이터 수:", resultsArray.length);
+      console.log(">>> 첫 번째 데이터:", resultsArray[0]);
+      console.log(">>> 현재 위치:", { lat, lng, radiusKm });
+      
+      if (resultsArray.length === 0) {
+        console.log("⚠️ 명소 데이터가 없습니다.");
+        setTours([]);
+        displayTourMarkers([]);
+        return;
+      }
+
+      // 좌표가 있는 명소만 필터링하고 거리 계산
+      const nearbyTours = resultsArray
+        .filter((tour: any) => {
+          // TourDTO에서 latitude, longitude는 String 타입
+          const latValue = tour.latitude || tour.lat;
+          const lngValue = tour.longitude || tour.lng;
+          
+          if (!latValue || !lngValue) {
+            console.log("❌ 좌표 없음:", tour.spotId || tour.id, tour.title);
+            return false;
+          }
+          
+          // 배열이면 첫 번째 요소 사용 (Solr 직접 응답인 경우)
+          const tourLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          const tourLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          const tourLat = typeof tourLatStr === 'string' ? parseFloat(tourLatStr) : Number(tourLatStr);
+          const tourLng = typeof tourLngStr === 'string' ? parseFloat(tourLngStr) : Number(tourLngStr);
+          
+          console.log("🔍 좌표 체크:", tour.spotId || tour.id, { tourLat, tourLng });
+          
+          if (isNaN(tourLat) || isNaN(tourLng)) {
+            console.log("❌ 좌표 변환 실패:", tour.spotId || tour.id);
+            return false;
+          }
+
+          const distance = getDistance(lat, lng, tourLat, tourLng);
+          console.log("📏 거리:", tour.spotId || tour.id, distance.toFixed(2) + "km");
+          return distance <= radiusKm;
+        })
+        .map((tour: any) => {
+          const latValue = tour.latitude || tour.lat;
+          const lngValue = tour.longitude || tour.lng;
+          
+          const tourLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          const tourLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          const tourLat = typeof tourLatStr === 'string' ? parseFloat(tourLatStr) : Number(tourLatStr);
+          const tourLng = typeof tourLngStr === 'string' ? parseFloat(tourLngStr) : Number(tourLngStr);
+          
+          return {
+            id: tour.spotId || tour.id,
+            title: tour.title,
+            address: tour.address,
+            image_url: tour.imageUrl || tour.image_url,
+            latitude: tourLat,
+            longitude: tourLng,
+            tel: tour.tel,
+            homepage: tour.homepage,
+            description: tour.description,
+            theme_id: tour.themeId || tour.theme_id,
+            distance: getDistance(lat, lng, tourLat, tourLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+      
+      console.log("✅ 필터링된 명소 수:", nearbyTours.length);
+      console.log("✅ 필터링된 첫 번째 데이터:", nearbyTours[0]);
+      
+      setTours(nearbyTours);
+      displayTourMarkers(nearbyTours);
+
+    } catch (error: any) {
+      console.error("❌ 명소 데이터 불러오기 실패:", error);
+      
+      // 연결 오류인 경우 더 자세한 메시지 표시
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('ERR_CONNECTION_REFUSED')) {
+        console.error("백엔드 서버(localhost:8484)가 실행 중인지 확인해주세요.");
+        setTours([]);
+        displayTourMarkers([]);
+      } else {
+        alert("명소 데이터를 불러오는데 실패했습니다: " + (error.message || error));
+        setTours([]);
+        displayTourMarkers([]);
+      }
+    }
+  }, [setTours]);
+
+  /* Solr에서 기념품(shopping) 데이터 가져오기 */
+  const fetchShoppings = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    try {
+      console.log("🛍️ 기념품 데이터 가져오기 시작...", { lat, lng, radiusKm });
+      const response = await fetch("http://localhost:8484/api/shopping/search?page=1&size=100");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const resultsArray = data?.items || [];
+      console.log(">>> 기념품 데이터 수:", resultsArray.length);
+      console.log(">>> 첫 번째 데이터:", resultsArray[0]);
+      console.log(">>> 현재 위치:", { lat, lng, radiusKm });
+      
+      if (resultsArray.length === 0) {
+        console.log("⚠️ 기념품 데이터가 없습니다.");
+        setShoppings([]);
+        displayShoppingMarkers([]);
+        return;
+      }
+
+      // 좌표가 있는 기념품만 필터링하고 거리 계산
+      const nearbyShoppings = resultsArray
+        .filter((shopping: any) => {
+          const latValue = shopping.lat;
+          const lngValue = shopping.lng;
+          
+          if (!latValue || !lngValue) {
+            console.log("❌ 좌표 없음:", shopping.id, shopping.title || shopping.main_title);
+            return false;
+          }
+          
+          // 배열이면 첫 번째 요소 사용
+          const shoppingLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          const shoppingLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          const shoppingLat = typeof shoppingLatStr === 'string' ? parseFloat(shoppingLatStr) : Number(shoppingLatStr);
+          const shoppingLng = typeof shoppingLngStr === 'string' ? parseFloat(shoppingLngStr) : Number(shoppingLngStr);
+          
+          console.log("🔍 좌표 체크:", shopping.id, { shoppingLat, shoppingLng });
+          
+          if (isNaN(shoppingLat) || isNaN(shoppingLng)) {
+            console.log("❌ 좌표 변환 실패:", shopping.id);
+            return false;
+          }
+
+          const distance = getDistance(lat, lng, shoppingLat, shoppingLng);
+          console.log("📏 거리:", shopping.id, distance.toFixed(2) + "km");
+          return distance <= radiusKm;
+        })
+        .map((shopping: any) => {
+          const latValue = shopping.lat;
+          const lngValue = shopping.lng;
+          
+          const shoppingLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          const shoppingLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          const shoppingLat = typeof shoppingLatStr === 'string' ? parseFloat(shoppingLatStr) : Number(shoppingLatStr);
+          const shoppingLng = typeof shoppingLngStr === 'string' ? parseFloat(shoppingLngStr) : Number(shoppingLngStr);
+          
+          return {
+            id: shopping.id,
+            title: shopping.title || shopping.main_title,
+            main_title: shopping.main_title,
+            address: shopping.addr1,
+            gugun_nm: shopping.gugun_nm,
+            lat: shopping.lat,
+            lng: shopping.lng,
+            latitude: shoppingLat,
+            longitude: shoppingLng,
+            main_img_normal: shopping.main_img_normal,
+            main_img_thumb: shopping.main_img_thumb,
+            cntct_tel_s: shopping.cntct_tel_s,
+            homepage_url: shopping.homepage_url,
+            usage_day_week_and_time: shopping.usage_day_week_and_time,
+            itemcntnts: shopping.itemcntnts,
+            distance: getDistance(lat, lng, shoppingLat, shoppingLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+      
+      console.log("✅ 필터링된 기념품 수:", nearbyShoppings.length);
+      console.log("✅ 필터링된 첫 번째 데이터:", nearbyShoppings[0]);
+      
+      setShoppings(nearbyShoppings);
+      displayShoppingMarkers(nearbyShoppings);
+
+    } catch (error: any) {
+      console.error("❌ 기념품 데이터 불러오기 실패:", error);
+      
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('ERR_CONNECTION_REFUSED')) {
+        console.error("백엔드 서버(localhost:8484)가 실행 중인지 확인해주세요.");
+        setShoppings([]);
+        displayShoppingMarkers([]);
+      } else {
+        alert("기념품 데이터를 불러오는데 실패했습니다: " + (error.message || error));
+        setShoppings([]);
+        displayShoppingMarkers([]);
+      }
+    }
+  }, [setShoppings]);
+
+  /* Solr에서 주차장 데이터 가져오기 */
+  const fetchParkings = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    try {
+      console.log("🅿️ 주차장 데이터 가져오기 시작...", { lat, lng, radiusKm });
+      const response = await fetch("http://localhost:8484/api/parking/search?page=1&size=100");
+      const data = await response.json();
+
+      const resultsArray = Array.isArray(data) ? data : (data?.list || []);
+      console.log(">>> 주차장 데이터 수:", resultsArray.length);
+      console.log(">>> 첫 번째 데이터:", resultsArray[0]);
+      console.log(">>> 현재 위치:", { lat, lng, radiusKm });
+      
+      if (resultsArray.length === 0) {
+        console.log("⚠️ 주차장 데이터가 없습니다.");
+        setParkings([]);
+        displayParkingMarkers([]);
+        return;
+      }
+
+      // 좌표가 있는 주차장만 필터링하고 거리 계산
+      const nearbyParkings = resultsArray
+        .filter((parking: any) => {
+          // API 응답 형식 확인 및 좌표 추출
+          // Solr에 저장된 형식: lat 필드에 위도, lng 필드에 경도가 저장되어야 함
+          // 하지만 실제로는 반대로 저장되어 있을 수 있으므로 두 경우 모두 처리
+          let latValue = parking.latitude || parking.lat;
+          let lngValue = parking.longitude || parking.lng;
+          
+          if (!latValue || !lngValue) {
+            console.log("❌ 좌표 없음:", parking.id || parking.mgntNum, parking.name || parking.title);
+            return false;
+          }
+          
+          // 배열이면 첫 번째 요소 사용
+          let parkingLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          let parkingLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          let parkingLat = typeof parkingLatStr === 'string' ? parseFloat(parkingLatStr) : Number(parkingLatStr);
+          let parkingLng = typeof parkingLngStr === 'string' ? parseFloat(parkingLngStr) : Number(parkingLngStr);
+          
+          // 좌표가 반대로 저장된 경우 자동 교정 (부산 지역: 위도 35.x, 경도 129.x)
+          // 위도는 33~38 사이, 경도는 124~132 사이가 한국 범위
+          if (parkingLat > 100 || parkingLng < 100) {
+            // lat이 100보다 크면 경도값, lng이 100보다 작으면 위도값
+            console.log("⚠️ 좌표 교정 필요:", { 원본: { lat: parkingLat, lng: parkingLng } });
+            [parkingLat, parkingLng] = [parkingLng, parkingLat]; // 교체
+            console.log("✅ 좌표 교정 후:", { lat: parkingLat, lng: parkingLng });
+          }
+          
+          console.log("🔍 좌표 체크:", parking.id || parking.mgntNum, { parkingLat, parkingLng });
+          
+          if (isNaN(parkingLat) || isNaN(parkingLng)) {
+            console.log("❌ 좌표 변환 실패:", parking.id || parking.mgntNum);
+            return false;
+          }
+
+          const distance = getDistance(lat, lng, parkingLat, parkingLng);
+          console.log("📏 거리:", parking.id || parking.mgntNum, distance.toFixed(2) + "km");
+          return distance <= radiusKm;
+        })
+        .map((parking: any) => {
+          let latValue = parking.latitude || parking.lat;
+          let lngValue = parking.longitude || parking.lng;
+          
+          let parkingLatStr = Array.isArray(latValue) ? latValue[0] : latValue;
+          let parkingLngStr = Array.isArray(lngValue) ? lngValue[0] : lngValue;
+          
+          let parkingLat = typeof parkingLatStr === 'string' ? parseFloat(parkingLatStr) : Number(parkingLatStr);
+          let parkingLng = typeof parkingLngStr === 'string' ? parseFloat(parkingLngStr) : Number(parkingLngStr);
+          
+          // 좌표가 반대로 저장된 경우 자동 교정
+          if (parkingLat > 100 || parkingLng < 100) {
+            [parkingLat, parkingLng] = [parkingLng, parkingLat];
+          }
+          
+          // API 응답 필드명 처리 (name/title, basicFee/fee_basic 등)
+          const title = parking.name || parking.title;
+          const address = parking.address;
+          const tel = parking.tel;
+          const fee_basic = parking.basicFee || parking.fee_basic;
+          const type = parking.type;
+          const parkingId = parking.id || `parking_${parking.mgntNum}`;
+          
+          return {
+            id: parkingId,
+            title: title,
+            address: address,
+            tel: tel,
+            fee_basic: fee_basic,
+            type: type,
+            latitude: parkingLat,
+            longitude: parkingLng,
+            distance: getDistance(lat, lng, parkingLat, parkingLng)
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+      
+      console.log("✅ 필터링된 주차장 수:", nearbyParkings.length);
+      console.log("✅ 필터링된 첫 번째 데이터:", nearbyParkings[0]);
+      
+      setParkings(nearbyParkings);
+      displayParkingMarkers(nearbyParkings);
+
+    } catch (error) {
+      console.error("❌ 주차장 데이터 불러오기 실패:", error);
+      alert("주차장 데이터를 불러오는데 실패했습니다.");
+    }
+  }, [setParkings]);
+
   /* Solr에서 도시여행 데이터 가져오기 */
   const fetchUrbans = useCallback(async (lat: number, lng: number, radiusKm: number) => {
     try {
@@ -521,6 +848,15 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (activeCategories.includes('숙소')) {
       fetchStays(lat, lng, newDistanceKm, searchKeyword);
     }
+    if (activeCategories.includes('주차장')) {
+      fetchParkings(lat, lng, newDistanceKm);
+    }
+    if (activeCategories.includes('명소')) {
+      fetchTours(lat, lng, newDistanceKm);
+    }
+    if (activeCategories.includes('여행코스 기념품')) {
+      fetchShoppings(lat, lng, newDistanceKm);
+    }
   };
 
   /* 음식점 카테고리 선택 시 처리 (초기 로딩 및 카테고리 전환 시) */
@@ -589,6 +925,39 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       setStays([]);
     }
   }, [activeCategories, fetchStays, setStays, searchRadiusKm, searchKeyword]);
+
+  /* 주차장 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('주차장')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchParkings(lat, lng, searchRadiusKm);
+    } else {
+      clearParkingMarkers();
+      setParkings([]);
+    }
+  }, [activeCategories, fetchParkings, setParkings, searchRadiusKm]);
+
+  /* 명소 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('명소')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchTours(lat, lng, searchRadiusKm);
+    } else {
+      clearTourMarkers();
+      setTours([]);
+    }
+  }, [activeCategories, fetchTours, setTours, searchRadiusKm]);
+
+  /* 기념품 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('여행코스 기념품')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchShoppings(lat, lng, searchRadiusKm);
+    } else {
+      clearShoppingMarkers();
+      setShoppings([]);
+    }
+  }, [activeCategories, fetchShoppings, setShoppings, searchRadiusKm]);
   
   /* 초기 지도 로드 */
   useEffect(() => {
@@ -761,6 +1130,24 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const clearStayMarkers = () => {
     stayMarkers.current.forEach(item => item.marker.setMap(null));
     stayMarkers.current = [];
+  };
+
+  /* 주차장 마커 제거 */
+  const clearParkingMarkers = () => {
+    parkingMarkers.current.forEach(item => item.marker.setMap(null));
+    parkingMarkers.current = [];
+  };
+
+  /* 명소 마커 제거 */
+  const clearTourMarkers = () => {
+    tourMarkers.current.forEach(item => item.marker.setMap(null));
+    tourMarkers.current = [];
+  };
+
+  /* 기념품 마커 제거 */
+  const clearShoppingMarkers = () => {
+    shoppingMarkers.current.forEach(item => item.marker.setMap(null));
+    shoppingMarkers.current = [];
   };
 
   /* 음식점 마커 표시 (주황색 핀 마커 사용) */
@@ -946,6 +1333,99 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     });
   };
 
+  /* 주차장 마커 표시 (회색 핀 마커 사용) */
+  const displayParkingMarkers = (parkings: any[]) => {
+    clearParkingMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    parkings.forEach(parking => {
+      const position = new window.kakao.maps.LatLng(parking.latitude, parking.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.PARKING);
+      
+      content.onclick = () => onRestaurantClick(parking);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+      
+      const title = Array.isArray(parking.title) ? parking.title[0] : parking.title;
+      const subtitle = Array.isArray(parking.address) ? parking.address[0] : parking.address;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, parking.distance)
+      });
+
+      parkingMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
+  /* 명소 마커 표시 (초록색 핀 마커 사용) */
+  const displayTourMarkers = (tours: any[]) => {
+    clearTourMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    tours.forEach(tour => {
+      const position = new window.kakao.maps.LatLng(tour.latitude, tour.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.TOUR);
+      
+      content.onclick = () => onRestaurantClick(tour);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+      
+      const title = Array.isArray(tour.title) ? tour.title[0] : tour.title;
+      const subtitle = Array.isArray(tour.address) ? tour.address[0] : tour.address;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, tour.distance)
+      });
+
+      tourMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
+  /* 기념품 마커 표시 (핑크색 핀 마커 사용) */
+  const displayShoppingMarkers = (shoppings: any[]) => {
+    clearShoppingMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    shoppings.forEach(shopping => {
+      const position = new window.kakao.maps.LatLng(shopping.latitude, shopping.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.SHOPPING);
+      
+      content.onclick = () => onRestaurantClick(shopping);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+      
+      const title = Array.isArray(shopping.title) ? shopping.title[0] : (shopping.title || (Array.isArray(shopping.main_title) ? shopping.main_title[0] : shopping.main_title));
+      const subtitle = Array.isArray(shopping.address) ? shopping.address[0] : shopping.address;
+      
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, shopping.distance)
+      });
+
+      shoppingMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
   /* 현재 위치 버튼 */
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) {
@@ -1077,6 +1557,21 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
             // 숙소 카테고리가 활성화되어 있으면 숙소 데이터 가져오기
             if (activeCategories.includes('숙소')) {
               fetchStays(lat, lng, searchRadiusKm, searchKeyword);
+            }
+
+            // 주차장 카테고리가 활성화되어 있으면 주차장 데이터 가져오기
+            if (activeCategories.includes('주차장')) {
+              fetchParkings(lat, lng, searchRadiusKm);
+            }
+
+            // 명소 카테고리가 활성화되어 있으면 명소 데이터 가져오기
+            if (activeCategories.includes('명소')) {
+              fetchTours(lat, lng, searchRadiusKm);
+            }
+
+            // 기념품 카테고리가 활성화되어 있으면 기념품 데이터 가져오기
+            if (activeCategories.includes('여행코스 기념품')) {
+              fetchShoppings(lat, lng, searchRadiusKm);
             }
           }
         );

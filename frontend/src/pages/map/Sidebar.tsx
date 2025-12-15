@@ -28,6 +28,12 @@ interface SidebarProps {
   onUrbanClick: (urban: any) => void;
   stays: any[];
   onStayClick: (stay: any) => void;
+  parkings: any[];
+  onParkingClick: (parking: any) => void;
+  tours: any[];
+  onTourClick: (tour: any) => void;
+  shoppings: any[];
+  onShoppingClick: (shopping: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -46,7 +52,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   urbans,
   onUrbanClick,
   stays,
-  onStayClick
+  onStayClick,
+  parkings,
+  onParkingClick,
+  tours,
+  onTourClick,
+  shoppings,
+  onShoppingClick
 }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -118,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleHistoryPlaceClick = (placeId: string) => {
-    const allPlaces = [...restaurants, ...walks, ...themes, ...marines, ...urbans, ...stays];
+    const allPlaces = [...restaurants, ...walks, ...themes, ...marines, ...urbans, ...stays, ...parkings, ...tours, ...shoppings];
     const foundPlace = allPlaces.find(p => p.id === placeId);
     if (foundPlace) {
       if (restaurants.some(r => r.id === placeId)) onRestaurantClick(foundPlace);
@@ -127,6 +139,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       else if (marines.some(m => m.id === placeId)) onMarineClick(foundPlace);
       else if (urbans.some(u => u.id === placeId)) onUrbanClick(foundPlace);
       else if (stays.some(s => s.id === placeId)) onStayClick(foundPlace);
+      else if (parkings.some(p => p.id === placeId)) onParkingClick(foundPlace);
+      else if (tours.some(t => t.id === placeId)) onTourClick(foundPlace);
+      else if (shoppings.some(s => s.id === placeId)) onShoppingClick(foundPlace);
     }
   };
 
@@ -231,16 +246,16 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="category-grid">
             <div className="category-row">
               <div 
-                className={`category-item ${activeCategories.includes('주변 여행지') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('주변 여행지')}
+                className={`category-item ${activeCategories.includes('명소') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('명소')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('주변 여행지') ? '#4CAF50' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('명소') ? '#4CAF50' : '#9E9E9E'}}
                 >
-                  🚗
+                  🏛️
                 </div>
-                <div className="category-label">주변 여행지</div>
+                <div className="category-label">명소</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('음식점') ? 'active' : ''}`}
@@ -293,16 +308,16 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="category-row">
               <div 
-                className={`category-item ${activeCategories.includes('전기차충전소') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('전기차충전소')}
+                className={`category-item ${activeCategories.includes('여행코스 기념품') ? 'active' : ''}`}
+                onClick={() => onCategoryClick('여행코스 기념품')}
               >
                 <div 
                   className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('전기차충전소') ? '#ccc017ff' : '#9E9E9E'}}
+                  style={{backgroundColor: activeCategories.includes('여행코스 기념품') ? '#E91E63' : '#9E9E9E'}}
                 >
-                  ⚡
+                  🛍️
                 </div>
-                <div className="category-label">전기차<br/>충전소</div>
+                <div className="category-label">여행코스<br/>기념품</div>
               </div>
               <div 
                 className={`category-item ${activeCategories.includes('도보여행') ? 'active' : ''}`}
@@ -928,6 +943,327 @@ const Sidebar: React.FC<SidebarProps> = ({
                           }}>{Array.isArray(urban.subtitle) ? urban.subtitle[0] : urban.subtitle}</span>
                         </div>
                       )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*명소 목록 표시 */}
+          {activeCategories.includes('명소') && tours.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🏛️ 주변 명소 ({tours.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {tours.map((tour) => (
+                  <div 
+                    key={tour.id} 
+                    className="restaurant-card"
+                    onClick={() => handlePlaceClick(tour, onTourClick)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={tour.image_url || tour.imageUrl || "https://via.placeholder.com/80?text=Tour"} 
+                        alt={tour.title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Tour";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(tour.title) ? tour.title[0] : tour.title}
+                      </div>
+                      {tour.distance && (
+                        <div className="restaurant-distance" style={{ 
+                          fontSize: '12px',
+                          color: '#666',
+                          marginBottom: '6px'
+                        }}>
+                          📍 {tour.distance.toFixed(2)}km
+                        </div>
+                      )}
+                      <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {tour.address && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#E8F5E9',
+                            color: '#2E7D32',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(tour.address) ? tour.address[0] : tour.address}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*기념품 목록 표시 */}
+          {activeCategories.includes('여행코스 기념품') && shoppings.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #E91E63 0%, #C2185B 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🛍️ 주변 기념품 ({shoppings.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {shoppings.map((shopping) => (
+                  <div 
+                    key={shopping.id} 
+                    className="restaurant-card"
+                    onClick={() => handlePlaceClick(shopping, onShoppingClick)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      <img 
+                        src={shopping.main_img_normal || shopping.main_img_thumb || shopping.image_url || "https://via.placeholder.com/80?text=Shopping"} 
+                        alt={shopping.title || shopping.main_title}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://via.placeholder.com/80?text=Shopping";
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(shopping.title) ? shopping.title[0] : (shopping.title || (Array.isArray(shopping.main_title) ? shopping.main_title[0] : shopping.main_title))}
+                      </div>
+                      {shopping.distance && (
+                        <div className="restaurant-distance" style={{ 
+                          fontSize: '12px',
+                          color: '#666',
+                          marginBottom: '6px'
+                        }}>
+                          📍 {shopping.distance.toFixed(2)}km
+                        </div>
+                      )}
+                      <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {shopping.addr1 && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#FCE4EC',
+                            color: '#C2185B',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(shopping.addr1) ? shopping.addr1[0] : shopping.addr1}</span>
+                        )}
+                        {shopping.gugun_nm && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#F8BBD0',
+                            color: '#AD1457',
+                            borderRadius: '12px'
+                          }}>{Array.isArray(shopping.gugun_nm) ? shopping.gugun_nm[0] : shopping.gugun_nm}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/*주차장 목록 표시 */}
+          {activeCategories.includes('주차장') && parkings.length > 0 && (
+            <div className="restaurant-list" style={{ marginTop: '10px' }}>
+              <div className="restaurant-header" style={{ 
+                background: 'linear-gradient(135deg, #607D8B 0%, #455A64 100%)',
+                padding: '12px 15px',
+                borderRadius: '8px',
+                marginBottom: '10px'
+              }}>
+                <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                  🅿️ 주변 주차장 ({parkings.length}개)
+                </h3>
+              </div>
+              
+              <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {parkings.map((parking) => (
+                  <div 
+                    key={parking.id} 
+                    className="restaurant-card"
+                    onClick={() => handlePlaceClick(parking, onParkingClick)}
+                    style={{ 
+                      cursor: 'pointer',
+                      marginBottom: '10px',
+                      padding: '12px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      gap: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    <div className="restaurant-image" style={{ 
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0,
+                      background: '#ECEFF1',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{ fontSize: '32px' }}>🅿️</span>
+                    </div>
+                    
+                    <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                      <div className="restaurant-title" style={{ 
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        marginBottom: '6px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {Array.isArray(parking.title) ? parking.title[0] : parking.title}
+                      </div>
+                      {parking.distance && (
+                        <div className="restaurant-distance" style={{ 
+                          fontSize: '12px',
+                          color: '#666',
+                          marginBottom: '6px'
+                        }}>
+                          📍 {parking.distance.toFixed(2)}km
+                        </div>
+                      )}
+                      <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {parking.address && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#ECEFF1',
+                            color: '#455A64',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100%'
+                          }}>{Array.isArray(parking.address) ? parking.address[0] : parking.address}</span>
+                        )}
+                        {parking.type && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#CFD8DC',
+                            color: '#37474F',
+                            borderRadius: '12px'
+                          }}>{Array.isArray(parking.type) ? parking.type[0] : parking.type}</span>
+                        )}
+                        {parking.fee_basic && (
+                          <span className="menu-tag" style={{
+                            fontSize: '11px',
+                            padding: '2px 8px',
+                            background: '#B0BEC5',
+                            color: '#263238',
+                            borderRadius: '12px'
+                          }}>기본요금: {Array.isArray(parking.fee_basic) ? parking.fee_basic[0] : parking.fee_basic}원</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
