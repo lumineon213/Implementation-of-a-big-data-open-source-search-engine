@@ -35,6 +35,8 @@ interface SidebarProps {
   onTourClick: (tour: any) => void;
   shoppings: any[];
   onShoppingClick: (shopping: any) => void;
+  festivals: any[];
+  onFestivalClick: (festival: any) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -59,7 +61,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   tours,
   onTourClick,
   shoppings,
-  onShoppingClick
+  onShoppingClick,
+  festivals,
+  onFestivalClick
 }) => {
   const { t } = useTranslation();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -295,17 +299,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div className="category-label">{t('map.sidebar.categories.restaurant')}</div>
               </div>
               <div 
-                className={`category-item ${activeCategories.includes('카페') ? 'active' : ''}`}
-                onClick={() => onCategoryClick('카페')}
+              className={`category-item ${activeCategories.includes('축제') ? 'active' : ''}`}
+              onClick={() => onCategoryClick('축제')}
+            >
+              <div 
+                className="category-icon" 
+                style={{backgroundColor: activeCategories.includes('축제') ? '#FFB300' : '#9E9E9E'}}
               >
-                <div 
-                  className="category-icon" 
-                  style={{backgroundColor: activeCategories.includes('카페') ? '#E91E63' : '#9E9E9E'}}
-                >
-                  ☕
-                </div>
-                <div className="category-label">{t('map.sidebar.categories.cafe')}</div>
+                🎪
               </div>
+              <div className="category-label">{t('map.sidebar.categories.festival')}</div>
+            </div>
               <div 
                 className={`category-item ${activeCategories.includes('숙소') ? 'active' : ''}`}
                 onClick={() => onCategoryClick('숙소')}
@@ -1073,6 +1077,118 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           )}
+
+        {/* 축제 목록 표시 */}
+        {activeCategories.includes('축제') && festivals.length > 0 && (
+          <div className="restaurant-list" style={{ marginTop: '10px' }}>
+            <div className="restaurant-header" style={{ 
+              background: 'linear-gradient(135deg, #FFB300 0%, #FF8F00 100%)',
+              padding: '12px 15px',
+              borderRadius: '8px',
+              marginBottom: '10px'
+            }}>
+              <h3 style={{ margin: 0, color: 'white', fontSize: '16px', fontWeight: 'bold' }}>
+                🎪 {t('map.sidebar.lists.nearbyFestivals') || '주변 축제'} ({festivals.length}{t('map.sidebar.lists.items')})
+              </h3>
+            </div>
+            
+            <div className="restaurant-items" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              {festivals.map((festival) => (
+                <div 
+                  key={festival.id} 
+                  className="restaurant-card"
+                  onClick={() => handlePlaceClick(festival, onFestivalClick)}
+                  style={{ 
+                    cursor: 'pointer',
+                    marginBottom: '10px',
+                    padding: '12px',
+                    background: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    gap: '12px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                  }}
+                >
+                  <div className="restaurant-image" style={{ 
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    flexShrink: 0
+                  }}>
+                    <img 
+                      src={festival.image || festival.mainImgNormal || "https://via.placeholder.com/80?text=Festival"} 
+                      alt={festival.title}
+                      onError={(e) => {
+                        e.currentTarget.src = "https://via.placeholder.com/80?text=Festival";
+                      }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                  
+                  <div className="restaurant-info" style={{ flex: 1, minWidth: 0 }}>
+                    <div className="restaurant-title" style={{ 
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      marginBottom: '6px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {festival.title}
+                    </div>
+                    {festival.distance && (
+                      <div className="restaurant-distance" style={{ 
+                        fontSize: '12px',
+                        color: '#666',
+                        marginBottom: '6px'
+                      }}>
+                        📍 {festival.distance.toFixed(2)}km
+                      </div>
+                    )}
+                    <div className="restaurant-menu" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {festival.address && (
+                        <span className="menu-tag" style={{
+                          fontSize: '11px',
+                          padding: '2px 8px',
+                          background: '#FFF3E0',
+                          color: '#E65100',
+                          borderRadius: '12px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '100%'
+                        }}>{festival.address}</span>
+                      )}
+                      {festival.period && (
+                        <span className="menu-tag" style={{
+                          fontSize: '11px',
+                          padding: '2px 8px',
+                          background: '#E3F2FD',
+                          color: '#1565C0',
+                          borderRadius: '12px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '100%'
+                        }}>{festival.period}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
           {/*기념품 목록 표시 */}
           {activeCategories.includes('여행코스 기념품') && shoppings.length > 0 && (

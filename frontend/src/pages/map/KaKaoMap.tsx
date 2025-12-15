@@ -27,6 +27,7 @@ interface KakaoMapProps {
   setParkings: (parkings: any[]) => void;
   setTours: (tours: any[]) => void;
   setShoppings: (shoppings: any[]) => void;
+  setFestivals: (festivals: any[]) => void;
   setCurrentLocation: (location: { lat: number; lng: number } | null) => void;
   onRestaurantClick: (restaurant: any) => void;
   externalLocation?: { lat: number; lng: number; title: string } | null;
@@ -45,6 +46,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   setParkings,
   setTours,
   setShoppings,
+  setFestivals,
   setCurrentLocation,
   onRestaurantClick,
   externalLocation
@@ -66,6 +68,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const parkingMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const tourMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const shoppingMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
+  const festivalMarkers = useRef<Array<{ marker: any, infowindow: any }>>([]); 
   const currentLocation = useRef<{lat: number, lng: number} | null>(null);
   const currentInfowindow = useRef<any>(null);
 
@@ -529,6 +532,69 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [setTours]);
 
+  /* 축제 데이터 가져오기 */
+  const fetchFestivals = useCallback(async (lat: number, lng: number, radiusKm: number, keyword?: string) => {
+    try {
+      const base = new URL("http://localhost:8484/api/festival/search");
+      base.searchParams.set("page", "1");
+      base.searchParams.set("size", "100");
+      if (keyword) {
+        base.searchParams.set("keyword", keyword);
+      }
+
+      const response = await fetch(base.toString());
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const resultsArray = data?.list || [];
+
+      if (resultsArray.length === 0) {
+        setFestivals([]);
+        displayFestivalMarkers([]);
+        return;
+      }
+
+      const nearbyFestivals = resultsArray
+        .filter((festival: any) => {
+          const latValue = festival.lat || festival.latitude;
+          const lngValue = festival.lng || festival.longitude;
+          if (latValue === undefined || lngValue === undefined) return false;
+          const festLat = typeof latValue === 'string' ? parseFloat(latValue) : Number(latValue);
+          const festLng = typeof lngValue === 'string' ? parseFloat(lngValue) : Number(lngValue);
+          if (isNaN(festLat) || isNaN(festLng)) return false;
+          const distance = getDistance(lat, lng, festLat, festLng);
+          return distance <= radiusKm;
+        })
+        .map((festival: any) => {
+          const festLat = typeof festival.lat === 'string' ? parseFloat(festival.lat) : Number(festival.lat || festival.latitude);
+          const festLng = typeof festival.lng === 'string' ? parseFloat(festival.lng) : Number(festival.lng || festival.longitude);
+          return {
+            id: festival.ucSeq || festival.id,
+            title: festival.mainTitle || festival.title,
+            address: festival.addr1 || festival.place,
+            latitude: festLat,
+            longitude: festLng,
+            image: festival.mainImgNormal,
+            description: festival.description,
+            period: festival.period,
+            status: festival.status,
+            distance: getDistance(lat, lng, festLat, festLng),
+            type: 'FESTIVAL'
+          };
+        })
+        .sort((a: any, b: any) => a.distance - b.distance)
+        .slice(0, 30);
+
+      setFestivals(nearbyFestivals);
+      displayFestivalMarkers(nearbyFestivals);
+    } catch (error) {
+      console.error("❌ 축제 데이터 불러오기 실패:", error);
+      alert("축제 데이터를 불러오는데 실패했습니다.");
+    }
+  }, [setFestivals]);
+
   /* Solr에서 기념품(shopping) 데이터 가져오기 */
   const fetchShoppings = useCallback(async (lat: number, lng: number, radiusKm: number) => {
     try {
@@ -856,6 +922,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (activeCategories.includes('명소')) {
       fetchTours(lat, lng, newDistanceKm);
     }
+    if (activeCategories.includes('축제')) {
+      fetchFestivals(lat, lng, newDistanceKm, searchKeyword);
+    }
     if (activeCategories.includes('여행코스 기념품')) {
       fetchShoppings(lat, lng, newDistanceKm);
     }
@@ -949,6 +1018,17 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       setTours([]);
     }
   }, [activeCategories, fetchTours, setTours, searchRadiusKm]);
+
+  /* 축제 카테고리 선택 시 처리 */
+  useEffect(() => {
+    if (activeCategories.includes('축제')) {
+      const { lat, lng } = currentLocation.current || { lat: 35.1796, lng: 129.0756 };
+      fetchFestivals(lat, lng, searchRadiusKm, searchKeyword);
+    } else {
+      clearFestivalMarkers();
+      setFestivals([]);
+    }
+  }, [activeCategories, fetchFestivals, setFestivals, searchRadiusKm, searchKeyword]);
 
   /* 기념품 카테고리 선택 시 처리 */
   useEffect(() => {
@@ -1144,6 +1224,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const clearTourMarkers = () => {
     tourMarkers.current.forEach(item => item.marker.setMap(null));
     tourMarkers.current = [];
+  };
+
+  /* 축제 마커 제거 */
+  const clearFestivalMarkers = () => {
+    festivalMarkers.current.forEach(item => item.marker.setMap(null));
+    festivalMarkers.current = [];
   };
 
   /* 기념품 마커 제거 */
@@ -1397,6 +1483,37 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     });
   };
 
+  /* 축제 마커 표시 */
+  const displayFestivalMarkers = (festivals: any[]) => {
+    clearFestivalMarkers();
+    const map = mapRef.current;
+    if (!map) return;
+
+    festivals.forEach(festival => {
+      const position = new window.kakao.maps.LatLng(festival.latitude, festival.longitude);
+      const content = createCustomMarkerContent(MARKER_COLORS.FESTIVAL);
+
+      content.onclick = () => onRestaurantClick(festival);
+
+      const customOverlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: content,
+        yAnchor: 1
+      });
+
+      customOverlay.setMap(map);
+
+      const title = Array.isArray(festival.title) ? festival.title[0] : festival.title;
+      const subtitle = Array.isArray(festival.address) ? festival.address[0] : festival.address;
+
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: createInfoWindowContent(title, subtitle, festival.distance)
+      });
+
+      festivalMarkers.current.push({ marker: customOverlay, infowindow });
+    });
+  };
+
   /* 기념품 마커 표시 (핑크색 핀 마커 사용) */
   const displayShoppingMarkers = (shoppings: any[]) => {
     clearShoppingMarkers();
@@ -1571,6 +1688,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
               fetchTours(lat, lng, searchRadiusKm);
             }
 
+            // 축제 카테고리가 활성화되어 있으면 축제 데이터 가져오기
+            if (activeCategories.includes('축제')) {
+              fetchFestivals(lat, lng, searchRadiusKm, searchKeyword);
+            }
+
             // 기념품 카테고리가 활성화되어 있으면 기념품 데이터 가져오기
             if (activeCategories.includes('여행코스 기념품')) {
               fetchShoppings(lat, lng, searchRadiusKm);
@@ -1600,6 +1722,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
     if (activeCategories.includes('숙소')) {
       fetchStays(lat, lng, searchRadiusKm, searchKeyword);
+    }
+    if (activeCategories.includes('축제')) {
+      fetchFestivals(lat, lng, searchRadiusKm, searchKeyword);
     }
   };
 
