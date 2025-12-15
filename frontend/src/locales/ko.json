@@ -247,7 +247,7 @@
       "categories": {
         "attraction": "명소",
         "restaurant": "음식점",
-        "cafe": "카페",
+        "festival": "축제",
         "accommodation": "숙소",
         "parking": "주차장",
         "souvenir": "여행코스<br/>기념품",
@@ -264,6 +264,7 @@
         "marineCourse": "해양여행 코스",
         "urbanCourse": "도시여행 코스",
         "nearbyAttractions": "주변 명소",
+        "nearbyFestivals": "주변 축제",
         "nearbySouvenirs": "주변 기념품",
         "nearbyParking": "주변 주차장",
         "items": "개"

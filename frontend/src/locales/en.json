@@ -247,7 +247,7 @@
       "categories": {
         "attraction": "Attractions",
         "restaurant": "Restaurants",
-        "cafe": "Cafe",
+        "festival": "Festival",
         "accommodation": "Accommodation",
         "parking": "Parking",
         "souvenir": "Travel Course<br/>Souvenirs",
@@ -264,6 +264,7 @@
         "marineCourse": "Marine Tour Course",
         "urbanCourse": "Urban Tour Course",
         "nearbyAttractions": "Nearby Attractions",
+        "nearbyFestivals": "Nearby Festivals",
         "nearbySouvenirs": "Nearby Souvenirs",
         "nearbyParking": "Nearby Parking",
         "items": ""

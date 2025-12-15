@@ -65,5 +65,6 @@ export const MARKER_COLORS = {
   STAY: '#9C27B0',        // 보라색 (숙소)
   PARKING: '#607D8B',     // 회색 (주차장)
   TOUR: '#4CAF50',        // 초록색 (명소)
-  SHOPPING: '#E91E63'     // 핑크색 (기념품)
+  SHOPPING: '#E91E63',    // 핑크색 (기념품)
+  FESTIVAL: '#FFB300'     // 노랑/오렌지 (축제)
 };
