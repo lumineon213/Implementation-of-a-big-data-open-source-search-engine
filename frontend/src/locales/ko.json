@@ -29,6 +29,7 @@
       "saveError": "정보 수정에 실패했습니다.",
       "loadingError": "마이페이지 정보를 불러올 수 없습니다."
     },
+    "adminPage": "관리자 페이지",
     "eventHistory": {
       "title": "📋 이벤트 내역",
       "tabs": {

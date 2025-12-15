@@ -1,7 +1,9 @@
 .admin-page {
-  padding: 20px;
+  padding: 120px 20px 60px;
   max-width: 1400px;
   margin: 0 auto;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .admin-header {

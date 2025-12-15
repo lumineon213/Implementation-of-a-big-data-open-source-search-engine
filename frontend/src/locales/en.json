@@ -29,6 +29,7 @@
       "saveError": "Failed to update information.",
       "loadingError": "Unable to load my page information."
     },
+    "adminPage": "Admin Page",
     "eventHistory": {
       "title": "📋 Event History",
       "tabs": {
