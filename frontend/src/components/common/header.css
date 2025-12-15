@@ -83,12 +83,16 @@
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
-  padding: 8px 4px;
+  padding: 8px 0;
   white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   cursor: pointer;
   letter-spacing: -0.2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
 }
 
 .header-desktop-menu .menu-item:hover {
@@ -100,8 +104,7 @@
   content: '';
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 0;
   height: 3px;
   background: linear-gradient(90deg, #0066ff, #00ccff);
@@ -113,24 +116,23 @@
   width: 100%;
 }
 
-/* 드롭다운 컨테이너 */
-.dropdown-container {
+/* 드롭다운 래퍼 - 통일된 구조 */
+.dropdown-wrapper {
   position: relative;
   display: inline-block;
-  padding-bottom: 16px;
-}
-
-.dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 /* 드롭다운 화살표 */
 .dropdown-arrow {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #7f8c8d;
-  margin-left: 2px;
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: 10px;
+  height: 6px;
 }
 
 .dropdown-arrow.open {
@@ -138,12 +140,11 @@
   color: #0066ff;
 }
 
-/* 드롭다운 메뉴 */
+/* 드롭다운 메뉴 - 통일된 위치 */
 .dropdown-menu {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(100% + 12px);
+  left: 0;
   background: white;
   min-width: 240px;
   border-radius: 20px;
@@ -153,17 +154,17 @@
   z-index: 1001;
   animation: dropdownFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
-  margin-top: 12px;
+  white-space: nowrap;
 }
 
 @keyframes dropdownFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-15px) scale(0.95);
+    transform: translateY(-15px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -262,6 +263,54 @@
 .dropdown-item:hover .dropdown-desc {
   color: #5a6c7d;
   transform: translateX(2px);
+}
+
+/* 여행코스 드롭다운 전용 스타일 */
+.course-dropdown {
+  min-width: 280px;
+  width: auto;
+  padding: 12px 12px;
+}
+
+.course-dropdown .course-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.course-dropdown .course-card:hover {
+  background: #f5f8ff;
+  transform: translateX(3px);
+}
+
+.course-dropdown .course-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.course-dropdown .course-info-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.course-dropdown .course-info-desc {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.course-dropdown .course-card:hover .course-info-title {
+  color: #0066ff;
 }
 
 /* 오른쪽 영역 */
@@ -876,53 +925,6 @@
   .header-inner {
     padding: 12px 14px;
   }
-}
-
-/* 여행코스 드롭다운 전용 스타일 */
-.course-dropdown {
-  width: 240px; /* 드롭다운 전체 너비 */
-  padding: 12px 12px;
-}
-
-.course-dropdown .course-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px;
-  border-radius: 10px;
-  text-decoration: none;
-  background: #fff;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  transition: all 0.2s ease;
-}
-
-.course-dropdown .course-card:hover {
-  background: #f5f8ff;
-  transform: translateX(3px);
-}
-
-.course-dropdown .course-icon {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.course-dropdown .course-info-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #222;
-}
-
-.course-dropdown .course-info-desc {
-  font-size: 12px;
-  color: #666;
-  margin-top: 2px;
-}
-
-.course-dropdown .course-card:hover .course-info-title {
-  color: #0066ff;
 }
 
 /* 다크모드 스타일 */
