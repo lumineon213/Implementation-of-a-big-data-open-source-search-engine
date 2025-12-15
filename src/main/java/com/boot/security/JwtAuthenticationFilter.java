@@ -19,7 +19,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
-    // 관리자는 otp를 통과하지 못하면 못씀
+    
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         String header = request.getHeader("Authorization");
 
-        // 📌 [DEBUG 추가] 헤더 수신 여부 로그 (paymentStay의 디버그 유지)
-        System.out.println("DEBUG: Authorization Header Received: " + header);
+        // 📌 [DEBUG] 헤더 수신 여부 로그
+        log.debug("Authorization Header: {}", header);
         
         // ✅ 2. 토큰이 없거나 "Bearer "로 시작하지 않으면 즉시 통과
         if (header == null || !header.startsWith("Bearer ")) {
@@ -57,30 +57,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String role = jwtUtil.getRole(token);
                 boolean otpVerified = jwtUtil.isOtpVerified(token);
 
-                // 🔐 ADMIN + OTP 미완료 차단
-                if ("ADMIN".equals(role) && !otpVerified) {
-                    log.warn("ADMIN OTP 미완료 접근 차단: {}", accountId);
+                // ✅ 로그 추가: OTP 상태 확인
+                log.info("JWT 인증 - accountId: {}, role: {}, otpVerified: {}", 
+                         accountId, role, otpVerified);
 
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType("application/json;charset=UTF-8");
-                    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-                    response.setHeader("Pragma", "no-cache");
-                    response.setHeader("Expires", "0");
-
-                    response.getWriter().write(
-                        "{\"success\":false,\"msg\":\"관리자 OTP 인증이 필요합니다.\"}"
-                    );
-                    response.getWriter().flush();
-                    return;
-                }
+                // 🔥 [수정] ADMIN OTP 차단 로직 제거
+                // SecurityConfig에서 처리하도록 변경
+                // 여기서는 인증 정보만 설정하고, 권한 검증은 SecurityConfig가 담당
 
                 UserDetails userDetails =
                         userDetailsService.loadUserByUsername(accountId);
                 
+                // 🔥 [중요] credentials에 token을 저장해야 SecurityConfig에서 검증 가능
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
-                                null,
+                                token,  // ✅ credentials에 token 저장 (SecurityConfig에서 사용)
                                 userDetails.getAuthorities()
                         );
                 
@@ -95,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     
     /**
-     * 인증이 필요 없는 공개 경로인지 확인 (기존 로직 유지)
+     * 인증이 필요 없는 공개 경로인지 확인
      */
     private boolean isPublicPath(String path, String method) {
         if (path.startsWith("/api/login") || path.startsWith("/api/join")) {
