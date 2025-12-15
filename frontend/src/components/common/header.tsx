@@ -296,7 +296,7 @@ const Header: React.FC = () => {
 
               {isInfoDropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/info/regions" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
+                  <Link to="/course/list" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🗺️</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">{t('header.travelRegion')}</div>
@@ -660,7 +660,7 @@ const Header: React.FC = () => {
 
             {expandedMenu === "info" && (
               <div className="mobile-sub-nav">
-                <Link to="/info/regions" onClick={handleMenuClose}>{t('header.travelRegion')}</Link>
+                <Link to="/course/list" onClick={handleMenuClose}>{t('header.travelRegion')}</Link>
                 <Link to="/info/news" onClick={handleMenuClose}>{t('header.travelArticles')}</Link> {/* 💡 경로 수정 완료 */}
                 <Link to="/festival" onClick={handleMenuClose}>{t('header.festival')}</Link>
                 <Link to="/shopping" onClick={handleMenuClose}>{t('header.shopping')}</Link>
