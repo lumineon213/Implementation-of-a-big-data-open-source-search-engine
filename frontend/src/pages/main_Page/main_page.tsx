@@ -1,4 +1,4 @@
-import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
+import React, { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from 'react';
 import { Search, ArrowRight, MapPin, Calendar, Star, Compass, Palmtree, Camera, UtensilsCrossed, PartyPopper } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -93,6 +93,10 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [popularPlaces, setPopularPlaces] = useState<SolrPlace[]>([]);
   const [loadingPlaces, setLoadingPlaces] = useState<boolean>(true);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // --- 슬라이드 자동 넘김 (5초) ---
   useEffect(() => {
@@ -145,17 +149,77 @@ const Home: React.FC = () => {
     fetchPopularPlaces();
   }, []);
 
+  // 검색어 제안 가져오기
+  const fetchSuggestions = async (query: string) => {
+    if (!query || query.trim().length < 1) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get('/api/solr/suggestions', {
+        params: {
+          q: query,
+          limit: 10
+        }
+      });
+      
+      if (response.data && Array.isArray(response.data)) {
+        setSuggestions(response.data);
+        setShowSuggestions(response.data.length > 0);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (error) {
+      console.error('제안 가져오기 실패:', error);
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
   // --- 단순 UI 핸들러 ---
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchQuery(value);
+    fetchSuggestions(value);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setShowSuggestions(false);
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  // 제안 클릭 핸들러
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSuggestions([]);
+    navigate(`/search?q=${encodeURIComponent(suggestion)}`);
+  };
+
+  // 외부 클릭 시 제안 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="home-layout">
@@ -177,18 +241,68 @@ const Home: React.FC = () => {
 
             {/* 검색창 추가 */}
             <form onSubmit={handleSubmit} className="hero-search-form fade-in delay-3">
-              <div className="hero-search-bar">
-                <Search size={20} className="search-icon-svg" />
-                <input
-                  type="text"
-                  placeholder={t('main.hero.searchPlaceholder')}
-                  value={searchQuery}
-                  onChange={handleInputChange}
-                  className="hero-search-input"
-                />
-                <button type="submit" className="hero-search-btn">
-                  <ArrowRight size={20} />
-                </button>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <div className="hero-search-bar">
+                  <Search size={20} className="search-icon-svg" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder={t('main.hero.searchPlaceholder')}
+                    value={searchQuery}
+                    onChange={handleInputChange}
+                    onFocus={() => {
+                      if (suggestions.length > 0) {
+                        setShowSuggestions(true);
+                      }
+                    }}
+                    className="hero-search-input"
+                  />
+                  <button type="submit" className="hero-search-btn">
+                    <ArrowRight size={20} />
+                  </button>
+                </div>
+                {showSuggestions && suggestions.length > 0 && (
+                  <div ref={suggestionsRef} className="suggestions-dropdown" style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: '8px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    zIndex: 1000,
+                    maxHeight: '300px',
+                    overflowY: 'auto'
+                  }}>
+                    {suggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        onMouseDown={(e) => e.preventDefault()}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '12px 16px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s',
+                          color: '#1f2937',
+                          borderBottom: index < suggestions.length - 1 ? '1px solid #f3f4f6' : 'none'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <Search size={16} style={{ marginRight: '8px', opacity: 0.6 }} />
+                        <span style={{ flex: 1, fontSize: '0.95rem' }}>{suggestion}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </form>
 

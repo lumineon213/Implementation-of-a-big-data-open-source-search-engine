@@ -98,6 +98,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/search-log") || path.startsWith("/api/search")) {
             return true;
         }
+        // Solr 통합 검색 및 제안 API는 공개 경로
+        if (path.startsWith("/api/solr")) {
+            return true;
+        }
         if (path.startsWith("/api/food") || path.startsWith("/api/walk") || 
             path.startsWith("/api/theme") || path.startsWith("/api/marine") || 
             path.startsWith("/api/urban")) {
