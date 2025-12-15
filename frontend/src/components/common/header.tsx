@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // 스템프 이벤트 페이지 연결 예시
 // import { Route, Routes } from "react-router-dom";
 // import StampEvent from "../../pages/benefits/StampEvent";
@@ -31,6 +31,14 @@ const Header: React.FC = () => {
   const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // 드롭다운 외부 클릭 감지를 위한 ref
+  const dropdownRefs = {
+    sns: useRef<HTMLDivElement>(null),
+    course: useRef<HTMLDivElement>(null),
+    info: useRef<HTMLDivElement>(null),
+    benefits: useRef<HTMLDivElement>(null),
+  };
 
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
@@ -75,6 +83,35 @@ const Header: React.FC = () => {
     checkAuth();
   }, [location.pathname]);
 
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      
+      // 각 드롭다운 외부 클릭 확인
+      if (expandedMenu === 'sns' && dropdownRefs.sns.current && !dropdownRefs.sns.current.contains(target)) {
+        setExpandedMenu(null);
+      }
+      if (expandedMenu === 'course' && dropdownRefs.course.current && !dropdownRefs.course.current.contains(target)) {
+        setExpandedMenu(null);
+      }
+      if (expandedMenu === 'benefits' && dropdownRefs.benefits.current && !dropdownRefs.benefits.current.contains(target)) {
+        setExpandedMenu(null);
+      }
+      if (isInfoDropdownOpen && dropdownRefs.info.current && !dropdownRefs.info.current.contains(target)) {
+        setIsInfoDropdownOpen(false);
+      }
+    };
+
+    if (expandedMenu || isInfoDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [expandedMenu, isInfoDropdownOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -84,7 +121,27 @@ const Header: React.FC = () => {
   };
 
   const toggleMenu = (menuName: string) => {
-    setExpandedMenu(expandedMenu === menuName ? null : menuName);
+    // 다른 드롭다운이 열려있으면 닫고 새 메뉴 열기
+    if (expandedMenu && expandedMenu !== menuName) {
+      setExpandedMenu(menuName);
+      setIsInfoDropdownOpen(false);
+    } else if (expandedMenu === menuName) {
+      // 같은 메뉴를 다시 클릭하면 닫기
+      setExpandedMenu(null);
+      setIsInfoDropdownOpen(false);
+    } else {
+      // 새 메뉴 열기
+      setExpandedMenu(menuName);
+      setIsInfoDropdownOpen(false);
+    }
+  };
+
+  const toggleInfoMenu = () => {
+    // 다른 드롭다운이 열려있으면 닫고 여행정보 열기
+    if (expandedMenu) {
+      setExpandedMenu(null);
+    }
+    setIsInfoDropdownOpen(!isInfoDropdownOpen);
   };
 
   const handleMenuClose = () => {
@@ -104,11 +161,11 @@ const Header: React.FC = () => {
           <nav className="header-desktop-menu">
             <Link to="/" className="menu-item">홈</Link>
             
-            <div className="dropdown-wrapper">
+            <div className="dropdown-wrapper" ref={dropdownRefs.sns}>
               <span
                 className="menu-item"
-                onMouseEnter={() => setExpandedMenu('sns')}
-                onMouseLeave={() => setExpandedMenu(null)}
+                onClick={() => toggleMenu('sns')}
+                style={{ cursor: 'pointer' }}
               >
                 SNS
                 <svg
@@ -123,13 +180,9 @@ const Header: React.FC = () => {
                 </svg>
               </span>
               {expandedMenu === 'sns' && (
-                <div
-                  className="dropdown-menu"
-                  onMouseEnter={() => setExpandedMenu('sns')}
-                  onMouseLeave={() => setExpandedMenu(null)}
-                >
-                  <Link to="/blog" className="dropdown-item">블로그</Link>
-                  <Link to="/cafe" className="dropdown-item">카페</Link>
+                <div className="dropdown-menu">
+                  <Link to="/blog" className="dropdown-item" onClick={() => setExpandedMenu(null)}>블로그</Link>
+                  <Link to="/cafe" className="dropdown-item" onClick={() => setExpandedMenu(null)}>카페</Link>
                 </div>
               )}
             </div>
@@ -137,26 +190,31 @@ const Header: React.FC = () => {
             <Link to="/tour" className="menu-item">명소</Link>
             <Link to="/food" className="menu-item">맛집</Link>
             <div 
-              className="dropdown-container"
-              onMouseEnter={() => setExpandedMenu("course")}
-              onMouseLeave={() => setExpandedMenu(null)}
+              className="dropdown-wrapper"
+              ref={dropdownRefs.course}
             >
-              <span className="menu-item dropdown-trigger">
+              <span 
+                className="menu-item"
+                onClick={() => toggleMenu("course")}
+                style={{ cursor: 'pointer' }}
+              >
                 여행코스
                 <svg 
                   className={`dropdown-arrow ${expandedMenu === "course" ? "open" : ""}`}
-                  width="10" 
+                  width="10"
                   height="6"
                   viewBox="0 0 10 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </span>
 
               {expandedMenu === "course" && (
                 <div className="dropdown-menu course-dropdown">
 
-                  <Link to="/course/walk" className="course-card">
+                  <Link to="/course/walk" className="course-card" onClick={() => setExpandedMenu(null)}>
                     <img src={walk} alt="도보 여행" className="course-icon" />
                     <div className="course-info">
                       <div className="course-info-title">도보 여행</div>
@@ -164,7 +222,7 @@ const Header: React.FC = () => {
                     </div>
                   </Link>
 
-                  <Link to="/course/theme" className="course-card">
+                  <Link to="/course/theme" className="course-card" onClick={() => setExpandedMenu(null)}>
                     <img src={theme} alt="테마 여행" className="course-icon" />
                     <div className="course-info">
                       <div className="course-info-title">테마 여행</div>
@@ -172,7 +230,7 @@ const Header: React.FC = () => {
                     </div>
                   </Link>
 
-                  <Link to="/course/marine" className="course-card">
+                  <Link to="/course/marine" className="course-card" onClick={() => setExpandedMenu(null)}>
                     <img src={marine} alt="해양 여행" className="course-icon" />
                     <div className="course-info">
                       <div className="course-info-title">해양 여행</div>
@@ -180,7 +238,7 @@ const Header: React.FC = () => {
                     </div>
                   </Link>
 
-                  <Link to="/course/urban" className="course-card">
+                  <Link to="/course/urban" className="course-card" onClick={() => setExpandedMenu(null)}>
                     <img src={urban} alt="도시 여행" className="course-icon" />
                     <div className="course-info">
                       <div className="course-info-title">도시 여행</div>
@@ -197,10 +255,13 @@ const Header: React.FC = () => {
             {/* 여행정보 드롭다운 */}
             <div 
               className="dropdown-wrapper"
-              onMouseEnter={() => setIsInfoDropdownOpen(true)}
-              onMouseLeave={() => setIsInfoDropdownOpen(false)}
+              ref={dropdownRefs.info}
             >
-              <span className="menu-item">
+              <span 
+                className="menu-item"
+                onClick={toggleInfoMenu}
+                style={{ cursor: 'pointer' }}
+              >
                 여행정보
                 <svg 
                   className={`dropdown-arrow ${isInfoDropdownOpen ? 'open' : ''}`}
@@ -216,42 +277,42 @@ const Header: React.FC = () => {
 
               {isInfoDropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/info/regions" className="dropdown-item">
+                  <Link to="/info/regions" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🗺️</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">여행지역</div>
                       <div className="dropdown-desc">부산의 주요 지역 탐색</div>
                     </div>
                   </Link>
-                  <Link to="/info/articles" className="dropdown-item">
+                  <Link to="/info/articles" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">📰</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">여행기사</div>
                       <div className="dropdown-desc">최신 여행 소식</div>
                     </div>
                   </Link>
-                  <Link to="/festival" className="dropdown-item">
+                  <Link to="/festival" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">축제</div>
                       <div className="dropdown-desc">다양한 축제 정보</div>
                     </div>
                   </Link>
-                  <Link to="/shopping" className="dropdown-item">
+                  <Link to="/shopping" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🛍️</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">쇼핑·기념품</div>
                       <div className="dropdown-desc">부산 특산품과 쇼핑 명소</div>
                     </div>
                   </Link>
-                  <Link to="/info/stay" className="dropdown-item">
+                  <Link to="/info/stay" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🏨</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">숙박</div>
                       <div className="dropdown-desc">추천 숙소</div>
                     </div>
                   </Link>
-                  <Link to="/ai-planner" className="dropdown-item">
+                  <Link to="/ai-planner" className="dropdown-item" onClick={() => setIsInfoDropdownOpen(false)}>
                     <span className="dropdown-icon">🤖</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">AI 여행 계획</div>
@@ -263,11 +324,11 @@ const Header: React.FC = () => {
             </div>
 
             {/* 여행혜택 드롭다운 */}
-            <div className="dropdown-wrapper">
+            <div className="dropdown-wrapper" ref={dropdownRefs.benefits}>
               <span 
                 className="menu-item"
-                onMouseEnter={() => setExpandedMenu("benefits")}
-                onMouseLeave={() => setExpandedMenu(null)}
+                onClick={() => toggleMenu("benefits")}
+                style={{ cursor: 'pointer' }}
               >
                 여행혜택
                 <svg
@@ -282,33 +343,29 @@ const Header: React.FC = () => {
                 </svg>
               </span>
               {expandedMenu === "benefits" && (
-                <div 
-                  className="dropdown-menu"
-                  onMouseEnter={() => setExpandedMenu("benefits")}
-                  onMouseLeave={() => setExpandedMenu(null)}
-                >
-                  <Link to="/footer_details/event" className="dropdown-item" onClick={handleMenuClose}>
+                <div className="dropdown-menu">
+                  <Link to="/footer_details/event" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🎉</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">이벤트</div>
                       <div className="dropdown-desc">여행 관련 이벤트</div>
                     </div>
                   </Link>
-                  <Link to="/benefits/stamp" className="dropdown-item" onClick={handleMenuClose}>
+                  <Link to="/benefits/stamp" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🛎️</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">스템프 이벤트</div>
                       <div className="dropdown-desc">명소 방문 인증/스탬프 투어</div>
                     </div>
                   </Link>
-                  <Link to="/benefits/coupon" className="dropdown-item" onClick={handleMenuClose}>
+                  <Link to="/benefits/coupon" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🎫</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">기프래카드</div>
                       <div className="dropdown-desc">여행 쿠폰/카드</div>
                     </div>
                   </Link>
-                  <Link to="/benefits/badge" className="dropdown-item" onClick={handleMenuClose}>
+                  <Link to="/benefits/badge" className="dropdown-item" onClick={() => { setExpandedMenu(null); handleMenuClose(); }}>
                     <span className="dropdown-icon">🏅</span>
                     <div className="dropdown-content">
                       <div className="dropdown-title">베지패드</div>
