@@ -317,7 +317,7 @@ gitignore에 secret.properties가 들어가있으나 인식을 못하는지
 ignore file 클릭
 
 * **solr에 데이터 넣는 방법**
-1. solr에 코어 생성
+1. solr에 코어 생성x
 solr create -c food_core
 marine_core
 walk_core
