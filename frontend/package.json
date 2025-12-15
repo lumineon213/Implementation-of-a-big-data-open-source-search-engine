@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@tosspayments/payment-sdk": "^1.9.2",
     "axios": "^1.13.2",
+    "dompurify": "^3.3.1",
     "i18next": "^25.7.1",
     "lucide-react": "^0.555.0",
     "react": "^19.2.0",

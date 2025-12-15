@@ -58,6 +58,7 @@ import AdminInquiries from "pages/admin/AdminInquiries";
 import AdminNotices from "pages/admin/AdminNotices";
 import AdminEvents from "pages/admin/AdminEvents";
 
+import NewsSearch from 'pages/news/newsSearch';
 
 // 타입 정의
 export interface SolrResultItem {
@@ -175,6 +176,9 @@ function App() {
 
                   {/* 예약 성공 페이지 */}
                   <Route path="/reservation/success" element={<ReservationSuccess />} />
+                  
+                  {/* 💡 Naver 뉴스 검색 페이지 */}
+            <Route path="/info/news" element={<NewsSearch />} />
                 </Routes>
          
           {!isMapPage && <Footer />}
