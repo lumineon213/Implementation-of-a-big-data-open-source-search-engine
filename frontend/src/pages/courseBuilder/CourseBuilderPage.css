@@ -1,0 +1,465 @@
+/* src/pages/courseBuilder/CourseBuilderPage.css */
+
+/* ---------------------------
+   Page
+--------------------------- */
+.cb-page {
+  width: 100%;
+  padding: 24px;
+  padding-top: 120px;
+  box-sizing: border-box;
+}
+
+/* ✅ 화면 높이 안에서 끝내기 */
+.cb-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 320px;
+  grid-template-areas:
+    "left right"
+    "left map";
+  gap: 16px;
+
+  height: calc(100vh - 160px);
+  min-height: 720px;
+}
+
+.cb-area-left { grid-area: left; min-height: 0; }
+.cb-area-right { grid-area: right; min-height: 0; }
+.cb-area-map { grid-area: map; min-height: 0; }
+
+/* 공통 박스 */
+.cb-left,
+.cb-right,
+.cb-map {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+
+/* ---------------------------
+   Left
+--------------------------- */
+.cb-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cb-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cb-tab {
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.cb-tab.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.cb-search input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+/* ✅ 왼쪽 리스트는 남은 공간 스크롤 */
+.cb-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+
+  padding-right: 2px;
+}
+
+/* 카드 */
+.cb-card {
+  display: grid;
+  grid-template-columns: 84px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.cb-thumb {
+  width: 84px;
+  height: 62px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+
+.cb-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cb-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cb-title {
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-sub {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cb-add,
+.cb-remove {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.cb-muted {
+  color: #6b7280;
+  padding: 18px 6px;
+}
+
+.cb-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ---------------------------
+   Pagination
+--------------------------- */
+.cb-paging {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.cb-page-btn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.cb-page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cb-page-list {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cb-page-num {
+  min-width: 36px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.cb-page-num.active {
+  background: #f97316;
+  border-color: #f97316;
+  color: #fff;
+}
+
+.cb-go {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
+}
+
+.cb-go input {
+  width: 60px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ---------------------------
+   Right (Selected) - 핵심 수정
+--------------------------- */
+.cb-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* 헤더(총 개수 + 전체 삭제) */
+.cb-selected-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  flex: 0 0 auto; /* ✅ 스크롤 밖 */
+}
+
+.cb-selected-title {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.cb-selected-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cb-selected-count {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 800;
+}
+
+.cb-clear {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+/* ✅ 폼 + 리스트를 한 덩어리로 스크롤 */
+.cb-right-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+/* 폼 */
+.cb-course-form {
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.cb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.cb-label {
+  font-size: 13px;
+  font-weight: 900;
+  color: #111;
+}
+
+.cb-required {
+  color: #ef4444;
+  font-weight: 900;
+}
+
+.cb-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+}
+
+.cb-textarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+}
+
+.cb-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cb-field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.cb-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #111;
+}
+
+.cb-save {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+/* ✅ 리스트는 이제 “스크롤 없음”(부모가 스크롤) */
+.cb-selected-list {
+  overflow: visible;
+  padding-right: 0;
+}
+
+.cb-selected-item {
+  display: grid;
+  grid-template-columns: 34px 56px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.cb-selected-index {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #111;
+  color: #fff;
+  font-weight: 900;
+}
+
+.cb-selected-thumb {
+  width: 56px;
+  height: 42px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+
+.cb-selected-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cb-selected-main {
+  min-width: 0;
+}
+
+/* ---------------------------
+   Map (mini)
+--------------------------- */
+.cb-area-map {
+  min-height: 260px;
+}
+
+.cb-map {
+  height: clamp(320px, 30vh, 420px);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+}
+
+#courseBuilderMap {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------
+   Responsive
+--------------------------- */
+@media (max-width: 1024px) {
+  .cb-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 320px;
+    grid-template-areas:
+      "left"
+      "right"
+      "map";
+    height: auto;
+    min-height: 0;
+  }
+
+  .cb-left,
+  .cb-right,
+  .cb-map {
+    height: auto;
+  }
+
+  .cb-list {
+    max-height: 420px;
+    flex: unset;
+  }
+
+  .cb-right-body {
+    max-height: 520px; /* 모바일에서 너무 길면 적당히 컷 */
+  }
+}
