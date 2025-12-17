@@ -133,5 +133,21 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 <hr>
 <h2>🧬 테이블 명세서 및 ERD</h2>
-![image.png](attachment:5a0b4990-0703-4ef6-aac2-bde6148d70f0:image.png)
-![image.png](attachment:5dcd5c4b-a602-4d06-8066-56b3dea6e6fd:image.png)
+
+<details>
+  <summary><b>🔍 [클릭] 메인 시스템 설계도(ERD 1) 보기</b></summary>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/588214e0-ef9f-4e24-95e0-5575b281d38b" width="100%" alt="Database ERD 1">
+  </p>
+</details>
+
+<br>
+
+<details>
+  <summary><b>🔍 [클릭] 상세 정보 및 로그 테이블(ERD 2) 보기</b></summary>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/4349e032-88da-4ac5-969d-b1167bd1db37" width="100%" alt="Database ERD 2">
+  </p>
+</details>
+
+<hr>
