@@ -133,3 +133,5 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 <hr>
 <h2>🧬 테이블 명세서 및 ERD</h2>
+![image.png](attachment:5a0b4990-0703-4ef6-aac2-bde6148d70f0:image.png)
+![image.png](attachment:5dcd5c4b-a602-4d06-8066-56b3dea6e6fd:image.png)
