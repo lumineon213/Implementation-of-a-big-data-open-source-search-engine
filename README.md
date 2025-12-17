@@ -34,7 +34,6 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
     <tr>
       <th width="200">주요 기능</th>
       <th width="500">상세 설명</th>
-      <th width="100">기여도</th>
     </tr>
   </thead>
   <tbody>
