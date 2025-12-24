@@ -1,4 +1,8 @@
+<img width="794" height="1123" alt="1" src="https://github.com/user-attachments/assets/d2da18c9-c464-4476-8a54-b17cb1cf7fcc" />
+
+
 # 🌊 Busan Go?
+
 
 Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화된 로컬 여행 경험을 설계하는 **지능형 부산 관광 플랫폼**입니다. 
 기존 플랫폼의 광고성 정보를 배제하고, AI 모델을 통해 신뢰도 높은 데이터를 분석하여 **사용자 맞춤형 여행 계획 및 동선 최적화 서비스**를 제공합니다.
