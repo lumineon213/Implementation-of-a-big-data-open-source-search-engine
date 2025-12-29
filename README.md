@@ -120,23 +120,164 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 </p>
 
 <hr>
-<h2>📊 핵심 세부기능 설명</h2>
-<ul>
-  <li></li>
-  <li></li>
-  <li></li>
-</ul>
+# ✨ UI / 기능 상세
 
-<hr>
-<h2>🎬 전체 보기(자세히)</h2>
-<ul>
-  <li></li>
-  <li></li>
-  <li></li>
-</ul>
+---
 
-<hr>
-<h2>🧬 테이블 명세서 및 ERD</h2>
+<details>
+<summary><strong>✨ UI/UX 테마 보기</strong></summary>
+
+### ◈ 메인 페이지 구성
+<img src="https://github.com/user-attachments/assets/f1648604-1c5e-46de-b2ff-ef36c885ef21" alt="메인 페이지" width="100%"/>
+
+
+### ◈ 로그인/회원가입
+<img src="https://github.com/user-attachments/assets/686caee1-7d11-48b4-894d-4f37a7abe5b1" alt="로그인" width="100%"/>
+<img src="https://github.com/user-attachments/assets/2d8b626e-d032-4218-bacb-34673bfe6955" alt="회원가입" width="100%"/>
+
+### ◈ 아이디/비밀번호 찾기
+<img src="https://github.com/user-attachments/assets/9c259fdd-88e4-46de-b179-c8dd4115f04c" alt="아이디 /비밀번호 찾기" width="100%"/>
+<img src="https://github.com/user-attachments/assets/c492c839-aa1f-4229-bd1c-355af70a325c" alt="이메일" width="100%"/>
+
+### ◈ Footer
+<img src="https://github.com/user-attachments/assets/4f0efdfa-84bc-4eb2-be9e-af2eb1825a49" alt="Footer" width="100%"/>
+
+<details><summary>운영 정책</summary>
+<img src="https://github.com/user-attachments/assets/f05d9b73-5aa3-49cb-abd2-fa949ea6112b" alt="운영 정책" width="100%"/>\
+<img src="https://github.com/user-attachments/assets/5b6b155d-c3fe-4ac4-b401-1bccfc1e891c" alt="운영 정책" width="100%"/>
+<img src="https://github.com/user-attachments/assets/0d6288d1-9ec8-40fd-a795-2eb2f3744ed1" alt="운영 정책" width="100%"/>
+</details>
+
+<details><summary>이용약관</summary>
+<img src="https://github.com/user-attachments/assets/b181a1b6-679d-4800-b5c3-0d741248e65d" alt="이용약관" width="100%"/>
+</details>
+
+<details><summary>개인정보 처리방침</summary>
+<img src="https://github.com/user-attachments/assets/9eb18387-6a34-4fc5-ad79-5363f9345b68" alt="개인정보 처리방침" width="100%"/>
+</details>
+
+<details><summary>고객센터</summary>
+<img src="https://github.com/user-attachments/assets/9fca05d7-3911-41e1-94b4-47500c61cfb8" alt="고객센터" width="100%"/>
+</details>
+
+</details>
+
+
+---
+
+<details>
+<summary><strong>✨ 충전소 정보 보기</strong></summary>
+
+### ◈ 충전소 목록
+<img src="https://github.com/user-attachments/assets/96440a1c-b75e-459a-bd27-d1dd32039f47" alt="충전소 목록" width="100%"/>
+
+
+### ◈ 충전소 상세 정보
+<img src="https://github.com/user-attachments/assets/66695ca6-443d-44bc-be7c-3e804c8f9d77" alt="충전소 상세" width="100%"/>
+
+### ◈ 충전소 주변 카페
+<img src="https://github.com/user-attachments/assets/dbdadde8-b8c5-4eec-a10b-e340e66e82b9" alt="충전소 주변 카페" width="100%"/>
+  
+### ◈ 충전소 혼잡도
+<img src="https://github.com/user-attachments/assets/b79696ac-5fd9-4a11-9432-e339e7a4c331" alt="충전소 혼잡도" width="100%"/>
+
+
+### ◈ 즐겨찾기
+<details><summary>즐겨찾기 UI</summary>
+<img src="https://github.com/user-attachments/assets/b2a2fe1f-c2cd-485b-b712-f0f6c4aa4676"  alt="즐겨찾기 버튼" width="100%"/>
+</details>
+
+<details><summary>즐겨찾기 목록</summary>
+<img src="" alt="즐겨찾기 목록" width="100%"/>
+</details>
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 마이페이지 보기</strong></summary>
+
+### ◈ 마이페이지 메인
+<img src="https://github.com/user-attachments/assets/d304245b-65b5-4fa2-97c4-1317e9b9fbc4" alt="마이페이지 메인" width="100%"/>
+
+### ◈ 내 예약 취소 내역
+<img src="https://github.com/user-attachments/assets/d345b8f9-4bfb-4609-862b-71b1026fe76a" alt="내 예약 취소 내역" width="100%"/>
+
+### ◈ 고장 신고 내역
+<img src="https://github.com/user-attachments/assets/9bfaf87d-6fa5-4963-a3d7-7c5a7424b499" alt="고장 신고 내역" width="100%"/>
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 고장 신고 기능</strong></summary>
+
+### ◈ 고장 신고 접수
+<img src="https://github.com/user-attachments/assets/0816f1db-60f7-4eba-9c70-d924cdcef189" alt="고장 신고 접수" width="100%"/>
+
+### ◈ 관리자 고장 신고 확인
+<img src="https://github.com/user-attachments/assets/0537a5ab-2f48-41c3-aed9-0ffb07a5a614" alt="관리자 고장 신고 확인" width="100%"/>
+
+### ◈ 고장신고 상세 보기
+<img src="https://github.com/user-attachments/assets/b3387057-90f4-484c-82f1-fac675fb15c7" alt="고장신고 상세 보기" width="100%"/>
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 예약 결제 기능</strong></summary>
+
+### ◈ 예약 접수
+<img src="https://github.com/user-attachments/assets/25e49347-116e-4ce1-bb60-4b2c9717b981" alt="예약 접수" width="100%"/>
+
+### ◈ 예약 접수 방법
+<img src="https://github.com/user-attachments/assets/0d124f0b-4f05-41c2-ad11-115f838879d3" alt="예약 접수 방법" width="100%"/>
+
+### ◈ 결제 확인 기능
+<img src="https://github.com/user-attachments/assets/e13a73af-bf95-4701-82a8-43dfa71552e0" alt="결제 확인 기능" width="100%"/>
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 게시판 보기</strong></summary>
+
+### ◈ 게시판
+<img src="https://github.com/user-attachments/assets/cca601d6-b109-4a06-94ed-b90c4a7c3706" alt="게시판" width="100%"/>
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 공지사항 보기</strong></summary>
+
+### ◈ 공지사항
+<img src="https://github.com/user-attachments/assets/56ea9b5c-9e2c-4dae-9eed-633dfb8eac61" alt="공지사항" width="100%"/>
+
+</details>
+
+---
+
+
+## 🧬 ERD & 테이블 명세서
+
+<details>
+<summary><strong>테이블 세부 명세서</strong></summary>
+
+<img src="https://github.com/user-attachments/assets/81bd8cf7-b5a5-4fca-b31f-26ca6bf26d6a" width="100%"/>
+<img src="https://github.com/user-attachments/assets/1b24cb3e-d9d8-48e8-a6ed-0433ce7a2ff8" width="100%"/>
+<img src="https://github.com/user-attachments/assets/bf485e58-7c45-46cf-bbef-3a65c06ea891" width="100%"/>
+<img src="https://github.com/user-attachments/assets/1c0c38db-6470-4f66-b806-f12b7263bf2e" width="100%"/>
+<img src="https://github.com/user-attachments/assets/c2f6de73-c821-464c-be76-3504f85b402d" width="100%"/>
+</details>
+
+---
+
 
 <details>
   <summary><b>🔍 [클릭] 메인 시스템 설계도(ERD 1) 보기</b></summary>
