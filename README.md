@@ -134,15 +134,16 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 ### ◈ 로그인/회원가입
 <img width="726" height="667" alt="스크린샷 2025-12-31 092525" src="https://github.com/user-attachments/assets/ebaf84c6-6b9d-4fe4-b737-3a46f5243b8a" />
+<img width="492" height="787" alt="관리자로그인" src="https://github.com/user-attachments/assets/dff98b53-83ef-4804-bfb9-d90a44c24be9" />
 <img width="1840" height="911" alt="image" src="https://github.com/user-attachments/assets/766e801e-fe9f-4839-8114-ed2108662a84" />
 <img width="1908" height="940" alt="image" src="https://github.com/user-attachments/assets/abb3dce7-b88c-4a41-9c52-8d4b0271ec19" />
 
 ### ◈ 아이디/비밀번호 찾기
-<img src="https://github.com/user-attachments/assets/9c259fdd-88e4-46de-b179-c8dd4115f04c" alt="아이디 /비밀번호 찾기" width="100%"/>
-<img src="https://github.com/user-attachments/assets/c492c839-aa1f-4229-bd1c-355af70a325c" alt="이메일" width="100%"/>
+<img width="1881" height="933" alt="스크린샷 2025-12-31 164903" src="https://github.com/user-attachments/assets/4f643638-4b62-4565-8136-1f2f28b7c6c7" />
+<img width="1877" height="938" alt="스크린샷 2025-12-31 164911" src="https://github.com/user-attachments/assets/21038853-b081-406a-bb51-ca7e19c77110" />
 
 ### ◈ Footer
-<img src="https://github.com/user-attachments/assets/4f0efdfa-84bc-4eb2-be9e-af2eb1825a49" alt="Footer" width="100%"/>
+<img width="1894" height="358" alt="footer" src="https://github.com/user-attachments/assets/450400b7-ac46-41ae-95f9-e8735277c8fa" />
 
 <details><summary>운영 정책</summary>
 <img src="https://github.com/user-attachments/assets/f05d9b73-5aa3-49cb-abd2-fa949ea6112b" alt="운영 정책" width="100%"/>\
