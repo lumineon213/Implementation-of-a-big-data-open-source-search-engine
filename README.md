@@ -294,11 +294,17 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 ### ◈ 신뢰 기반 맛집 검색
 > 광고성 홍보 게시글을 배제하고 부산광역시에서 공식적으로 인증한 맛집 데이터를 조회합니다.
-<img src="여기에_맛집_검색_이미지_주소_넣기" alt="맛집 검색" width="100%"/>
+<img width="1906" height="946" alt="8" src="https://github.com/user-attachments/assets/5ad8e827-e223-4c29-8377-a6896ab337e4" />
 
-### ◈ 테마별 맛집 필터링
-> '로컬 노포', '바다 전망', '가성비' 등 사용자가 원하는 테마에 맞는 식당을 빠르게 탐색합니다.
-<img src="여기에_맛집_필터_이미지_주소_넣기" alt="맛집 필터링" width="100%"/>
+### ◈ 테마별 맛집 검색 기능
+> 로컬 노포, 바다 전망, 가성비, 원하는 메뉴 등 사용자가 원하는 테마에 맞는 식당을 빠르게 탐색합니다.
+<img width="1911" height="945" alt="57" src="https://github.com/user-attachments/assets/a8ac81e7-80f6-4765-9485-c142cf60a614" />
+
+### ◈ 맛집 상세 정보 및 시설 확인
+> 공공데이터 API를 통해 수집된 식당의 상세 정보를 확인합니다.
+<img width="1914" height="948" alt="9" src="https://github.com/user-attachments/assets/58db0563-4886-4972-a122-2060047fa476" />
+
+
 
 </details>
 
