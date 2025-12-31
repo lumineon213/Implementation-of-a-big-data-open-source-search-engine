@@ -129,8 +129,10 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 ### ◈ 메인 페이지 구성
 <img width="1896" height="887" alt="스크린샷 2025-12-31 092319" src="https://github.com/user-attachments/assets/94a0901f-3bfe-4537-9415-1a525466549a" />
+<img width="1888" height="940" alt="스크린샷 2025-12-31 161237" src="https://github.com/user-attachments/assets/e9b57865-5110-4017-9235-e17781f5ae54" />
 <img width="1898" height="942" alt="스크린샷 2025-12-31 092412" src="https://github.com/user-attachments/assets/321967f9-b585-4e48-8168-ff34e31a594b" />
 <img width="1917" height="944" alt="스크린샷 2025-12-31 092431" src="https://github.com/user-attachments/assets/e27846cf-6813-4517-8262-a910a67a3771" />
+<img width="284" height="942" alt="스크린샷 2025-12-31 161300" src="https://github.com/user-attachments/assets/52750718-4a51-471f-bfc4-ffe042ee6341" />
 
 ### ◈ 로그인/회원가입
 <img width="726" height="667" alt="스크린샷 2025-12-31 092525" src="https://github.com/user-attachments/assets/ebaf84c6-6b9d-4fe4-b737-3a46f5243b8a" />
@@ -145,22 +147,17 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 ### ◈ Footer
 <img width="1894" height="358" alt="footer" src="https://github.com/user-attachments/assets/450400b7-ac46-41ae-95f9-e8735277c8fa" />
 
-<details><summary>운영 정책</summary>
-<img src="https://github.com/user-attachments/assets/f05d9b73-5aa3-49cb-abd2-fa949ea6112b" alt="운영 정책" width="100%"/>\
-<img src="https://github.com/user-attachments/assets/5b6b155d-c3fe-4ac4-b401-1bccfc1e891c" alt="운영 정책" width="100%"/>
-<img src="https://github.com/user-attachments/assets/0d6288d1-9ec8-40fd-a795-2eb2f3744ed1" alt="운영 정책" width="100%"/>
-</details>
-
 <details><summary>이용약관</summary>
-<img src="https://github.com/user-attachments/assets/b181a1b6-679d-4800-b5c3-0d741248e65d" alt="이용약관" width="100%"/>
+<img width="1896" height="800" alt="이용약관" src="https://github.com/user-attachments/assets/ae896444-2f6f-48b0-bfab-5fd55f56b1f6" />
 </details>
 
 <details><summary>개인정보 처리방침</summary>
-<img src="https://github.com/user-attachments/assets/9eb18387-6a34-4fc5-ad79-5363f9345b68" alt="개인정보 처리방침" width="100%"/>
+<img width="1897" height="866" alt="개인정보처리방침" src="https://github.com/user-attachments/assets/e8a6ab93-bb4d-4213-84c3-925d290a28bc" />
 </details>
 
-<details><summary>고객센터</summary>
-<img src="https://github.com/user-attachments/assets/9fca05d7-3911-41e1-94b4-47500c61cfb8" alt="고객센터" width="100%"/>
+<details><summary>자주 묻는 질문</summary>
+<img width="1894" height="943" alt="자주묻는질문1" src="https://github.com/user-attachments/assets/67346488-cd67-47ca-a3fd-03e242ffb094" />
+<img width="1878" height="933" alt="자주묻는질문2" src="https://github.com/user-attachments/assets/10741788-4b76-4806-85af-abb2d3848649" />
 </details>
 
 </details>
