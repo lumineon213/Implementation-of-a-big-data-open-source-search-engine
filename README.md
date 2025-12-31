@@ -264,7 +264,47 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 </details>
 
 ---
+<details>
+<summary><strong>✨ 숙박 시설 탐색 및 예약 연동</strong></summary>
 
+### ◈ 지역별 숙소 리스트
+> 공공데이터를 기반으로 한 부산 전역의 숙박 시설 정보를 카테고리별로 제공합니다.
+<img width="1913" height="944" alt="19" src="https://github.com/user-attachments/assets/e23ad24e-0374-4664-ad99-22ea73608a5d" />
+
+### ◈ 숙소 상세 정보 및 시설 확인
+> 공공데이터 API를 통해 수집된 상세 편의시설 정보를 확인합니다.
+<img width="1902" height="943" alt="20" src="https://github.com/user-attachments/assets/e1cb55b0-b165-42f2-959f-d1e9c05c54f7" />
+<img width="964" height="504" alt="56" src="https://github.com/user-attachments/assets/35801632-53ef-4dab-a922-8591d1479b3f" />
+
+### ◈ 예약 로직 프로세스
+> 예약 데이터의 무결성을 위해 중복 예약 방지 로직을 수행하며, 예약 번호 생성 및 상태 값(대기/완료)을 관리합니다.
+<img width="1903" height="937" alt="21" src="https://github.com/user-attachments/assets/4a03c320-c27b-485a-bb8f-d389ab0eebfb" />
+<img width="597" height="596" alt="스크린샷 2025-12-31 165025" src="https://github.com/user-attachments/assets/f09c1f3d-b40c-4190-a013-92b5f5dd8566" />
+<img width="594" height="594" alt="스크린샷 2025-12-31 165017" src="https://github.com/user-attachments/assets/49c29e32-a2b5-46cf-a080-d5492b1ea691" />
+
+
+### ◈ 결제 API 연동 및 확인
+> TOSS 결제 API를 연동하여 실제 결제 프로세스를 구현하였으며, 결제 성공 시 DB의 예약 상태를 업데이트하고 사용자에게 최종 결제 확인 내역을 제공합니다.
+<img width="643" height="196" alt="스크린샷 2025-12-31 164957" src="https://github.com/user-attachments/assets/bf1ba8b7-c89f-48f4-ac28-c5e5a5e62a58" />
+
+</details>
+
+---
+
+<details>
+<summary><strong>✨ 광고 없는 로컬 맛집 큐레이션</strong></summary>
+
+### ◈ 신뢰 기반 맛집 검색
+> 광고성 홍보 게시글을 배제하고 부산광역시에서 공식적으로 인증한 맛집 데이터를 조회합니다.
+<img src="여기에_맛집_검색_이미지_주소_넣기" alt="맛집 검색" width="100%"/>
+
+### ◈ 테마별 맛집 필터링
+> '로컬 노포', '바다 전망', '가성비' 등 사용자가 원하는 테마에 맞는 식당을 빠르게 탐색합니다.
+<img src="여기에_맛집_필터_이미지_주소_넣기" alt="맛집 필터링" width="100%"/>
+
+</details>
+
+---
 
 ## 🧬 ERD & 테이블 명세서
 
