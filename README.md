@@ -270,12 +270,14 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 
 <details>
 <summary><strong>테이블 세부 명세서</strong></summary>
+<img width="838" height="625" alt="스크린샷 2025-12-31 150720" src="https://github.com/user-attachments/assets/75eedf87-c360-4873-93c1-f9f2e2722572" />
+<img width="841" height="718" alt="스크린샷 2025-12-31 152716" src="https://github.com/user-attachments/assets/427c9409-513f-4480-9fa3-d792024046cb" />
+<img width="842" height="720" alt="스크린샷 2025-12-31 152733" src="https://github.com/user-attachments/assets/b56dcfd6-32c3-4bd8-b011-946dfcd139e3" />
+<img width="843" height="756" alt="스크린샷 2025-12-31 152746" src="https://github.com/user-attachments/assets/251fa2d4-fdab-4184-8aae-3d8a9290d643" />
+<img width="841" height="688" alt="스크린샷 2025-12-31 152823" src="https://github.com/user-attachments/assets/a2b82b8a-a46c-4749-b32a-a5cbe44f6098" />
+<img width="842" height="210" alt="스크린샷 2025-12-31 152839" src="https://github.com/user-attachments/assets/aeef753a-a4b5-4a03-ba1d-87b1102df2ed" />
 
-<img src="https://github.com/user-attachments/assets/81bd8cf7-b5a5-4fca-b31f-26ca6bf26d6a" width="100%"/>
-<img src="https://github.com/user-attachments/assets/1b24cb3e-d9d8-48e8-a6ed-0433ce7a2ff8" width="100%"/>
-<img src="https://github.com/user-attachments/assets/bf485e58-7c45-46cf-bbef-3a65c06ea891" width="100%"/>
-<img src="https://github.com/user-attachments/assets/1c0c38db-6470-4f66-b806-f12b7263bf2e" width="100%"/>
-<img src="https://github.com/user-attachments/assets/c2f6de73-c821-464c-be76-3504f85b402d" width="100%"/>
+
 </details>
 
 ---
