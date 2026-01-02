@@ -180,7 +180,6 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 <img width="597" height="596" alt="스크린샷 2025-12-31 165025" src="https://github.com/user-attachments/assets/f09c1f3d-b40c-4190-a013-92b5f5dd8566" />
 <img width="594" height="594" alt="스크린샷 2025-12-31 165017" src="https://github.com/user-attachments/assets/49c29e32-a2b5-46cf-a080-d5492b1ea691" />
 
-
 ### ◈ 결제 API 연동 및 확인
 > TOSS 결제 API를 연동하여 실제 결제 프로세스를 구현하였으며, 결제 성공 시 DB의 예약 상태를 업데이트하고 사용자에게 최종 결제 확인 내역을 제공합니다.
 <img width="643" height="196" alt="스크린샷 2025-12-31 164957" src="https://github.com/user-attachments/assets/bf1ba8b7-c89f-48f4-ac28-c5e5a5e62a58" />
@@ -204,7 +203,12 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 > 공공데이터 API를 통해 수집된 식당의 상세 정보를 확인합니다.
 <img width="1914" height="948" alt="9" src="https://github.com/user-attachments/assets/58db0563-4886-4972-a122-2060047fa476" />
 
-
+### ◈ 각종 테마 코스 준비
+> 공공데이터 API와 solr 코어 분배로 여행자의 취향에 맞는 각종 테마 코스 추천
+<img width="228" height="264" alt="KakaoTalk_20251229_152109436" src="https://github.com/user-attachments/assets/0e8c66ac-0262-473c-b308-27cbb2ac1a32" />
+<img width="1835" height="939" alt="KakaoTalk_20251229_152107764" src="https://github.com/user-attachments/assets/3b87162a-62c7-42da-b683-536c9e0131b6" />
+<img width="1835" height="941" alt="KakaoTalk_20251229_152029656" src="https://github.com/user-attachments/assets/f3c401e1-5885-4af6-aa04-335da0db7049" />
+<img width="1843" height="905" alt="KakaoTalk_20251229_152032216" src="https://github.com/user-attachments/assets/98c434b2-b53a-490d-95fe-eec5ef6adb01" />
 
 </details>
 
