@@ -203,6 +203,9 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 > 공공데이터 API를 통해 수집된 식당의 상세 정보를 확인합니다.
 <img width="1914" height="948" alt="9" src="https://github.com/user-attachments/assets/58db0563-4886-4972-a122-2060047fa476" />
 
+</details>
+
+<details>
 ### ◈ 각종 테마 코스 준비
 > 공공데이터 API와 solr 코어 분배로 여행자의 취향에 맞는 각종 테마 코스 추천
 <img width="228" height="264" alt="KakaoTalk_20251229_152109436" src="https://github.com/user-attachments/assets/0e8c66ac-0262-473c-b308-27cbb2ac1a32" />
@@ -211,7 +214,6 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 <img width="1843" height="905" alt="KakaoTalk_20251229_152032216" src="https://github.com/user-attachments/assets/98c434b2-b53a-490d-95fe-eec5ef6adb01" />
 
 </details>
-
 ---
 
 ## 🧬 ERD & 테이블 명세서
