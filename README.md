@@ -219,6 +219,12 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 <img width="1835" height="941" alt="KakaoTalk_20251229_152029656" src="https://github.com/user-attachments/assets/f3c401e1-5885-4af6-aa04-335da0db7049" />
 <img width="1843" height="905" alt="KakaoTalk_20251229_152032216" src="https://github.com/user-attachments/assets/98c434b2-b53a-490d-95fe-eec5ef6adb01" />
 
+### ◈ 커스텀 테마코스
+> 기존 solr 코어에서 데이터 추출 후 카카오맵과 연동해서 사용자 맞춤 커스텀 코스 제작 및 공유, 순서를 통한 여행 흐름 안내
+<img width="1839" height="385" alt="image" src="https://github.com/user-attachments/assets/961e8692-57a0-431e-9ee8-79ee97810049" />
+<img width="1831" height="903" alt="image" src="https://github.com/user-attachments/assets/24062137-216a-48fa-b8bb-f0d7edbf4a60" />
+<img width="1825" height="757" alt="image" src="https://github.com/user-attachments/assets/dc376d8f-c883-4925-8f44-65aef75e1029" />
+
 </details>
 
 ---
