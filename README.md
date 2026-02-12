@@ -120,11 +120,7 @@ Busan Go?는 사용자의 여행 테마와 선호도를 기반으로 최적화�
 </p>
 
 <hr>
-# ✨ UI / 기능 상세
 
----
-
-<details>
 <summary><strong>✨ UI/UX 테마 보기</strong></summary>
 
 ### ◈ 메인 페이지 구성
